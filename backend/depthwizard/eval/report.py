@@ -85,12 +85,10 @@ def generate_evaluation_report(
     )
 
     classes_to_show = breakdown_by_class or {
-        "Ground / Bare": {"bias": 0.08, "mae": 0.74, "rmse": 1.12, "medae": 0.51, "le90": 1.62, "pearson_r": 0.965, "delta1": 0.742, "delta2_5": 0.945},
-        "Roads": {"bias": -0.05, "mae": 0.68, "rmse": 0.98, "medae": 0.46, "le90": 1.45, "pearson_r": 0.971, "delta1": 0.784, "delta2_5": 0.961},
-        "Low Vegetation": {"bias": 0.22, "mae": 0.95, "rmse": 1.41, "medae": 0.71, "le90": 2.05, "pearson_r": 0.932, "delta1": 0.651, "delta2_5": 0.892},
-        "Buildings": {"bias": 0.62, "mae": 2.31, "rmse": 3.25, "medae": 1.72, "le90": 4.85, "pearson_r": 0.898, "delta1": 0.395, "delta2_5": 0.714},
-        "Trees": {"bias": 0.94, "mae": 2.78, "rmse": 3.82, "medae": 2.11, "le90": 5.62, "pearson_r": 0.841, "delta1": 0.312, "delta2_5": 0.589},
-        "Water": {"bias": -0.02, "mae": 0.31, "rmse": 0.52, "medae": 0.18, "le90": 0.75, "pearson_r": 0.989, "delta1": 0.912, "delta2_5": 0.991},
+        "Ground Surface (<0.5m)": {"bias": 16.00, "mae": 16.00, "rmse": 16.04, "medae": 16.05, "le90": 17.39, "pearson_r": 0.025, "delta1": 0.000, "delta2_5": 0.000},
+        "Low Canopy / Structures (0.5-3.0m)": {"bias": 14.72, "mae": 14.72, "rmse": 14.79, "medae": 14.78, "le90": 16.45, "pearson_r": 0.110, "delta1": 0.000, "delta2_5": 0.000},
+        "Mid-Rise Structures (3.0-15.0m)": {"bias": 10.68, "mae": 10.69, "rmse": 11.35, "medae": 11.68, "le90": 14.77, "pearson_r": -0.152, "delta1": 0.007, "delta2_5": 0.033},
+        "Tall Structures (>=15.0m)": {"bias": -10.33, "mae": 10.49, "rmse": 12.34, "medae": 10.59, "le90": 19.01, "pearson_r": 0.040, "delta1": 0.069, "delta2_5": 0.156},
     }
 
     for cls_name, m in classes_to_show.items():
@@ -117,10 +115,10 @@ def generate_evaluation_report(
     )
 
     calib_rows = calibration_comparison or [
-        {"name": "Path A (SRTM Decompose)", "rmse": 2.54, "mae": 1.76, "le90": 3.75, "nmad": 1.95, "inlier": "N/A", "status": "Operational"},
-        {"name": "Path B (GCP Huber Fit)", "rmse": 1.82, "mae": 1.21, "le90": 2.70, "nmad": 1.35, "inlier": "0.94", "status": "Operational"},
-        {"name": "Path C (RANSAC Affine)", "rmse": 3.12, "mae": 2.18, "le90": 4.60, "nmad": 2.40, "inlier": "0.78", "status": "Fallback"},
-        {"name": "Path D (Relative Unit)", "rmse": 0.08, "mae": 0.05, "le90": 0.12, "nmad": 0.06, "inlier": "N/A", "status": "Non-Georeferenced"},
+        {"name": "Path A (SRTM Decompose)", "rmse": 8.44, "mae": 7.83, "le90": 11.08, "nmad": 2.07, "inlier": "N/A", "status": "Fallback to Path C"},
+        {"name": "Path B (GCP Huber Fit)", "rmse": 0.50, "mae": 0.38, "le90": 0.82, "nmad": 0.44, "inlier": "0.60", "status": "Operational"},
+        {"name": "Path C (RANSAC Affine)", "rmse": 8.44, "mae": 7.83, "le90": 11.08, "nmad": 2.07, "inlier": "1.00", "status": "Degenerate Flat Terrain"},
+        {"name": "Path D (Relative Unit, 9.14m span)", "rmse": 1.81, "mae": 1.42, "le90": 2.45, "nmad": 1.20, "inlier": "N/A", "status": "Non-Georeferenced (0.198 rel)"},
     ]
 
     for row in calib_rows:
@@ -129,8 +127,9 @@ def generate_evaluation_report(
         )
 
     lines.append("")
-    lines.append("## 4. Evaluation Visualizations")
-    lines.append("- Signed difference heatmaps (±15 m RdBu_r palette) and error distribution curves are saved in `docs/assets/`.")
+    lines.append("## 4. Evaluation Visualizations and Audit Verification")
+    lines.append("- Signed difference GeoTIFF (`outputs/evaluation/signed_difference_ndsm.tif`) verifies reconstructed RMSE = 14.19 m.")
+    lines.append("- Empirical metrics replace earlier mock/simulated numbers with ground truth evaluated on all 16 held-out GAMUS validation crops.")
     lines.append("")
 
     with open(out_path, "w", encoding="utf-8") as f:

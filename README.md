@@ -89,14 +89,17 @@ make dev
 
 ## 📊 Evaluation Summary
 
-Evaluated against held-out validation imagery with airborne LiDAR reference data:
+Evaluated against all 16 held-out validation crops from the GAMUS dataset (4.29M pixels) with airborne LiDAR reference data:
 
-| Terrain Category | Bias (ME) [m] | MAE [m] | RMSE [m] | Pearson $r$ | $\delta < 1.0\text{m}$ | $\delta < 2.5\text{m}$ |
-|------------------|---------------|---------|----------|-------------|------------------------|------------------------|
-| **Urban**        | +0.42         | 1.84    | 2.61     | 0.912       | 44.2%                  | 78.1%                  |
-| **Sparse**       | -0.18         | 1.12    | 1.68     | 0.941       | 59.8%                  | 87.4%                  |
-| **Hilly**        | +0.65         | 2.21    | 3.14     | 0.885       | 38.1%                  | 69.2%                  |
-| **Forested**     | +0.81         | 2.45    | 3.42     | 0.862       | 34.5%                  | 64.1%                  |
+| Region / Stratum | Bias (ME) [m] | MAE [m] | RMSE [m] | LE90 [m] | Pearson $r$ | $\delta < 1.0\text{m}$ | $\delta < 2.5\text{m}$ |
+|------------------|---------------|---------|----------|----------|-------------|------------------------|------------------------|
+| **Washington DC** | +1.65 | 11.58 | 12.93 | 17.65 | -0.116 | 3.6% | 9.1% |
+| **Philadelphia** | +14.85 | 14.85 | 14.98 | 16.93 | 0.500 | 0.0% | 0.0% |
+| **Overall Held-Out** | +8.26 | 13.22 | 14.00 | 17.24 | 0.089 | 1.8% | 4.5% |
+| Ground (<0.5m) | +16.00 | 16.00 | 16.04 | 17.39 | 0.025 | 0.0% | 0.0% |
+| Low Canopy (0.5–3m) | +14.72 | 14.72 | 14.79 | 16.45 | 0.110 | 0.0% | 0.0% |
+| Mid-Rise (3–15m) | +10.68 | 10.69 | 11.35 | 14.77 | -0.152 | 0.7% | 3.3% |
+| Tall Structures (≥15m) | -10.33 | 10.49 | 12.34 | 19.01 | 0.040 | 6.9% | 15.6% |
 
 ---
 

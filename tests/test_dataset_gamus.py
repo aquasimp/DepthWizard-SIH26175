@@ -110,3 +110,53 @@ def test_gamus_dataloader_batch_shapes_and_metric_scale() -> None:
     assert 10.0 <= p99 <= 80.0, (
         f"nDSM 99th percentile ({p99:.2f} m) is outside expected metric range [10, 80] metres!"
     )
+
+
+def test_augmentation_spatial_alignment_and_value_invariance() -> None:
+    """Step 8 / Mutation D: Verify geometric augmentation invariance across all 8 rotation/flip combinations.
+
+    Asserts:
+    1. height.min() and height.max() are IDENTICAL before and after (no negation, no value flip).
+    2. Pixel position of image maximum coincides with height maximum after the transform.
+    3. Detecting deliberate misalignment (e.g. k vs k+1) immediately causes a failure.
+    """
+    from training.dataset import apply_geometric_augmentations
+
+    H, W = 100, 100
+    # Pure row ramp: height[r, c] = r
+    r_ramp = np.arange(H, dtype=np.float32)[:, None] * np.ones((1, W), dtype=np.float32)
+
+    img_orig = np.zeros((H, W, 3), dtype=np.uint8)
+    img_orig[:, :, 0] = (r_ramp / (H - 1) * 255.0).astype(np.uint8)
+    hgt_orig = r_ramp.copy()
+    mask_orig = np.ones((H, W), dtype=bool)
+
+    # 4 rotations x 2 flip_lr x 2 flip_ud = 16 combinations
+    for k in [0, 1, 2, 3]:
+        for flip_lr in [False, True]:
+            for flip_ud in [False, True]:
+                img_aug, hgt_aug, _ = apply_geometric_augmentations(
+                    img_orig.copy(), hgt_orig.copy(), mask_orig.copy(),
+                    k=k, flip_lr=flip_lr, flip_ud=flip_ud,
+                )
+
+                # (a) Values must remain identical: no negation, no inversion
+                assert hgt_aug.min() == hgt_orig.min(), f"Min value changed under k={k}, lr={flip_lr}, ud={flip_ud}"
+                assert hgt_aug.max() == hgt_orig.max(), f"Max value changed under k={k}, lr={flip_lr}, ud={flip_ud}"
+                assert hgt_aug.mean() == hgt_orig.mean(), f"Mean value changed under k={k}, lr={flip_lr}, ud={flip_ud}"
+
+                # (b) Spatial alignment: image peak must coincide with height peak
+                img_peak = np.unravel_index(np.argmax(img_aug[:, :, 0]), (H, W))
+                hgt_peak = np.unravel_index(np.argmax(hgt_aug), (H, W))
+                assert img_peak == hgt_peak, (
+                    f"Spatial misalignment in augmentation (k={k}, lr={flip_lr}, ud={flip_ud}): "
+                    f"img_peak={img_peak} != hgt_peak={hgt_peak}"
+                )
+
+    # Also verify loader runs cleanly with augment=True
+    manifest_path = Path("data/gamus/manifest.csv")
+    aug_dataset = GAMUSDataset(manifest_path=manifest_path, split="train", crop_size=518, augment=True)
+    sample = aug_dataset[0]
+    assert sample["image"].shape == (3, 518, 518)
+    assert sample["depth"].shape == (1, 518, 518)
+    assert torch.all(sample["depth"] >= 0.0)

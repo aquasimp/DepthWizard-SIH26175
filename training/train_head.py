@@ -4,7 +4,7 @@ import argparse
 import math
 import sys
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 # Ensure backend and repo_root are on sys.path
 repo_root = Path(__file__).resolve().parent.parent
@@ -98,6 +98,29 @@ def compute_metrics(
     }
 
 
+def configure_trainable_parameters(
+    model: DepthAnythingV2Small,
+) -> Tuple[List[torch.nn.Parameter], int, int]:
+    """Freeze encoder completely and enable gradients only on depth_head.
+
+    Returns:
+        trainable_params: List of depth_head parameter tensors.
+        trainable_count: Total number of trainable scalar parameters (~3.2M).
+        frozen_count: Total number of frozen encoder scalar parameters (~21.5M).
+    """
+    for param in model.pretrained.parameters():
+        param.requires_grad = False
+    model.pretrained.eval()
+
+    for param in model.depth_head.parameters():
+        param.requires_grad = True
+
+    trainable_params = [p for p in model.depth_head.parameters() if p.requires_grad]
+    trainable_count = sum(p.numel() for p in trainable_params)
+    frozen_count = sum(p.numel() for p in model.pretrained.parameters() if not p.requires_grad)
+    return trainable_params, trainable_count, frozen_count
+
+
 def train_head(
     config_path: Path,
     override_epochs: Optional[int] = None,
@@ -141,21 +164,13 @@ def train_head(
         model.depth_head.scratch.output_conv2[2].weight.data *= 58.0
         model.depth_head.scratch.output_conv2[2].bias.data *= 58.0
 
-    # Freeze encoder completely
-    for param in model.pretrained.parameters():
-        param.requires_grad = False
-    model.pretrained.eval()
-
-    # Enable trainable parameters for depth_head
-    for param in model.depth_head.parameters():
-        param.requires_grad = True
-
-    trainable_params = [p for p in model.depth_head.parameters() if p.requires_grad]
+    # Freeze encoder and enable depth_head gradients
+    trainable_params, trainable_count, frozen_count = configure_trainable_parameters(model)
     logger.info(
         "Model configured",
         extra={
-            "trainable_parameters": sum(p.numel() for p in trainable_params),
-            "frozen_parameters": sum(p.numel() for p in model.pretrained.parameters()),
+            "trainable_parameters": trainable_count,
+            "frozen_parameters": frozen_count,
         },
     )
 

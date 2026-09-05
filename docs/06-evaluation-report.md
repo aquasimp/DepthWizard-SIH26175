@@ -6,30 +6,28 @@ Evaluation of DepthWizard Single-View Height Estimation across held-out test spl
 
 | Terrain Category | Bias [m] | MAE [m] | RMSE [m] | MedAE [m] | LE90 [m] | NMAD [m] | Pearson $r$ | $\delta < 1.0\text{m}$ | $\delta < 2.5\text{m}$ |
 |------------------|----------|---------|----------|-----------|----------|----------|-------------|------------------------|------------------------|
-| **Urban** | +0.38 | 1.26 | 1.68 | 1.25 | 2.84 | 1.44 | 0.912 | 0.442 | 0.781 |
-| **Sparse** | -0.18 | 1.12 | 1.68 | 0.82 | 2.45 | 1.28 | 0.941 | 0.598 | 0.874 |
-| **Hilly** | +0.65 | 2.21 | 3.14 | 1.64 | 4.68 | 2.45 | 0.885 | 0.381 | 0.692 |
-| **Forested** | +0.81 | 2.45 | 3.42 | 1.81 | 5.12 | 2.68 | 0.862 | 0.345 | 0.641 |
+| **Washington_dc** | +1.65 | 11.58 | 12.93 | 12.81 | 17.65 | 17.73 | -0.116 | 0.036 | 0.091 |
+| **Philadelphia** | +14.85 | 14.85 | 14.98 | 15.28 | 16.93 | 1.55 | 0.500 | 0.000 | 0.000 |
+| **Overall_held_out** | +8.26 | 13.22 | 14.00 | 14.71 | 17.24 | 3.82 | 0.089 | 0.018 | 0.045 |
 
 ## 2. Breakdown by Semantic Class (GAMUS Labels)
 
 | Semantic Class | Bias [m] | MAE [m] | RMSE [m] | MedAE [m] | LE90 [m] | Pearson $r$ | $\delta < 1.0\text{m}$ | $\delta < 2.5\text{m}$ |
 |----------------|----------|---------|----------|-----------|----------|-------------|------------------------|------------------------|
-| **Ground / Bare** | +0.08 | 0.74 | 1.12 | 0.51 | 1.62 | 0.965 | 0.742 | 0.945 |
-| **Roads** | -0.05 | 0.68 | 0.98 | 0.46 | 1.45 | 0.971 | 0.784 | 0.961 |
-| **Low Vegetation** | +0.22 | 0.95 | 1.41 | 0.71 | 2.05 | 0.932 | 0.651 | 0.892 |
-| **Buildings** | +0.62 | 2.31 | 3.25 | 1.72 | 4.85 | 0.898 | 0.395 | 0.714 |
-| **Trees** | +0.94 | 2.78 | 3.82 | 2.11 | 5.62 | 0.841 | 0.312 | 0.589 |
-| **Water** | -0.02 | 0.31 | 0.52 | 0.18 | 0.75 | 0.989 | 0.912 | 0.991 |
+| **Ground Surface (<0.5m)** | +16.00 | 16.00 | 16.04 | 16.05 | 17.39 | 0.025 | 0.000 | 0.000 |
+| **Low Canopy / Structures (0.5m - 3.0m)** | +14.72 | 14.72 | 14.79 | 14.78 | 16.45 | 0.110 | 0.000 | 0.000 |
+| **Mid-Rise Structures (3.0m - 15.0m)** | +10.68 | 10.69 | 11.35 | 11.68 | 14.77 | -0.152 | 0.007 | 0.033 |
+| **Tall Structures (>=15.0m)** | -10.33 | 10.49 | 12.34 | 10.59 | 19.01 | 0.040 | 0.069 | 0.156 |
 
 ## 3. Breakdown by Calibration Method
 
 | Calibration Path | Absolute RMSE [m] | Absolute MAE [m] | LE90 [m] | NMAD [m] | Inlier Fraction | Status |
 |------------------|-------------------|------------------|----------|----------|-----------------|--------|
-| **Path A (SRTM Decompose)** | 2.54 | 1.76 | 3.75 | 1.95 | N/A | Operational |
-| **Path B (GCP Huber Fit)** | 1.82 | 1.21 | 2.70 | 1.35 | 0.94 | Operational |
-| **Path C (RANSAC Affine)** | 3.12 | 2.18 | 4.60 | 2.40 | 0.78 | Fallback |
-| **Path D (Relative Unit)** | 0.08 | 0.05 | 0.12 | 0.06 | N/A | Non-Georeferenced |
+| **Path A (SRTM Decompose)** | 8.44 | 7.83 | 11.08 | 2.07 | N/A | Fallback to Path C |
+| **Path B (GCP Huber Fit)** | 0.50 | 0.38 | 0.82 | 0.44 | 0.60 | Operational |
+| **Path C (RANSAC Affine)** | 8.44 | 7.83 | 11.08 | 2.07 | 1.00 | Degenerate Flat Terrain |
+| **Path D (Relative Unit, 9.14m span)** | 1.81 | 1.42 | 2.45 | 1.20 | N/A | Non-Georeferenced (0.198 rel) |
 
-## 4. Evaluation Visualizations
-- Signed difference heatmaps (±15 m RdBu_r palette) and error distribution curves are saved in `docs/assets/`.
+## 4. Evaluation Visualizations and Audit Verification
+- Signed difference GeoTIFF (`outputs/evaluation/signed_difference_ndsm.tif`) verifies reconstructed RMSE = 14.19 m.
+- Empirical metrics replace earlier mock/simulated numbers with ground truth evaluated on all 16 held-out GAMUS validation crops.

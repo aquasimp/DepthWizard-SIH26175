@@ -50,3 +50,32 @@ def test_empty_or_all_nan_disparity_guarded() -> None:
 
     assert meta["is_degenerate"] is True
     assert np.all(np.isfinite(calibrated_dsm))
+
+
+def test_low_elevation_variance_reference_triggers_degenerate_flat_terrain() -> None:
+    """Reference DEM with elevation standard deviation < 5.0m triggers DEGENERATE_FLAT_TERRAIN."""
+    H, W = 100, 100
+    np.random.seed(42)
+    # Deliberately flat reference DEM: elevation std = 1.8m (< 5.0m threshold)
+    flat_ref = (120.0 + np.random.normal(0, 1.8, (H, W))).astype(np.float32)
+    assert np.std(flat_ref) < 5.0
+
+    disparity = np.random.uniform(0.15, 0.35, (H, W)).astype(np.float32)
+
+    calibrated_dsm, meta = calibrate_path_c(
+        disparity,
+        reference_dem=flat_ref,
+        assumed_max_structure_height_m=35.0,
+    )
+
+    assert meta["calibration_status"] == "DEGENERATE_FLAT_TERRAIN"
+    assert meta["status"] == "DEGENERATE_FLAT_TERRAIN"
+    assert meta["is_degenerate"] is True
+    assert meta["flat_scene"] is True
+    assert "inlier_fraction" in meta
+    assert "a" in meta and "b" in meta
+
+    # Height variation above ground must stay within [0, 1.5 * assumed_max_structure_height_m]
+    height_range = float(np.ptp(calibrated_dsm))
+    assert height_range <= 1.5 * 35.0
+    assert np.all(np.isfinite(calibrated_dsm))

@@ -52,3 +52,25 @@ def test_cached_srtm_tile_loads_offline() -> None:
     assert meta["is_absolute"] is True
     assert meta["status"] == "CALIBRATED"
     assert calibrated_dsm.shape == (512, 512)
+
+
+def test_uncached_offline_bbox_fails_loudly() -> None:
+    """Request for a bounding box outside the cached DEM fails loudly with FileNotFoundError."""
+    import pytest
+    repo_root = Path(__file__).resolve().parent.parent
+    cache_dir = repo_root / "data" / "cache" / "srtm"
+
+    # Completely different location outside North America (e.g. Paris / Alps)
+    uncached_bounds = (2.30, 48.80, 2.40, 48.90)
+    target_shape = (256, 256)
+    target_transform = rasterio.Affine(0.001, 0, 2.30, 0, -0.001, 48.90)
+
+    with pytest.raises(FileNotFoundError, match="No SRTM DEM available in cache"):
+        fetch_srtm_dem(
+            bounds=uncached_bounds,
+            target_shape=target_shape,
+            target_crs=rasterio.CRS.from_epsg(4326),
+            target_transform=target_transform,
+            cache_dir=cache_dir,
+            api_key="",
+        )

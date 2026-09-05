@@ -62,14 +62,23 @@ def fetch_srtm_dem(
     if cached_tile.exists():
         source_path = cached_tile
     else:
-        # Check if any .tif in cache_dir contains or overlaps bounds
+        # Check if any .tif in cache_dir genuinely overlaps the requested WGS84 bounds
         for tif_file in cache_dir.glob("*.tif"):
             try:
                 with rasterio.open(str(tif_file)) as src:
-                    # Check if file has data
                     if src.width > 0 and src.height > 0:
-                        source_path = tif_file
-                        break
+                        src_lon_min, src_lat_min, src_lon_max, src_lat_max = to_wgs84_bounds(
+                            tuple(src.bounds), src.crs
+                        )
+                        # Check for non-empty bounding box intersection
+                        if not (
+                            lon_max < src_lon_min
+                            or lon_min > src_lon_max
+                            or lat_max < src_lat_min
+                            or lat_min > src_lat_max
+                        ):
+                            source_path = tif_file
+                            break
             except Exception:
                 continue
 

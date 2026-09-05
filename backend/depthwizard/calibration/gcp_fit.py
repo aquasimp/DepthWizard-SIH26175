@@ -135,6 +135,8 @@ def calibrate_path_b(
 
     calibrated_dsm = (s * dsm_initial + t).astype(np.float32)
 
+    inlier_fraction = float(np.mean(~huber.outliers_)) if hasattr(huber, "outliers_") else 1.0
+
     meta = {
         "calibration_path": "PATH_B_GCP_REFINEMENT",
         "vertical_datum": "EGM96",
@@ -143,7 +145,11 @@ def calibrate_path_b(
         "gcp_count": len(gcps),
         "scale": round(s, 4),
         "shift": round(t, 4),
+        "a": round(s, 4),
+        "b": round(t, 4),
+        "inlier_fraction": round(inlier_fraction, 4),
         "gcp_rmse_m": round(gcp_rmse, 3),
         "status": "CALIBRATED",
+        "calibration_status": "CALIBRATED",
     }
     return calibrated_dsm, meta

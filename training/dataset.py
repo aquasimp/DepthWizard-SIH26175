@@ -2,7 +2,7 @@
 
 import csv
 from pathlib import Path
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import torch
@@ -11,6 +11,37 @@ from torch.utils.data import Dataset
 # Canonical ImageNet normalization statistics
 IMAGENET_MEAN = np.array([0.485, 0.456, 0.406], dtype=np.float32).reshape(3, 1, 1)
 IMAGENET_STD = np.array([0.229, 0.224, 0.225], dtype=np.float32).reshape(3, 1, 1)
+
+
+def apply_geometric_augmentations(
+    rgb: np.ndarray,
+    ndsm: np.ndarray,
+    mask: np.ndarray,
+    k: int = 0,
+    flip_lr: bool = False,
+    flip_ud: bool = False,
+) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Apply spatial rotation and flips identically across rgb, ndsm, and mask.
+
+    Ensures that spatial dimensions are transformed synchronously with no
+    negation or value-level inversion of height values.
+    """
+    if k > 0:
+        rgb = np.rot90(rgb, k=k, axes=(0, 1)).copy()
+        ndsm = np.rot90(ndsm, k=k, axes=(0, 1)).copy()
+        mask = np.rot90(mask, k=k, axes=(0, 1)).copy()
+
+    if flip_lr:
+        rgb = np.fliplr(rgb).copy()
+        ndsm = np.fliplr(ndsm).copy()
+        mask = np.fliplr(mask).copy()
+
+    if flip_ud:
+        rgb = np.flipud(rgb).copy()
+        ndsm = np.flipud(ndsm).copy()
+        mask = np.flipud(mask).copy()
+
+    return rgb, ndsm, mask
 
 
 class GAMUSDataset(Dataset):
@@ -29,24 +60,25 @@ class GAMUSDataset(Dataset):
         self.repo_root = self.manifest_path.parent.parent.parent
 
         self.samples: List[Dict[str, str]] = []
-        if self.manifest_path.exists():
-            with open(self.manifest_path, "r", encoding="utf-8") as f:
-                reader = csv.DictReader(f)
-                for row in reader:
-                    if split is None or row.get("split") == split:
-                        self.samples.append(row)
+        if not self.manifest_path.exists():
+            raise FileNotFoundError(f"Manifest not found at {self.manifest_path}")
+
+        with open(self.manifest_path, "r", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                if split is None or row.get("split") == split:
+                    self.samples.append(row)
 
     def __len__(self) -> int:
         return len(self.samples)
 
     def __getitem__(self, idx: int) -> Dict[str, torch.Tensor]:
         row = self.samples[idx]
-        file_rel = row["file_path"]
-        file_path = self.repo_root / file_rel
+        file_path = self.repo_root / row["file_path"]
 
         data = np.load(file_path)
         rgb = data["image"]  # uint8 (518, 518, 3)
-        ndsm = data["depth"]  # float32 (518, 518) in metres
+        ndsm = data["depth"].astype(np.float32)  # float32 (518, 518) in metres
         mask = data["mask"]  # bool (518, 518)
 
         # Ensure shapes
@@ -60,23 +92,12 @@ class GAMUSDataset(Dataset):
         # NEVER negate or invert height values!
         # NEVER apply photometric jitter that modifies shadow directions!
         if self.augment:
-            k = np.random.choice([0, 1, 2, 3])
-            if k > 0:
-                rgb = np.rot90(rgb, k=k, axes=(0, 1)).copy()
-                ndsm = np.rot90(ndsm, k=k, axes=(0, 1)).copy()
-                mask = np.rot90(mask, k=k, axes=(0, 1)).copy()
-
-            if np.random.rand() > 0.5:
-                # Horizontal flip
-                rgb = np.fliplr(rgb).copy()
-                ndsm = np.fliplr(ndsm).copy()
-                mask = np.fliplr(mask).copy()
-
-            if np.random.rand() > 0.5:
-                # Vertical flip (spatial coordinates only, never values)
-                rgb = np.flipud(rgb).copy()
-                ndsm = np.flipud(ndsm).copy()
-                mask = np.flipud(mask).copy()
+            k = int(np.random.choice([0, 1, 2, 3]))
+            flip_lr = bool(np.random.rand() > 0.5)
+            flip_ud = bool(np.random.rand() > 0.5)
+            rgb, ndsm, mask = apply_geometric_augmentations(
+                rgb, ndsm, mask, k=k, flip_lr=flip_lr, flip_ud=flip_ud
+            )
 
             # Color jitter (brightness=0.2, contrast=0.2 on RGB only)
             if np.random.rand() > 0.5:
