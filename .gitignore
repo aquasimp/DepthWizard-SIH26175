@@ -19,6 +19,7 @@ build/
 # Jobs and data
 jobs/*
 !jobs/.gitkeep
+outputs/
 data/gamus/
 data/cache/srtm/*.tif
 !data/cache/srtm/.gitkeep
