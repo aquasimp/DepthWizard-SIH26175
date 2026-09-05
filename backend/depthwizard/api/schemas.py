@@ -46,4 +46,6 @@ class MetricsResponse(BaseModel):
     metrics_ndsm: Optional[Dict[str, float]] = None
     breakdown_by_class: Optional[Dict[str, Dict[str, float]]] = None
     terrain_tag: Optional[str] = None
-    shift_applied: Optional[Dict[str, float]] = None
+    shift_applied: Optional[Dict[str, Any]] = None
+    histogram: Optional[Dict[str, Any]] = None
+    diff_artifact_url: Optional[str] = None

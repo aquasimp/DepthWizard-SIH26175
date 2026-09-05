@@ -1,18 +1,25 @@
 """API routes for reference DSM validation and GCP recalibration."""
 
 import json
+import logging
+from pathlib import Path
 
+import matplotlib
 import numpy as np
 import rasterio
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, status
+from PIL import Image
 
 from depthwizard.api.routes_jobs import get_job_manager
 from depthwizard.api.schemas import GcpPayload, JobStatusResponse, MetricsResponse
 from depthwizard.calibration.gcp_fit import calibrate_path_b
-from depthwizard.eval.metrics import compute_elevation_metrics
-from depthwizard.io.writers import export_job_rasters
+from depthwizard.eval.coregister import coregister_grids
+from depthwizard.eval.metrics import compute_elevation_metrics, compute_error_histogram
+from depthwizard.io.writers import export_job_rasters, write_geotiff
 from depthwizard.jobs.manager import JobManager
 from depthwizard.mesh.export_glb import export_all_lod_glbs
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/jobs", tags=["validation"])
 
@@ -67,6 +74,8 @@ async def upload_reference_dsm(
 
     with rasterio.open(str(dsm_path)) as pred_src:
         pred_data = pred_src.read(1).astype(np.float32)
+        pred_crs = pred_src.crs
+        pred_transform = pred_src.transform
 
     # Resize reference to match pred shape if necessary
     if ref_data.shape != pred_data.shape:
@@ -78,19 +87,66 @@ async def upload_reference_dsm(
             interpolation=cv2.INTER_NEAREST,
         )
 
-    # Create valid mask
-    mask = np.isfinite(pred_data) & np.isfinite(ref_data)
-    if ref_nodata is not None:
-        mask = mask & (~np.isclose(ref_data, ref_nodata))
-    mask = mask & (pred_data != -9999.0)
+    # Co-register reference grid to prediction grid
+    pred_data, aligned_ref, shift_info = coregister_grids(pred_data, ref_data)
 
-    metrics_abs = compute_elevation_metrics(pred_data, ref_data, mask=mask)
+    # Create valid mask
+    mask = (
+        np.isfinite(pred_data)
+        & np.isfinite(aligned_ref)
+        & (pred_data != -9999.0)
+        & (aligned_ref != -9999.0)
+    )
+    if ref_nodata is not None:
+        mask = mask & (~np.isclose(aligned_ref, ref_nodata))
+
+    metrics_abs = compute_elevation_metrics(pred_data, aligned_ref, mask=mask)
+
+    # Compute signed difference: pred - ref
+    diff_data = np.full_like(pred_data, -9999.0, dtype=np.float32)
+    diff_data[mask] = pred_data[mask] - aligned_ref[mask]
+
+    # Error distribution histogram (-15m to +15m)
+    hist = compute_error_histogram(diff_data[mask], num_bins=50, range_m=(-15.0, 15.0))
+
+    # Write difference GeoTIFF
+    diff_tif_path = job_dir / "diff.tif"
+    try:
+        write_geotiff(
+            path=diff_tif_path,
+            data=diff_data,
+            crs=pred_crs,
+            transform=pred_transform,
+            nodata=-9999.0,
+            description="DSM_error_pred_minus_ref_meters",
+        )
+    except Exception as e:
+        logger.warning(f"Failed to write difference GeoTIFF: {e}")
+
+    # Generate colored difference preview PNG using RdBu_r (-15m to +15m)
+    try:
+        norm = np.clip((diff_data + 15.0) / 30.0, 0.0, 1.0)
+        cmap = matplotlib.colormaps["RdBu_r"]
+        rgba = cmap(norm)
+        # Transparent for nodata / invalid pixels
+        rgba[~mask] = [0.0, 0.0, 0.0, 0.0]
+        rgba_img = (rgba * 255).astype(np.uint8)
+        img_out = Image.fromarray(rgba_img)
+        img_out.save(job_dir / "diff.png", format="PNG")
+    except Exception as e:
+        logger.warning(f"Failed to write difference PNG preview: {e}")
+
+    # Determine terrain tag based on roughness / RMSE
+    tag = "urban_dense" if metrics_abs.get("rmse", 0) > 3.0 else "plains_open"
 
     response = MetricsResponse(
         job_id=job_id,
         status="EVALUATED",
         metrics_absolute=metrics_abs,
-        terrain_tag="urban_dense" if metrics_abs.get("rmse", 0) > 3.0 else "plains_open",
+        terrain_tag=tag,
+        shift_applied=shift_info,
+        histogram=hist,
+        diff_artifact_url=f"/api/jobs/{job_id}/artifacts/diff.png",
     )
 
     metrics_file = job_dir / "metrics.json"
