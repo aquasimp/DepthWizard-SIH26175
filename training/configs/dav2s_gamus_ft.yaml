@@ -5,13 +5,13 @@ max_val_tiles: 120
 epochs: 30
 batch_size: 8
 crop_size: 518
-learning_rate: 0.0003
-min_lr: 0.00001
+learning_rate: 0.00003
+min_lr: 0.000003
 warmup_ratio: 0.05
 weight_decay: 0.01
 grad_clip: 1.0
-amp: true
+amp: false
 device: "auto"
 seed: 42
-checkpoint_interval_steps: 500
+checkpoint_interval_steps: 25
 output_checkpoint: "models/dav2s_gamus_ft_v1.pth"
