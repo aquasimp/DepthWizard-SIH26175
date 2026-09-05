@@ -30,7 +30,10 @@ class DepthInferenceEngine:
         else:
             self.device = device
 
-        logger.info("Initializing DepthInferenceEngine", extra={"device": self.device, "checkpoint": str(checkpoint_path)})
+        logger.info(
+            "Initializing DepthInferenceEngine",
+            extra={"device": self.device, "checkpoint": str(checkpoint_path)},
+        )
         self.model: DepthAnythingV2Small = load_dav2_small(checkpoint_path, device=self.device)
 
     def infer_tile(self, tile_rgb: np.ndarray, input_size: int = 518) -> np.ndarray:

@@ -31,16 +31,24 @@ def test_samples_contain_required_variants() -> None:
         elif p.suffix.lower() in [".tif", ".tiff"]:
             try:
                 with rasterio.open(str(p)) as src:
-                    if src.crs is not None and src.transform is not None and not src.transform.is_identity:
+                    if (
+                        src.crs is not None
+                        and src.transform is not None
+                        and not src.transform.is_identity
+                    ):
                         georef_files.append(p)
                     else:
                         unref_tiff_files.append(p)
             except Exception:
                 pass
 
-    assert len(georef_files) >= 1, f"Expected at least 1 georeferenced GeoTIFF, found {len(georef_files)}"
+    assert len(georef_files) >= 1, (
+        f"Expected at least 1 georeferenced GeoTIFF, found {len(georef_files)}"
+    )
     assert len(plain_png_files) >= 1, f"Expected at least 1 plain PNG, found {len(plain_png_files)}"
-    assert len(unref_tiff_files) >= 1, f"Expected at least 1 TIFF without CRS, found {len(unref_tiff_files)}"
+    assert len(unref_tiff_files) >= 1, (
+        f"Expected at least 1 TIFF without CRS, found {len(unref_tiff_files)}"
+    )
 
 
 def test_manifest_csv_matches_files_on_disk() -> None:

@@ -63,10 +63,10 @@ def get_tile_coordinates(
 
     for r_idx, r_pos in enumerate(r_offsets):
         for c_idx, c_pos in enumerate(c_offsets):
-            is_top = (r_idx == 0)
-            is_bottom = (r_idx == len(r_offsets) - 1)
-            is_left = (c_idx == 0)
-            is_right = (c_idx == len(c_offsets) - 1)
+            is_top = r_idx == 0
+            is_bottom = r_idx == len(r_offsets) - 1
+            is_left = c_idx == 0
+            is_right = c_idx == len(c_offsets) - 1
             coords.append((r_pos, c_pos, is_top, is_bottom, is_left, is_right))
 
     return coords
@@ -110,7 +110,10 @@ def infer_tiled(
 
         # Median matching: align tile offset to current accumulator in overlap region
         if np.sum(overlap_mask) >= 64:
-            existing_d = accum_depth[r : r + tile_size, c : c + tile_size][overlap_mask] / existing_w[overlap_mask]
+            existing_d = (
+                accum_depth[r : r + tile_size, c : c + tile_size][overlap_mask]
+                / existing_w[overlap_mask]
+            )
             new_d = tile_pred[overlap_mask]
             delta = float(np.median(existing_d - new_d))
             tile_pred = tile_pred + delta

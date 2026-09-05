@@ -99,7 +99,9 @@ def test_cli_runs_on_all_samples_cpu_and_cuda() -> None:
     samples_dir = Path("data/samples")
     assert samples_dir.exists()
 
-    engine_cpu = DepthInferenceEngine(checkpoint_path="models/depth_anything_v2_vits.pth", device="cpu")
+    engine_cpu = DepthInferenceEngine(
+        checkpoint_path="models/depth_anything_v2_vits.pth", device="cpu"
+    )
 
     sample_files = list(samples_dir.glob("sample_*.*"))
     assert len(sample_files) >= 3
@@ -115,7 +117,9 @@ def test_cli_runs_on_all_samples_cpu_and_cuda() -> None:
         assert time_cpu > 0.0
 
     if torch.cuda.is_available():
-        engine_cuda = DepthInferenceEngine(checkpoint_path="models/depth_anything_v2_vits.pth", device="cuda")
+        engine_cuda = DepthInferenceEngine(
+            checkpoint_path="models/depth_anything_v2_vits.pth", device="cuda"
+        )
         for p in sample_files:
             pil_img = Image.open(str(p)).convert("RGB")
             rgb = np.array(pil_img, dtype=np.uint8)

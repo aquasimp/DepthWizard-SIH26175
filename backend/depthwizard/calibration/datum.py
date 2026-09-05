@@ -1,7 +1,6 @@
 """Vertical datum handling and conversion utilities."""
 
 
-
 def convert_vertical_datum(
     heights: float,
     lat: float,

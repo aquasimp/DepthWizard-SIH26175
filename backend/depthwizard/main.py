@@ -24,7 +24,10 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     app.state.device = device_name
     app.state.cuda_available = torch.cuda.is_available()
     app.state.model = None  # Loaded in infer/pipeline
-    logger.info("DepthWizard backend ready.", extra={"device": device_name, "cuda": app.state.cuda_available})
+    logger.info(
+        "DepthWizard backend ready.",
+        extra={"device": device_name, "cuda": app.state.cuda_available},
+    )
     yield
     logger.info("Shutting down DepthWizard backend...")
 

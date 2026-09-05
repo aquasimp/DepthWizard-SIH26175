@@ -1,7 +1,6 @@
 """Calibration path selector."""
 
 
-
 def select_calibration_path(
     is_georef: bool,
     has_gcps: bool,

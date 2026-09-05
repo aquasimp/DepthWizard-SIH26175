@@ -19,7 +19,7 @@ class Attention(nn.Module):
         super().__init__()
         self.num_heads = num_heads
         self.head_dim = dim // num_heads
-        self.scale = self.head_dim ** -0.5
+        self.scale = self.head_dim**-0.5
         self.qkv = nn.Linear(dim, dim * 3, bias=True)
         self.proj = nn.Linear(dim, dim, bias=True)
 
@@ -73,13 +73,17 @@ class PatchEmbed(nn.Module):
 
 
 class DinoVisionTransformer(nn.Module):
-    def __init__(self, embed_dim: int = 384, depth: int = 12, num_heads: int = 6, patch_size: int = 14):
+    def __init__(
+        self, embed_dim: int = 384, depth: int = 12, num_heads: int = 6, patch_size: int = 14
+    ):
         super().__init__()
         self.patch_embed = PatchEmbed(patch_size=patch_size, in_chans=3, embed_dim=embed_dim)
         self.cls_token = nn.Parameter(torch.zeros(1, 1, embed_dim))
         self.pos_embed = nn.Parameter(torch.zeros(1, 1370, embed_dim))
         self.mask_token = nn.Parameter(torch.zeros(1, embed_dim))
-        self.blocks = nn.ModuleList([Block(dim=embed_dim, num_heads=num_heads) for _ in range(depth)])
+        self.blocks = nn.ModuleList(
+            [Block(dim=embed_dim, num_heads=num_heads) for _ in range(depth)]
+        )
         self.norm = nn.LayerNorm(embed_dim)
 
     def interpolate_pos_encoding(self, x: torch.Tensor, w: int, h: int) -> torch.Tensor:
@@ -92,9 +96,11 @@ class DinoVisionTransformer(nn.Module):
         dim = x.shape[-1]
         w0 = w // 14
         h0 = h // 14
-        M = int(N ** 0.5)
+        M = int(N**0.5)
         patch_pos_embed = patch_pos_embed.reshape(1, M, M, dim).permute(0, 3, 1, 2)
-        patch_pos_embed = F.interpolate(patch_pos_embed, size=(h0, w0), mode="bicubic", align_corners=False)
+        patch_pos_embed = F.interpolate(
+            patch_pos_embed, size=(h0, w0), mode="bicubic", align_corners=False
+        )
         patch_pos_embed = patch_pos_embed.permute(0, 2, 3, 1).view(1, -1, dim)
         return torch.cat((class_pos_embed.unsqueeze(0), patch_pos_embed), dim=1)
 
@@ -153,10 +159,18 @@ class Scratch(nn.Module):
 
     def __init__(self, in_channels: List[int], features: int):
         super().__init__()
-        self.layer1_rn = nn.Conv2d(in_channels[0], features, kernel_size=3, stride=1, padding=1, bias=False)
-        self.layer2_rn = nn.Conv2d(in_channels[1], features, kernel_size=3, stride=1, padding=1, bias=False)
-        self.layer3_rn = nn.Conv2d(in_channels[2], features, kernel_size=3, stride=1, padding=1, bias=False)
-        self.layer4_rn = nn.Conv2d(in_channels[3], features, kernel_size=3, stride=1, padding=1, bias=False)
+        self.layer1_rn = nn.Conv2d(
+            in_channels[0], features, kernel_size=3, stride=1, padding=1, bias=False
+        )
+        self.layer2_rn = nn.Conv2d(
+            in_channels[1], features, kernel_size=3, stride=1, padding=1, bias=False
+        )
+        self.layer3_rn = nn.Conv2d(
+            in_channels[2], features, kernel_size=3, stride=1, padding=1, bias=False
+        )
+        self.layer4_rn = nn.Conv2d(
+            in_channels[3], features, kernel_size=3, stride=1, padding=1, bias=False
+        )
 
         self.refinenet1 = FeatureFusionBlock(features)
         self.refinenet2 = FeatureFusionBlock(features)
@@ -181,18 +195,22 @@ class DPTHead(nn.Module):
     ):
         super().__init__()
         channels = out_channels if out_channels is not None else [48, 96, 192, 384]
-        self.projects = nn.ModuleList([
-            nn.Conv2d(in_channels, channels[0], kernel_size=1, bias=True),
-            nn.Conv2d(in_channels, channels[1], kernel_size=1, bias=True),
-            nn.Conv2d(in_channels, channels[2], kernel_size=1, bias=True),
-            nn.Conv2d(in_channels, channels[3], kernel_size=1, bias=True),
-        ])
-        self.resize_layers = nn.ModuleList([
-            nn.ConvTranspose2d(channels[0], channels[0], kernel_size=4, stride=4, padding=0),
-            nn.ConvTranspose2d(channels[1], channels[1], kernel_size=2, stride=2, padding=0),
-            nn.Identity(),
-            nn.Conv2d(channels[3], channels[3], kernel_size=3, stride=2, padding=1),
-        ])
+        self.projects = nn.ModuleList(
+            [
+                nn.Conv2d(in_channels, channels[0], kernel_size=1, bias=True),
+                nn.Conv2d(in_channels, channels[1], kernel_size=1, bias=True),
+                nn.Conv2d(in_channels, channels[2], kernel_size=1, bias=True),
+                nn.Conv2d(in_channels, channels[3], kernel_size=1, bias=True),
+            ]
+        )
+        self.resize_layers = nn.ModuleList(
+            [
+                nn.ConvTranspose2d(channels[0], channels[0], kernel_size=4, stride=4, padding=0),
+                nn.ConvTranspose2d(channels[1], channels[1], kernel_size=2, stride=2, padding=0),
+                nn.Identity(),
+                nn.Conv2d(channels[3], channels[3], kernel_size=3, stride=2, padding=1),
+            ]
+        )
         self.scratch = Scratch(channels, features)
 
     def forward(self, out_features: List[torch.Tensor], patch_h: int, patch_w: int) -> torch.Tensor:
@@ -215,7 +233,9 @@ class DPTHead(nn.Module):
         path_1 = self.scratch.refinenet1([path_2, layer_1_rn], size=layer_1_rn.shape[2:])
 
         out_conv1 = self.scratch.output_conv1(path_1)
-        out_interp = F.interpolate(out_conv1, (patch_h * 14, patch_w * 14), mode="bilinear", align_corners=True)
+        out_interp = F.interpolate(
+            out_conv1, (patch_h * 14, patch_w * 14), mode="bilinear", align_corners=True
+        )
         return self.scratch.output_conv2(out_interp)
 
 
