@@ -1,0 +1,19 @@
+DepthWizard: Single-View Height Estimation and 3D Flythrough
+Copyright (c) 2026 DepthWizard Contributors (SIH 2026 Problem Statement 26175, ISRO)
+
+This product includes software and models developed by third parties:
+
+1. Depth Anything V2 (Small)
+   - License: Apache License 2.0
+   - Copyright (c) 2024 Depth Anything Authors
+   - Model Weights: depth_anything_v2_vits.pth
+   - Repository: https://github.com/DepthAnything/Depth-Anything-V2
+
+2. GAMUS Dataset (Ground-Aerial Multimodal Urban Sensing)
+   - License: Creative Commons Attribution 4.0 International (CC-BY-4.0)
+   - Attribution: Earthflow / EarthNets / RSI-MMSegmentation
+   - Repository: https://huggingface.co/datasets/earthflow/GAMUS
+
+3. Shuttle Radar Topography Mission (SRTM) GL1 30 m DEM
+   - Provided courtesy of NASA / USGS / OpenTopography
+   - Public Domain / Open Data

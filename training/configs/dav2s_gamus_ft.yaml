@@ -1,0 +1,17 @@
+# Full fine-tuning configuration on GAMUS subset
+run_name: "dav2s_gamus_ft_v1"
+max_train_tiles: 600
+max_val_tiles: 120
+epochs: 30
+batch_size: 8
+crop_size: 518
+learning_rate: 0.0003
+min_lr: 0.00001
+warmup_ratio: 0.05
+weight_decay: 0.01
+grad_clip: 1.0
+amp: true
+device: "auto"
+seed: 42
+checkpoint_interval_steps: 500
+output_checkpoint: "models/dav2s_gamus_ft_v1.pth"
