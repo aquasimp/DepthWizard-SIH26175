@@ -44,6 +44,8 @@ class DepthInferenceEngine:
         )
         self.model: DepthAnythingV2Small = load_dav2_small(checkpoint_path, device=self.device)
 
+
+
     def infer_tile(self, tile_rgb: np.ndarray, input_size: int = 518) -> np.ndarray:
         """Infer depth for a single square tile.
 
@@ -129,3 +131,23 @@ def colorize_depth(
 
     colored = cv2.applyColorMap(norm_uint8, colormap)
     return cv2.cvtColor(colored, cv2.COLOR_BGR2RGB)
+
+
+_INFERENCE_ENGINE: Optional[DepthInferenceEngine] = None
+
+
+def get_inference_engine(
+    checkpoint_path: Optional[Union[str, Path]] = None,
+    mode: str = "metric",
+    device: str = "auto",
+) -> DepthInferenceEngine:
+    """Get or initialize singleton DepthInferenceEngine instance."""
+    global _INFERENCE_ENGINE
+    if _INFERENCE_ENGINE is None:
+        _INFERENCE_ENGINE = DepthInferenceEngine(
+            checkpoint_path=checkpoint_path,
+            mode=mode,
+            device=device,
+        )
+    return _INFERENCE_ENGINE
+

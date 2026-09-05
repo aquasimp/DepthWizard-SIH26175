@@ -48,6 +48,15 @@ app.add_middleware(
 )
 
 
+from depthwizard.api.routes_artifacts import router as artifacts_router
+from depthwizard.api.routes_jobs import router as jobs_router
+from depthwizard.api.routes_validate import router as validate_router
+
+app.include_router(jobs_router)
+app.include_router(artifacts_router)
+app.include_router(validate_router)
+
+
 @app.get("/api/health")
 def health_check() -> dict:
     return {
@@ -56,3 +65,4 @@ def health_check() -> dict:
         "device": getattr(app.state, "device", "unknown"),
         "cuda_available": getattr(app.state, "cuda_available", False),
     }
+
