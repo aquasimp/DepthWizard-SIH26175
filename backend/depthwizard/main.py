@@ -58,6 +58,7 @@ app.include_router(validate_router)
 
 
 @app.get("/api/health")
+@app.get("/health")
 def health_check() -> dict:
     return {
         "status": "healthy",

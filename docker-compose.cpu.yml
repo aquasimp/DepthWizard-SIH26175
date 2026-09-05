@@ -1,10 +1,6 @@
-version: "3.8"
-
 services:
   backend:
     environment:
       - DEVICE=cpu
-    deploy:
-      resources:
-        reservations:
-          devices: []
+      - CUDA_VISIBLE_DEVICES=
+    deploy: {}

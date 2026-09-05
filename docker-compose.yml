@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   backend:
     build:
@@ -45,7 +43,7 @@ services:
       backend:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost/healthz"]
+      test: ["CMD", "wget", "-q", "-O", "-", "http://localhost/healthz"]
       interval: 10s
       timeout: 5s
       retries: 3
