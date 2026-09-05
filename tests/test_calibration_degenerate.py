@@ -1,0 +1,52 @@
+"""Tests for flat-scene degeneracy guard (Acceptance check 3)."""
+
+import numpy as np
+from depthwizard.calibration.ransac_affine import calibrate_path_c
+
+
+def test_flat_water_triggers_degeneracy_guard_without_nan() -> None:
+    """Acceptance check 3: Flat water input triggers flat-scene guard without NaN/Inf."""
+    H, W = 100, 100
+    # Flat water body with zero variance
+    flat_water_disp = np.full((H, W), 0.15, dtype=np.float32)
+
+    calibrated_dsm, meta = calibrate_path_c(flat_water_disp)
+
+    # Must trigger degeneracy guard
+    assert meta["is_degenerate"] is True
+    assert meta["flat_scene"] is True
+
+    # Must contain NO NaN or Inf
+    assert np.all(np.isfinite(calibrated_dsm)), "Output contains NaN or Inf values!"
+    assert not np.isnan(calibrated_dsm).any()
+    assert not np.isinf(calibrated_dsm).any()
+
+
+def test_desert_near_zero_variance_triggers_guard() -> None:
+    """Featureless desert or salt flat with variance < 1e-4 triggers guard."""
+    H, W = 100, 100
+    np.random.seed(42)
+    # Variance is 1e-6 (far below 1e-4 threshold)
+    desert_disp = (0.20 + np.random.normal(0, 0.001, (H, W))).astype(np.float32)
+    assert np.var(desert_disp) < 1e-4
+
+    ref_dem = np.full((H, W), 450.0, dtype=np.float32)
+
+    calibrated_dsm, meta = calibrate_path_c(desert_disp, reference_dem=ref_dem)
+
+    assert meta["is_degenerate"] is True
+    assert meta["flat_scene"] is True
+    assert np.all(np.isfinite(calibrated_dsm))
+    # Should maintain reference terrain level without exploding
+    assert np.allclose(calibrated_dsm, 450.0)
+
+
+def test_empty_or_all_nan_disparity_guarded() -> None:
+    """Completely invalid / NaN input array is handled gracefully."""
+    H, W = 50, 50
+    nan_disp = np.full((H, W), np.nan, dtype=np.float32)
+
+    calibrated_dsm, meta = calibrate_path_c(nan_disp)
+
+    assert meta["is_degenerate"] is True
+    assert np.all(np.isfinite(calibrated_dsm))

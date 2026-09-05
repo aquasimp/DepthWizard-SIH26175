@@ -1,10 +1,10 @@
 """Phase 4 Acceptance Tests: Metric nDSM head training, loss, and checkpoint loading."""
 
 from pathlib import Path
-import pytest
-import torch
 
+import torch
 from depthwizard.depth.infer import DepthInferenceEngine
+
 from training.losses import (
     MaskedL1Loss,
     MaskedSILogLoss,
