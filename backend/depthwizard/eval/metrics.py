@@ -1,6 +1,6 @@
 """Elevation estimation accuracy metrics computation for remote-sensing terrain models."""
 
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, Optional, Tuple
 
 import numpy as np
 

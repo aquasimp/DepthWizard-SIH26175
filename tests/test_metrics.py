@@ -2,7 +2,6 @@
 
 import numpy as np
 import pytest
-
 from depthwizard.eval.metrics import compute_elevation_metrics, compute_error_histogram
 
 

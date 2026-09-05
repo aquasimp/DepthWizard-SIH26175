@@ -8,7 +8,6 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "backend"))
 
 import numpy as np
-
 from depthwizard.eval.metrics import compute_elevation_metrics
 from depthwizard.eval.report import generate_evaluation_report
 

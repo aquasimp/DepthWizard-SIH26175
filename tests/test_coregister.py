@@ -3,7 +3,6 @@
 import numpy as np
 import pytest
 import scipy.ndimage as ndi
-
 from depthwizard.eval.coregister import coregister_grids
 
 
