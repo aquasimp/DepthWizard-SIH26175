@@ -1,122 +1,77 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { useEffect, useState } from 'react';
+import { JobStatusPage } from './pages/JobStatusPage';
+import { UploadPage } from './pages/UploadPage';
+import { ValidatePage } from './pages/ValidatePage';
+import { ViewerPage } from './pages/ViewerPage';
 
-function App() {
-  const [count, setCount] = useState(0)
+export type PageView = 'upload' | 'status' | 'viewer' | 'validate';
+
+export function App() {
+  const [currentPage, setCurrentPage] = useState<PageView>('upload');
+  const [activeJobId, setActiveJobId] = useState<string | null>(null);
+
+  // Read URL query params on mount for direct link navigation
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const jobParam = params.get('job');
+    const pageParam = params.get('page') as PageView | null;
+
+    if (jobParam) {
+      setActiveJobId(jobParam);
+      if (pageParam && ['status', 'viewer', 'validate'].includes(pageParam)) {
+        setCurrentPage(pageParam);
+      } else {
+        setCurrentPage('viewer');
+      }
+    }
+  }, []);
+
+  const navigateTo = (page: PageView, jobId?: string) => {
+    if (jobId) setActiveJobId(jobId);
+    setCurrentPage(page);
+
+    const url = new URL(window.location.href);
+    if (jobId) url.searchParams.set('job', jobId);
+    else url.searchParams.delete('job');
+    url.searchParams.set('page', page);
+    window.history.pushState({}, '', url.toString());
+  };
+
+  if (currentPage === 'viewer' && activeJobId) {
+    return (
+      <ViewerPage
+        jobId={activeJobId}
+        onNavigateBack={() => navigateTo('upload')}
+        onNavigateValidate={(id) => navigateTo('validate', id)}
+      />
+    );
+  }
+
+  if (currentPage === 'status' && activeJobId) {
+    return (
+      <JobStatusPage
+        jobId={activeJobId}
+        onOpenViewer={(id) => navigateTo('viewer', id)}
+        onNavigateHome={() => navigateTo('upload')}
+      />
+    );
+  }
+
+  if (currentPage === 'validate' && activeJobId) {
+    return (
+      <ValidatePage
+        jobId={activeJobId}
+        onNavigateBack={() => navigateTo('viewer', activeJobId)}
+      />
+    );
+  }
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+    <UploadPage
+      onJobSelect={(id) => navigateTo('viewer', id)}
+      onJobCreated={(id) => navigateTo('status', id)}
+    />
+  );
 }
 
-export default App
+export default App;
