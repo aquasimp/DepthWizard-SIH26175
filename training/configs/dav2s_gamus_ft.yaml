@@ -1,7 +1,8 @@
 # Full fine-tuning configuration on GAMUS subset
 run_name: "dav2s_gamus_ft_v1"
-max_train_tiles: 600
-max_val_tiles: 120
+# Capped from original targets (~600 train / 120 val) due to hackathon-window bandwidth limits during ingestion
+max_train_tiles: 40
+max_val_tiles: 16
 epochs: 30
 batch_size: 8
 crop_size: 518
