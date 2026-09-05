@@ -78,6 +78,12 @@ class GAMUSDataset(Dataset):
                 ndsm = np.flipud(ndsm).copy()
                 mask = np.flipud(mask).copy()
 
+            # Color jitter (brightness=0.2, contrast=0.2 on RGB only)
+            if np.random.rand() > 0.5:
+                alpha = 1.0 + float(np.random.uniform(-0.2, 0.2))
+                beta = float(np.random.uniform(-0.2, 0.2)) * 255.0
+                rgb = np.clip(alpha * rgb.astype(np.float32) + beta, 0, 255).astype(np.uint8)
+
         # Normalize RGB to [0, 1] then ImageNet standard stats -> (3, H, W)
         rgb_float = (rgb.astype(np.float32) / 255.0).transpose(2, 0, 1)
         rgb_norm = (rgb_float - IMAGENET_MEAN) / IMAGENET_STD

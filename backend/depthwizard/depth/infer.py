@@ -2,7 +2,7 @@
 
 import time
 from pathlib import Path
-from typing import Tuple, Union
+from typing import Optional, Tuple, Union
 
 import cv2
 import numpy as np
@@ -22,17 +22,25 @@ class DepthInferenceEngine:
 
     def __init__(
         self,
-        checkpoint_path: Union[str, Path] = "models/depth_anything_v2_vits.pth",
+        checkpoint_path: Optional[Union[str, Path]] = None,
+        mode: str = "relative",
         device: str = "auto",
     ):
+        self.mode = mode
         if device == "auto":
             self.device = "cuda" if torch.cuda.is_available() else "cpu"
         else:
             self.device = device
 
+        if checkpoint_path is None:
+            if mode == "metric":
+                checkpoint_path = "models/dav2s_gamus_ft_v1.pth"
+            else:
+                checkpoint_path = "models/depth_anything_v2_vits.pth"
+
         logger.info(
             "Initializing DepthInferenceEngine",
-            extra={"device": self.device, "checkpoint": str(checkpoint_path)},
+            extra={"device": self.device, "checkpoint": str(checkpoint_path), "mode": self.mode},
         )
         self.model: DepthAnythingV2Small = load_dav2_small(checkpoint_path, device=self.device)
 

@@ -66,7 +66,9 @@ def prepare_gamus(
 
     for split, max_tiles in [("train", max_train_tiles), ("val", max_val_tiles)]:
         split_prefix = f"images/{split}/"
-        candidate_rgb_files = [f for f in all_files if f.startswith(split_prefix) and f.endswith("_RGB.h5")]
+        candidate_rgb_files = [
+            f for f in all_files if f.startswith(split_prefix) and f.endswith("_RGB.h5")
+        ]
 
         # Group by city for stratification
         cities: Dict[str, List[str]] = {}
@@ -90,8 +92,12 @@ def prepare_gamus(
             city = tile_name.split("_")[0]
 
             try:
-                rgb_path = hf_hub_download(repo_id="earthflow/GAMUS", repo_type="dataset", filename=rgb_rel_path)
-                hgt_path = hf_hub_download(repo_id="earthflow/GAMUS", repo_type="dataset", filename=hgt_rel_path)
+                rgb_path = hf_hub_download(
+                    repo_id="earthflow/GAMUS", repo_type="dataset", filename=rgb_rel_path
+                )
+                hgt_path = hf_hub_download(
+                    repo_id="earthflow/GAMUS", repo_type="dataset", filename=hgt_rel_path
+                )
 
                 with h5py.File(rgb_path, "r") as f_rgb:
                     rgb = f_rgb["image"][:]
@@ -121,18 +127,20 @@ def prepare_gamus(
                     else:
                         h_mean, h_max, h_p99 = 0.0, 0.0, 0.0
 
-                    manifest_rows.append({
-                        "id": crop_id,
-                        "split": split,
-                        "city": city,
-                        "tile_name": tile_name,
-                        "crop_idx": crop_idx,
-                        "file_path": str(crop_file.relative_to(out_path.parent.parent)),
-                        "valid_ratio": float(np.mean(mask)),
-                        "height_mean": round(h_mean, 3),
-                        "height_max": round(h_max, 3),
-                        "height_p99": round(h_p99, 3),
-                    })
+                    manifest_rows.append(
+                        {
+                            "id": crop_id,
+                            "split": split,
+                            "city": city,
+                            "tile_name": tile_name,
+                            "crop_idx": crop_idx,
+                            "file_path": str(crop_file.relative_to(out_path.parent.parent)),
+                            "valid_ratio": float(np.mean(mask)),
+                            "height_mean": round(h_mean, 3),
+                            "height_max": round(h_max, 3),
+                            "height_p99": round(h_p99, 3),
+                        }
+                    )
 
             except Exception as e:
                 print(f"Error processing {tile_name}: {e}")
@@ -140,10 +148,21 @@ def prepare_gamus(
     # Write Manifest CSV
     manifest_path = out_path / "manifest.csv"
     with open(manifest_path, "w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=[
-            "id", "split", "city", "tile_name", "crop_idx",
-            "file_path", "valid_ratio", "height_mean", "height_max", "height_p99",
-        ])
+        writer = csv.DictWriter(
+            f,
+            fieldnames=[
+                "id",
+                "split",
+                "city",
+                "tile_name",
+                "crop_idx",
+                "file_path",
+                "valid_ratio",
+                "height_mean",
+                "height_max",
+                "height_p99",
+            ],
+        )
         writer.writeheader()
         writer.writerows(manifest_rows)
 
@@ -153,13 +172,30 @@ def prepare_gamus(
     if sampled_height_vals:
         hist_path = out_path / "height_histogram.png"
         plt.figure(figsize=(8, 5))
-        plt.hist(sampled_height_vals, bins=60, range=(0, 60), color="#0055a5", edgecolor="black", alpha=0.8)
+        plt.hist(
+            sampled_height_vals,
+            bins=60,
+            range=(0, 60),
+            color="#0055a5",
+            edgecolor="black",
+            alpha=0.8,
+        )
         plt.title("GAMUS nDSM Height Distribution (Metres Above Ground)")
         plt.xlabel("Height (m)")
         plt.ylabel("Pixel Count")
         plt.grid(True, linestyle="--", alpha=0.5)
-        plt.axvline(float(np.median(sampled_height_vals)), color="orange", linestyle="--", label=f"Median: {np.median(sampled_height_vals):.1f}m")
-        plt.axvline(float(np.percentile(sampled_height_vals, 99)), color="red", linestyle=":", label=f"99th Percentile: {np.percentile(sampled_height_vals, 99):.1f}m")
+        plt.axvline(
+            float(np.median(sampled_height_vals)),
+            color="orange",
+            linestyle="--",
+            label=f"Median: {np.median(sampled_height_vals):.1f}m",
+        )
+        plt.axvline(
+            float(np.percentile(sampled_height_vals, 99)),
+            color="red",
+            linestyle=":",
+            label=f"99th Percentile: {np.percentile(sampled_height_vals, 99):.1f}m",
+        )
         plt.legend()
         plt.tight_layout()
         plt.savefig(hist_path, dpi=150)
