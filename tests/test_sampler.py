@@ -38,6 +38,8 @@ def test_sampler_empty_tall_bucket_raises(tmp_path: Path) -> None:
 
 def test_sampler_determinism_under_fixed_seed() -> None:
     """Verify that identical seeds produce bitwise-identical batch sequences."""
+    if not MANIFEST_PATH.exists():
+        pytest.skip("data/gamus/manifest.csv not found (training dataset excluded from git)")
     sampler1 = HeightStratifiedBatchSampler(
         manifest_path=MANIFEST_PATH, batch_size=4, accumulation_steps=2, seed=1337
     )
@@ -54,6 +56,8 @@ def test_sampler_determinism_under_fixed_seed() -> None:
 
 def test_sampler_per_window_guarantee() -> None:
     """Verify that every accumulation window satisfies the minimum tall structure guarantee."""
+    if not MANIFEST_PATH.exists():
+        pytest.skip("data/gamus/manifest.csv not found (training dataset excluded from git)")
     batch_size = 4
     accumulation_steps = 2
     sampler = HeightStratifiedBatchSampler(
@@ -81,6 +85,8 @@ def test_sampler_per_window_guarantee() -> None:
 
 def test_sampler_zero_leakage_and_valid_ids() -> None:
     """Verify that no val or test crops are ever emitted and all emitted indices are train."""
+    if not MANIFEST_PATH.exists():
+        pytest.skip("data/gamus/manifest.csv not found (training dataset excluded from git)")
     with open(MANIFEST_PATH, "r", encoding="utf-8") as f:
         rows = list(csv.DictReader(f))
 

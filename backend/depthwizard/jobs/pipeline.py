@@ -86,7 +86,19 @@ def run_pipeline(
         with gpu_semaphore:
             mgr.update_job(job_id, stage="INFER", progress=40)
             device = str(opts.get("device", "auto"))
-            engine = get_inference_engine(mode="metric", device=device)
+            ckpt_path = Path("models/dav2s_gamus_ft_v1.pth")
+            if not ckpt_path.exists():
+                v110_ckpt = Path("models/v1.1.0/best.pt")
+                base_ckpt = Path("models/depth_anything_v2_vits.pth")
+                if v110_ckpt.exists():
+                    ckpt_path = v110_ckpt
+                elif base_ckpt.exists():
+                    logger.warning(
+                        "Fine-tuned checkpoint not found; falling back to base checkpoint %s",
+                        base_ckpt,
+                    )
+                    ckpt_path = base_ckpt
+            engine = get_inference_engine(checkpoint_path=str(ckpt_path), mode="metric", device=device)
             raw_depth, wall_time = engine.infer_scene(canon_rgb, tile_size=512, overlap=64)
 
         mgr.update_job(

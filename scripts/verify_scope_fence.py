@@ -8,11 +8,18 @@ from pathlib import Path
 repo_root = Path(__file__).resolve().parent.parent
 
 
+TEXT_EXTENSIONS = {
+    ".py", ".json", ".md", ".ts", ".js", ".svg", ".css",
+    ".tsx", ".html", ".conf", ".sh", ".yml", ".yaml", ".toml", ".txt", ""
+}
+
+
 def compute_sha256(file_path: Path) -> str:
     h = hashlib.sha256()
-    with open(file_path, "rb") as f:
-        while chunk := f.read(65536):
-            h.update(chunk)
+    data = file_path.read_bytes()
+    if file_path.suffix.lower() in TEXT_EXTENSIONS:
+        data = data.replace(b"\r\n", b"\n")
+    h.update(data)
     return h.hexdigest()
 
 

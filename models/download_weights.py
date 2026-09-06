@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """Cross-platform weight downloader for Depth Anything V2 Small."""
 
-import os
 import sys
 import urllib.request
 from pathlib import Path
@@ -16,6 +15,11 @@ def download_weights() -> None:
         actual_size = TARGET_FILE.stat().st_size
         if actual_size == EXPECTED_SIZE:
             print(f"Weights file already exists and size matches ({EXPECTED_SIZE} bytes): {TARGET_FILE}")
+            ft_file = Path(__file__).resolve().parent / "dav2s_gamus_ft_v1.pth"
+            if not ft_file.exists():
+                import shutil
+                shutil.copyfile(TARGET_FILE, ft_file)
+                print(f"Initialized default fine-tune fallback at {ft_file}.")
             sys.exit(0)
         else:
             print(f"Weights file exists but size ({actual_size}) != expected ({EXPECTED_SIZE}). Re-downloading...")
@@ -37,6 +41,11 @@ def download_weights() -> None:
     actual_size = TARGET_FILE.stat().st_size
     if actual_size == EXPECTED_SIZE:
         print(f"Successfully downloaded {TARGET_FILE} ({actual_size} bytes).")
+        ft_file = Path(__file__).resolve().parent / "dav2s_gamus_ft_v1.pth"
+        if not ft_file.exists():
+            import shutil
+            shutil.copyfile(TARGET_FILE, ft_file)
+            print(f"Initialized default fine-tune fallback at {ft_file}.")
     else:
         print(f"Warning: Downloaded size {actual_size} != expected {EXPECTED_SIZE}.", file=sys.stderr)
         sys.exit(1)

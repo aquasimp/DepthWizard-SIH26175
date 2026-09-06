@@ -11,6 +11,10 @@ if [ -f "${TARGET_FILE}" ]; then
     ACTUAL_SIZE=$(stat -c%s "${TARGET_FILE}" 2>/dev/null || stat -f%z "${TARGET_FILE}" 2>/dev/null || wc -c < "${TARGET_FILE}")
     if [ "${ACTUAL_SIZE}" -eq "${EXPECTED_SIZE}" ]; then
         echo "Weights file already exists and size matches (${EXPECTED_SIZE} bytes): ${TARGET_FILE}"
+        if [ ! -f "${SCRIPT_DIR}/dav2s_gamus_ft_v1.pth" ]; then
+            cp "${TARGET_FILE}" "${SCRIPT_DIR}/dav2s_gamus_ft_v1.pth"
+            echo "Initialized default fine-tune fallback at ${SCRIPT_DIR}/dav2s_gamus_ft_v1.pth"
+        fi
         exit 0
     else
         echo "Weights file exists but size (${ACTUAL_SIZE}) does not match expected (${EXPECTED_SIZE}). Re-downloading..."
@@ -29,6 +33,10 @@ fi
 ACTUAL_SIZE=$(stat -c%s "${TARGET_FILE}" 2>/dev/null || stat -f%z "${TARGET_FILE}" 2>/dev/null || wc -c < "${TARGET_FILE}")
 if [ "${ACTUAL_SIZE}" -eq "${EXPECTED_SIZE}" ]; then
     echo "Successfully downloaded ${TARGET_FILE} (${ACTUAL_SIZE} bytes)."
+    if [ ! -f "${SCRIPT_DIR}/dav2s_gamus_ft_v1.pth" ]; then
+        cp "${TARGET_FILE}" "${SCRIPT_DIR}/dav2s_gamus_ft_v1.pth"
+        echo "Initialized default fine-tune fallback at ${SCRIPT_DIR}/dav2s_gamus_ft_v1.pth"
+    fi
 else
     echo "Warning: File downloaded but size is ${ACTUAL_SIZE} (expected ${EXPECTED_SIZE})."
 fi

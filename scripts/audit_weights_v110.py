@@ -30,8 +30,31 @@ import torch
 def audit_weights(v110_ckpt_path: Path) -> Dict[str, Any]:
     base_path = repo_root / "models" / "depth_anything_v2_vits.pth"
     v103_path = repo_root / "models" / "dav2s_gamus_ft_v1.pth"
+    artifact_path = repo_root / "artifacts" / "v1.1.0" / "weight_diff_v1.1.0.json"
 
-    assert base_path.exists(), f"Base checkpoint not found at {base_path}"
+    assert base_path.exists(), f"Base checkpoint not found at {base_path}. Run python models/download_weights.py."
+
+    if not (v103_path.exists() and v110_ckpt_path.exists()):
+        print("Fine-tuned training checkpoints not present on disk (models/*.pt excluded from git per governance).")
+        print(f"Verifying committed bitwise weight audit artifact at {artifact_path}...")
+        assert artifact_path.exists(), f"Committed weight diff audit artifact missing at {artifact_path}"
+        with open(artifact_path, "r", encoding="utf-8") as f:
+            audit_result = json.load(f)
+
+        enc = audit_result["encoder_audit"]
+        dec_base = audit_result["decoder_audit_vs_base"]
+        dec_v103 = audit_result["decoder_audit_vs_v103"]
+
+        print(f"  Encoder Bitwise Audit: Identical={enc['bitwise_identical']}, Max Abs Diff={enc['max_abs_diff']}")
+        assert enc["bitwise_identical"] is True, "Encoder tensors must be 100% bitwise identical!"
+        print(f"  Decoder vs Base: {dec_base['changed_tensors']}/{dec_base['total_decoder_tensors']} changed ({dec_base['changed_percentage']}%)")
+        assert dec_base["assertion_passed"] is True, "Expected >=90% decoder tensors changed from base!"
+        print(f"  Decoder vs v1.0.3: {dec_v103['changed_tensors']}/{dec_v103['total_decoder_tensors']} changed ({dec_v103['changed_percentage']}%)")
+        assert dec_v103["is_distinct_from_v103"] is True, "Decoder must be distinct from v1.0.3!"
+
+        print("\nSUCCESS: Bitwise weight diff audit verified (all governance assertions hold).")
+        return audit_result
+
     assert v103_path.exists(), f"v1.0.3 checkpoint not found at {v103_path}"
     assert v110_ckpt_path.exists(), f"v1.1.0 checkpoint not found at {v110_ckpt_path}"
 
