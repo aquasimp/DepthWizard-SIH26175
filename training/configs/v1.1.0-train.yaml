@@ -1,0 +1,44 @@
+# DepthWizard v1.1.0 "Data Quality and Scale-Up" Fine-Tuning Configuration
+# Controlled experiment isolating 3 variables:
+# 1. Dataset scale (~100x scale-up, 3 cities: DC, NYC, PHL)
+# 2. Height-stratified batch sampling (2.5x tall-pixel enrichment)
+# 3. Synchronized height-safe spatial and photometric augmentation
+
+run_name: "dav2s_gamus_v110"
+
+model:
+  init_checkpoint: "models/depth_anything_v2_vits.pth"
+  frozen_encoder: true
+
+data:
+  manifest: "data/gamus/manifest.csv"
+  crop_size: 518
+  batch_size: 8
+  augment: true
+  sampler: "HeightStratifiedBatchSampler"
+  num_workers: 0
+
+training:
+  epochs: 60
+  learning_rate: 0.00003
+  min_lr: 0.000003
+  warmup_ratio: 0.05
+  weight_decay: 0.01
+  grad_clip: 1.0
+  amp: true
+  device: "cuda"
+  seed: 1337
+  loss:
+    silog_lambda: 0.85
+    silog_eps: 0.0001
+
+checkpoints:
+  dir: "models/v1.1.0"
+  last: "models/v1.1.0/last.pt"
+  best: "models/v1.1.0/best.pt"
+  best_tall: "models/v1.1.0/best_tall.pt"
+
+logging:
+  dir: "logs/v1.1.0"
+  csv: "logs/v1.1.0/train_metrics.csv"
+  jsonl: "logs/v1.1.0/train_metrics.jsonl"

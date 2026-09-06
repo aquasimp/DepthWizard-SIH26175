@@ -1,0 +1,20 @@
+{
+  "completed_epochs": 60,
+  "best_epoch": 48,
+  "best_val_rmse_m": 3.7333,
+  "best_tall_rmse_m": 7.7341,
+  "train_rmse_epoch_m": 5.8844,
+  "val_rmse_epoch_m": 3.7689,
+  "saved_checkpoints": {
+    "best": "models/v1.1.0/best.pt",
+    "best_tall": "models/v1.1.0/best_tall.pt",
+    "last": "models/v1.1.0/last.pt"
+  },
+  "logs": {
+    "jsonl": "logs/v1.1.0/train_metrics.jsonl",
+    "csv": "logs/v1.1.0/train_metrics.csv",
+    "curves_plot": "docs/assets/v1.1.0_training_curves.png"
+  },
+  "status": "COMPLETED",
+  "ready_for_evaluation": true
+}

@@ -21,13 +21,16 @@ jobs/*
 !jobs/.gitkeep
 outputs/
 data/gamus/
+data/gamus_raw/
 data/cache/srtm/*.tif
 !data/cache/srtm/.gitkeep
 !data/cache/srtm/demo_*.tif
 
 # Models
 models/*.pth
+models/v1.1.0/*.pt
 !models/.gitkeep
+!models/v1.1.0/checkpoint_state.json
 
 # Node / Frontend
 node_modules/

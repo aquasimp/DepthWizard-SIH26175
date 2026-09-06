@@ -1,0 +1,27 @@
+{
+  "repo_id": "earthflow/GAMUS",
+  "triplet_basename": "DC_01_25",
+  "files": {
+    "images/train/DC_01_25_RGB.h5": {
+      "local_path": "X:\\DepthWizard SIH26175\\artifacts\\v1.1.0\\sample_triplet\\images\\train\\DC_01_25_RGB.h5",
+      "size_bytes": 3147776,
+      "size_kb": 3074.0,
+      "size_mb": 3.002
+    },
+    "heights/train/DC_01_25_AGL.h5": {
+      "local_path": "X:\\DepthWizard SIH26175\\artifacts\\v1.1.0\\sample_triplet\\heights\\train\\DC_01_25_AGL.h5",
+      "size_bytes": 4196352,
+      "size_kb": 4098.0,
+      "size_mb": 4.002
+    },
+    "classes/train/DC_01_25_CLS.h5": {
+      "local_path": "X:\\DepthWizard SIH26175\\artifacts\\v1.1.0\\sample_triplet\\classes\\train\\DC_01_25_CLS.h5",
+      "size_bytes": 4196352,
+      "size_kb": 4098.0,
+      "size_mb": 4.002
+    }
+  },
+  "total_triplet_bytes": 11540480,
+  "total_triplet_kb": 11270.0,
+  "total_triplet_mb": 11.0059
+}

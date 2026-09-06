@@ -1,0 +1,72 @@
+{
+  "realised_crops": {
+    "train": 3817,
+    "val": 568,
+    "test": 1071
+  },
+  "crops_by_city": {
+    "train": {
+      "DC": 1226,
+      "NYC": 1191,
+      "PHL": 1400
+    },
+    "val": {
+      "DC": 268,
+      "PHL": 300
+    },
+    "test": {
+      "DC": 338,
+      "NYC": 333,
+      "PHL": 400
+    }
+  },
+  "total_crops": 5456,
+  "city_tall_pixel_fractions": {
+    "DC": 0.19216,
+    "NYC": 0.136,
+    "PHL": 0.02415
+  },
+  "city_pixel_totals": {
+    "DC": {
+      "total_valid_pixels": 497989534,
+      "tall_pixels_ge_15m": 95692002,
+      "tall_fraction_pct": 19.216
+    },
+    "NYC": {
+      "total_valid_pixels": 381939744,
+      "tall_pixels_ge_15m": 51942625,
+      "tall_fraction_pct": 13.6
+    },
+    "PHL": {
+      "total_valid_pixels": 569902134,
+      "tall_pixels_ge_15m": 13760800,
+      "tall_fraction_pct": 2.415
+    }
+  },
+  "wave1_probe_stats": {
+    "DC": {
+      "probed_count": 150,
+      "mean_tall_pixel_frac": 0.17778324314521748,
+      "median_tall_pixel_frac": 0.10378313064575195,
+      "p75_tall_pixel_frac": 0.24669337272644043,
+      "max_tall_pixel_frac": 0.9698600769042969,
+      "tiles_with_tall_structures_ge_05": 121
+    },
+    "NYC": {
+      "probed_count": 150,
+      "mean_tall_pixel_frac": 0.10310951795243442,
+      "median_tall_pixel_frac": 0.053252081413111926,
+      "p75_tall_pixel_frac": 0.12530127590184223,
+      "max_tall_pixel_frac": 0.7394183090280217,
+      "tiles_with_tall_structures_ge_05": 78
+    },
+    "PHL": {
+      "probed_count": 150,
+      "mean_tall_pixel_frac": 0.02972272115842434,
+      "median_tall_pixel_frac": 0.004634857177734375,
+      "p75_tall_pixel_frac": 0.04052162170410156,
+      "max_tall_pixel_frac": 0.23805618286132812,
+      "tiles_with_tall_structures_ge_05": 33
+    }
+  }
+}

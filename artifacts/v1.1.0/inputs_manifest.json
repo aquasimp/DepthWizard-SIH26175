@@ -1,0 +1,30 @@
+{
+  "v1_0_3_checkpoint": {
+    "path": "models/dav2s_gamus_ft_v1.pth",
+    "absolute_path": "X:\\DepthWizard SIH26175\\models\\dav2s_gamus_ft_v1.pth",
+    "exists": true,
+    "sha256": "5eb8ed489738146469c930d4d8b5550e7a9aac0b83a3cc1cb81652d2e9839929",
+    "size_bytes": 99232082
+  },
+  "pristine_base_checkpoint": {
+    "path": "models/depth_anything_v2_vits.pth",
+    "absolute_path": "X:\\DepthWizard SIH26175\\models\\depth_anything_v2_vits.pth",
+    "exists": true,
+    "sha256": "715fade13be8f229f8a70cc02066f656f2423a59effd0579197bbf57860e1378",
+    "size_bytes": 99218434
+  },
+  "v1_0_3_manifest": {
+    "path": "data/gamus/manifest.csv",
+    "absolute_path": "X:\\DepthWizard SIH26175\\data\\gamus\\manifest.csv",
+    "exists": true,
+    "sha256": "6efb8283060726563c7d0a3c25c56e573e67d8d6e768a9447243c8ce123e6c7f",
+    "size_bytes": 6066
+  },
+  "augmentation_module": {
+    "path": "training/dataset.py",
+    "absolute_path": "X:\\DepthWizard SIH26175\\training\\dataset.py",
+    "exists": true,
+    "sha256": "e97513dbdd89d251ee16b0ad6ee0271f8f6320a8d3c2da095ab8a3003ff49e8f",
+    "size_bytes": 4568
+  }
+}

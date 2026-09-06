@@ -1,0 +1,34 @@
+{
+  "num_batches_tested": 300,
+  "num_windows_tested": 150,
+  "batch_size": 4,
+  "accumulation_steps": 2,
+  "effective_batch_window": 8,
+  "realised_bucket_slot_shares": {
+    "B0": 0.125,
+    "B1": 0.0,
+    "B2": 0.125,
+    "B3": 0.75
+  },
+  "tall_slots_share_b2_u_b3": 0.875,
+  "fraction_windows_with_tall_crop": 1.0,
+  "fraction_windows_with_tall_crop_pct": 100.0,
+  "mean_batch_tall_pixel_fraction": 0.28242,
+  "corpus_baseline_tall_pixel_fraction": 0.11132,
+  "corpus_multiplier": 2.537,
+  "phl_baseline_tall_pixel_fraction": 0.02415,
+  "phl_multiplier": 11.694,
+  "realised_oversampling_factors": {
+    "B3": 3.104,
+    "B2": 0.626,
+    "B1": 0.0,
+    "B0": 0.362
+  },
+  "total_unique_crops_drawn": 1200,
+  "val_test_leaks_count": 0,
+  "all_emitted_ids_valid": true,
+  "criterion_1_window_tall_ge_95pct": true,
+  "criterion_2_multiplier_ge_2_5x": true,
+  "criterion_3_zero_leaks": true,
+  "criterion_4_all_ids_valid": true
+}

@@ -206,18 +206,11 @@ def prepare_gamus(
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Prepare GAMUS dataset subset")
-    parser.add_argument("--output-dir", default="data/gamus")
-    parser.add_argument("--max-train-tiles", type=int, default=150)
-    parser.add_argument("--max-val-tiles", type=int, default=30)
-    args = parser.parse_args()
-
-    prepare_gamus(
-        output_dir=args.output_dir,
-        max_train_tiles=args.max_train_tiles,
-        max_val_tiles=args.max_val_tiles,
-    )
+    """Entry point for GAMUS dataset preparation."""
+    from scripts.prepare_gamus_v110 import run_pipeline
+    run_pipeline()
 
 
 if __name__ == "__main__":
     main()
+

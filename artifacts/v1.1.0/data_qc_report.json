@@ -1,0 +1,4914 @@
+{
+  "total_qc_events": 544,
+  "by_action": {
+    "drop": 544
+  },
+  "by_reason": {
+    "nan_fraction_gt_30_percent": 134,
+    "height_lt_minus_1m": 406,
+    "entirely_class_0_background": 4
+  },
+  "by_city": {
+    "DC": 268,
+    "NYC": 276
+  },
+  "by_split": {
+    "train": 383,
+    "val": 32,
+    "test": 129
+  },
+  "events": [
+    {
+      "crop_id": "train_DC_23_03_crop0",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_23_03",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.9818
+    },
+    {
+      "crop_id": "train_DC_23_03_crop1",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_23_03",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_23_03_crop2",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_23_03",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.8444
+    },
+    {
+      "crop_id": "train_DC_23_03_crop3",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_23_03",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.3938
+    },
+    {
+      "crop_id": "train_DC_06_26_crop0",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_06_26",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_06_26_crop2",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_06_26",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_27_22_crop0",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_27_22",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_27_22_crop1",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_27_22",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_27_22_crop3",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_27_22",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_33_04_crop0",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_33_04",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_33_04_crop1",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_33_04",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.9266
+    },
+    {
+      "crop_id": "train_DC_33_04_crop3",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_33_04",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.523
+    },
+    {
+      "crop_id": "train_DC_30_24_crop0",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_30_24",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_35_07_crop0",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_35_07",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_35_07_crop1",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_35_07",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.4527
+    },
+    {
+      "crop_id": "train_DC_35_07_crop2",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_35_07",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_35_07_crop3",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_35_07",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_31_22_crop3",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_31_22",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_34_20_crop2",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_34_20",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_39_19_crop0",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_39_19",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_37_09_crop0",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_37_09",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_37_09_crop2",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_37_09",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_37_09_crop3",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_37_09",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_36_09_crop0",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_36_09",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 1.0
+    },
+    {
+      "crop_id": "train_DC_36_09_crop1",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_36_09",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.439
+    },
+    {
+      "crop_id": "train_DC_36_09_crop2",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_36_09",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.7631
+    },
+    {
+      "crop_id": "train_DC_36_09_crop3",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_36_09",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_21_06_crop2",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_21_06",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_21_06_crop3",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_21_06",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_44_34_crop2",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_44_34",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.7439656257629395
+    },
+    {
+      "crop_id": "train_DC_44_34_crop3",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_44_34",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_57_31_crop0",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_57_31",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_57_31_crop1",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_57_31",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_57_31_crop2",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_57_31",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_57_31_crop3",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_57_31",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_47_27_crop0",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_47_27",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.5146
+    },
+    {
+      "crop_id": "train_DC_47_27_crop1",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_47_27",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_47_27_crop2",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_47_27",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 1.0
+    },
+    {
+      "crop_id": "train_DC_47_27_crop3",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_47_27",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.971
+    },
+    {
+      "crop_id": "train_DC_54_29_crop0",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_54_29",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 1.0
+    },
+    {
+      "crop_id": "train_DC_54_29_crop1",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_54_29",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.3572
+    },
+    {
+      "crop_id": "train_DC_54_29_crop2",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_54_29",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 1.0
+    },
+    {
+      "crop_id": "train_DC_54_29_crop3",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_54_29",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.7796
+    },
+    {
+      "crop_id": "train_DC_51_22_crop0",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_51_22",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.4796
+    },
+    {
+      "crop_id": "train_DC_51_22_crop1",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_51_22",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.5069
+    },
+    {
+      "crop_id": "train_DC_51_22_crop2",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_51_22",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.5681
+    },
+    {
+      "crop_id": "train_DC_51_22_crop3",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_51_22",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.9319
+    },
+    {
+      "crop_id": "train_DC_55_30_crop0",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_55_30",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_55_30_crop2",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_55_30",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.6092
+    },
+    {
+      "crop_id": "train_DC_41_61_crop2",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_41_61",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_52_28_crop0",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_52_28",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.9528
+    },
+    {
+      "crop_id": "train_DC_52_28_crop1",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_52_28",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_52_28_crop2",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_52_28",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 1.0
+    },
+    {
+      "crop_id": "train_DC_52_28_crop3",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_52_28",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.7549
+    },
+    {
+      "crop_id": "train_DC_50_27_crop2",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_50_27",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.4609
+    },
+    {
+      "crop_id": "train_DC_50_27_crop3",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_50_27",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_18_21_crop2",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_18_21",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_18_25_crop0",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_18_25",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_18_25_crop2",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_18_25",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_46_50_crop0",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_46_50",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_46_50_crop1",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_46_50",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.9715
+    },
+    {
+      "crop_id": "train_DC_46_50_crop2",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_46_50",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.5634
+    },
+    {
+      "crop_id": "train_DC_46_50_crop3",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_46_50",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.5414
+    },
+    {
+      "crop_id": "train_DC_52_42_crop0",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_52_42",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_52_42_crop1",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_52_42",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.774
+    },
+    {
+      "crop_id": "train_DC_52_42_crop2",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_52_42",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.5112
+    },
+    {
+      "crop_id": "train_DC_52_42_crop3",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_52_42",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.8944
+    },
+    {
+      "crop_id": "train_DC_45_34_crop0",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_45_34",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_45_34_crop1",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_45_34",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.5979
+    },
+    {
+      "crop_id": "train_DC_45_34_crop2",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_45_34",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_45_34_crop3",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_45_34",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_32_56_crop3",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_32_56",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.3118
+    },
+    {
+      "crop_id": "train_DC_55_37_crop0",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_55_37",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.8861
+    },
+    {
+      "crop_id": "train_DC_55_37_crop1",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_55_37",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_55_37_crop2",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_55_37",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.4144
+    },
+    {
+      "crop_id": "train_DC_53_31_crop1",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_53_31",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.6633
+    },
+    {
+      "crop_id": "train_DC_53_31_crop3",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_53_31",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.3912
+    },
+    {
+      "crop_id": "train_DC_30_03_crop0",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_30_03",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_30_03_crop1",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_30_03",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_30_03_crop2",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_30_03",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_30_03_crop3",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_30_03",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_32_22_crop0",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_32_22",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_32_22_crop1",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_32_22",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_32_22_crop2",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_32_22",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_32_22_crop3",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_32_22",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_50_45_crop1",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_50_45",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_50_45_crop2",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_50_45",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.7281
+    },
+    {
+      "crop_id": "train_DC_50_45_crop3",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_50_45",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.95
+    },
+    {
+      "crop_id": "train_DC_52_32_crop0",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_52_32",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.8532
+    },
+    {
+      "crop_id": "train_DC_52_32_crop1",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_52_32",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_52_32_crop2",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_52_32",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 1.0
+    },
+    {
+      "crop_id": "train_DC_52_32_crop3",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_52_32",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.5069
+    },
+    {
+      "crop_id": "train_DC_20_21_crop1",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_20_21",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_50_47_crop0",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_50_47",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.9584
+    },
+    {
+      "crop_id": "train_DC_50_47_crop1",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_50_47",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.9844
+    },
+    {
+      "crop_id": "train_DC_50_47_crop2",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_50_47",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.6082
+    },
+    {
+      "crop_id": "train_DC_50_47_crop3",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_50_47",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_51_42_crop3",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_51_42",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_30_02_crop0",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_30_02",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.6165
+    },
+    {
+      "crop_id": "train_DC_30_02_crop1",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_30_02",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_30_02_crop2",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_30_02",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_30_02_crop3",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_30_02",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.5816
+    },
+    {
+      "crop_id": "train_DC_38_15_crop2",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_38_15",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_38_15_crop3",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_38_15",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_41_62_crop3",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_41_62",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_60_37_crop1",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_60_37",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_60_37_crop2",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_60_37",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_60_37_crop3",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_60_37",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_14_27_crop0",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_14_27",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_58_34_crop0",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_58_34",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.9918
+    },
+    {
+      "crop_id": "train_DC_58_34_crop1",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_58_34",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_58_34_crop2",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_58_34",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.347
+    },
+    {
+      "crop_id": "train_DC_46_19_crop1",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_46_19",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.4985
+    },
+    {
+      "crop_id": "train_DC_46_19_crop3",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_46_19",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_75_31_crop0",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_75_31",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_75_31_crop1",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_75_31",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.5847
+    },
+    {
+      "crop_id": "train_DC_75_31_crop2",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_75_31",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_75_31_crop3",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_75_31",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.4503
+    },
+    {
+      "crop_id": "train_DC_49_29_crop0",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_49_29",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.7679
+    },
+    {
+      "crop_id": "train_DC_49_29_crop1",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_49_29",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.8818
+    },
+    {
+      "crop_id": "train_DC_49_29_crop2",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_49_29",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_49_29_crop3",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_49_29",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.9207
+    },
+    {
+      "crop_id": "train_DC_76_31_crop0",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_76_31",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.4314
+    },
+    {
+      "crop_id": "train_DC_76_31_crop1",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_76_31",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_76_31_crop2",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_76_31",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.3342
+    },
+    {
+      "crop_id": "train_DC_76_31_crop3",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_76_31",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.6087
+    },
+    {
+      "crop_id": "train_DC_44_19_crop0",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_44_19",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_44_19_crop1",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_44_19",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.3665
+    },
+    {
+      "crop_id": "train_DC_44_19_crop2",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_44_19",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_44_19_crop3",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_44_19",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.3629
+    },
+    {
+      "crop_id": "train_DC_32_57_crop0",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_32_57",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_32_57_crop2",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_32_57",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.4986
+    },
+    {
+      "crop_id": "train_DC_32_57_crop3",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_32_57",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_38_14_crop2",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_38_14",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_38_14_crop3",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_38_14",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_51_23_crop0",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_51_23",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_51_23_crop1",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_51_23",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.3362
+    },
+    {
+      "crop_id": "train_DC_51_23_crop2",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_51_23",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.7862
+    },
+    {
+      "crop_id": "train_DC_51_23_crop3",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_51_23",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.614
+    },
+    {
+      "crop_id": "train_DC_16_19_crop3",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_16_19",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_49_30_crop0",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_49_30",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.4475
+    },
+    {
+      "crop_id": "train_DC_49_30_crop1",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_49_30",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_49_30_crop2",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_49_30",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.8908
+    },
+    {
+      "crop_id": "train_DC_49_30_crop3",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_49_30",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.4687
+    },
+    {
+      "crop_id": "train_DC_39_16_crop0",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_39_16",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_39_16_crop1",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_39_16",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_39_16_crop2",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_39_16",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.7869
+    },
+    {
+      "crop_id": "train_DC_39_16_crop3",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_39_16",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.9471
+    },
+    {
+      "crop_id": "train_DC_52_40_crop1",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_52_40",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_52_40_crop2",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_52_40",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.5409
+    },
+    {
+      "crop_id": "train_DC_52_40_crop3",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_52_40",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_53_36_crop1",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_53_36",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_53_36_crop3",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_53_36",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.3778
+    },
+    {
+      "crop_id": "train_DC_34_06_crop0",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_34_06",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_34_06_crop1",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_34_06",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_34_06_crop2",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_34_06",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_34_06_crop3",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_34_06",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_29_32_crop1",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_29_32",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_29_32_crop3",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_29_32",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.8512
+    },
+    {
+      "crop_id": "train_DC_75_32_crop0",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_75_32",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_75_32_crop1",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_75_32",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_75_32_crop2",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_75_32",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.5321
+    },
+    {
+      "crop_id": "train_DC_75_32_crop3",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_75_32",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.3291
+    },
+    {
+      "crop_id": "train_DC_71_37_crop0",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_71_37",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_71_37_crop2",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_71_37",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_71_37_crop3",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_71_37",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_34_07_crop2",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_34_07",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_34_07_crop3",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_34_07",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_44_66_crop0",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_44_66",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_44_66_crop1",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_44_66",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_44_66_crop2",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_44_66",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_44_66_crop3",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_44_66",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_41_59_crop2",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_41_59",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_DC_41_59_crop3",
+      "city": "DC",
+      "split": "train",
+      "tile_name": "DC_41_59",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "train_NYC_29866_crop0",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_29866",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.3136895895004272
+    },
+    {
+      "crop_id": "train_NYC_29866_crop2",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_29866",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.6367768049240112
+    },
+    {
+      "crop_id": "train_NYC_23502_crop2",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_23502",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.2710154056549072
+    },
+    {
+      "crop_id": "train_NYC_30232_crop1",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_30232",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.9811999797821045
+    },
+    {
+      "crop_id": "train_NYC_30232_crop3",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_30232",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.1917691230773926
+    },
+    {
+      "crop_id": "train_NYC_24637_crop0",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_24637",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.4904718399047852
+    },
+    {
+      "crop_id": "train_NYC_24637_crop1",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_24637",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.350264072418213
+    },
+    {
+      "crop_id": "train_NYC_24637_crop2",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_24637",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.1948165893554688
+    },
+    {
+      "crop_id": "train_NYC_23512_crop0",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_23512",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -2.2738101482391357
+    },
+    {
+      "crop_id": "train_NYC_23512_crop3",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_23512",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.8592795133590698
+    },
+    {
+      "crop_id": "train_NYC_28947_crop0",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_28947",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.0850895643234253
+    },
+    {
+      "crop_id": "train_NYC_28947_crop3",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_28947",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.4599922895431519
+    },
+    {
+      "crop_id": "train_NYC_29870_crop1",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_29870",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.2009127140045166
+    },
+    {
+      "crop_id": "train_NYC_29870_crop2",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_29870",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.5727691650390625
+    },
+    {
+      "crop_id": "train_NYC_26912_crop1",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_26912",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -4.632961273193359
+    },
+    {
+      "crop_id": "train_NYC_26912_crop2",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_26912",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.6062949895858765
+    },
+    {
+      "crop_id": "train_NYC_27627_crop2",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_27627",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.7465027570724487
+    },
+    {
+      "crop_id": "train_NYC_31517_crop1",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_31517",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.4234154224395752
+    },
+    {
+      "crop_id": "train_NYC_28401_crop0",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_28401",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.972055196762085
+    },
+    {
+      "crop_id": "train_NYC_28401_crop1",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_28401",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.030224323272705
+    },
+    {
+      "crop_id": "train_NYC_28401_crop2",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_28401",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.274064064025879
+    },
+    {
+      "crop_id": "train_NYC_29282_crop0",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_29282",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -2.977896213531494
+    },
+    {
+      "crop_id": "train_NYC_29282_crop1",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_29282",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -3.971543788909912
+    },
+    {
+      "crop_id": "train_NYC_29282_crop2",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_29282",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -3.995927095413208
+    },
+    {
+      "crop_id": "train_NYC_29282_crop3",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_29282",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -2.017775774002075
+    },
+    {
+      "crop_id": "train_NYC_31332_crop3",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_31332",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.0820398330688477
+    },
+    {
+      "crop_id": "train_NYC_30800_crop2",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_30800",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.4051282405853271
+    },
+    {
+      "crop_id": "train_NYC_25613_crop1",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_25613",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.2862558364868164
+    },
+    {
+      "crop_id": "train_NYC_29490_crop1",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_29490",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -3.130296230316162
+    },
+    {
+      "crop_id": "train_NYC_33000_crop2",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_33000",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.3045436143875122
+    },
+    {
+      "crop_id": "train_NYC_33000_crop3",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_33000",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.9263335466384888
+    },
+    {
+      "crop_id": "train_NYC_28005_crop1",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_28005",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.9354795217514038
+    },
+    {
+      "crop_id": "train_NYC_30771_crop0",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_30771",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.5462
+    },
+    {
+      "crop_id": "train_NYC_30771_crop2",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_30771",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.6988
+    },
+    {
+      "crop_id": "train_NYC_26109_crop0",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_26109",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.1460480690002441
+    },
+    {
+      "crop_id": "train_NYC_26346_crop1",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_26346",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.0637513399124146
+    },
+    {
+      "crop_id": "train_NYC_23930_crop1",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_23930",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -2.727959156036377
+    },
+    {
+      "crop_id": "train_NYC_26550_crop0",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_26550",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -2.0573999881744385
+    },
+    {
+      "crop_id": "train_NYC_26550_crop1",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_26550",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.1429988145828247
+    },
+    {
+      "crop_id": "train_NYC_26550_crop3",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_26550",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.0088884830474854
+    },
+    {
+      "crop_id": "train_NYC_27669_crop2",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_27669",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.0058404207229614
+    },
+    {
+      "crop_id": "train_NYC_23707_crop3",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_23707",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -2.1396961212158203
+    },
+    {
+      "crop_id": "train_NYC_26356_crop0",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_26356",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -2.191512107849121
+    },
+    {
+      "crop_id": "train_NYC_28140_crop1",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_28140",
+      "action": "drop",
+      "reason": "entirely_class_0_background"
+    },
+    {
+      "crop_id": "train_NYC_28140_crop2",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_28140",
+      "action": "drop",
+      "reason": "entirely_class_0_background"
+    },
+    {
+      "crop_id": "train_NYC_28140_crop3",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_28140",
+      "action": "drop",
+      "reason": "entirely_class_0_background"
+    },
+    {
+      "crop_id": "train_NYC_26694_crop1",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_26694",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.0424154996871948
+    },
+    {
+      "crop_id": "train_NYC_28745_crop0",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_28745",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.4386564493179321
+    },
+    {
+      "crop_id": "train_NYC_30039_crop3",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_30039",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.6002000570297241
+    },
+    {
+      "crop_id": "train_NYC_23197_crop0",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_23197",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.539239764213562
+    },
+    {
+      "crop_id": "train_NYC_23197_crop2",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_23197",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.030224323272705
+    },
+    {
+      "crop_id": "train_NYC_23197_crop3",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_23197",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.030224323272705
+    },
+    {
+      "crop_id": "train_NYC_32441_crop1",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_32441",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.0485128164291382
+    },
+    {
+      "crop_id": "train_NYC_32441_crop2",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_32441",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.3136873245239258
+    },
+    {
+      "crop_id": "train_NYC_24123_crop3",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_24123",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -2.0330166816711426
+    },
+    {
+      "crop_id": "train_NYC_23878_crop1",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_23878",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.9872972965240479
+    },
+    {
+      "crop_id": "train_NYC_23878_crop3",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_23878",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.1948177814483643
+    },
+    {
+      "crop_id": "train_NYC_24819_crop2",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_24819",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -2.285998821258545
+    },
+    {
+      "crop_id": "train_NYC_25224_crop0",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_25224",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -2.4079198837280273
+    },
+    {
+      "crop_id": "train_NYC_25224_crop3",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_25224",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.274064064025879
+    },
+    {
+      "crop_id": "train_NYC_30405_crop1",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_30405",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.6855436563491821
+    },
+    {
+      "crop_id": "train_NYC_27215_crop0",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_27215",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -4.486656188964844
+    },
+    {
+      "crop_id": "train_NYC_29849_crop3",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_29849",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -2.557271957397461
+    },
+    {
+      "crop_id": "train_NYC_24483_crop3",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_24483",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.1308079957962036
+    },
+    {
+      "crop_id": "train_NYC_31698_crop0",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_31698",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.5240000486373901
+    },
+    {
+      "crop_id": "train_NYC_31698_crop1",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_31698",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.4904718399047852
+    },
+    {
+      "crop_id": "train_NYC_28933_crop1",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_28933",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.1521447896957397
+    },
+    {
+      "crop_id": "train_NYC_28933_crop3",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_28933",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.1521447896957397
+    },
+    {
+      "crop_id": "train_NYC_23329_crop0",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_23329",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -2.109215497970581
+    },
+    {
+      "crop_id": "train_NYC_23329_crop2",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_23329",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -2.7218642234802246
+    },
+    {
+      "crop_id": "train_NYC_23329_crop3",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_23329",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -2.072640895843506
+    },
+    {
+      "crop_id": "train_NYC_25217_crop1",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_25217",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.6215358972549438
+    },
+    {
+      "crop_id": "train_NYC_27649_crop3",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_27649",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.2405359745025635
+    },
+    {
+      "crop_id": "train_NYC_31714_crop1",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_31714",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -2.023871898651123
+    },
+    {
+      "crop_id": "train_NYC_26494_crop0",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_26494",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.3380718231201172
+    },
+    {
+      "crop_id": "train_NYC_30587_crop0",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_30587",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 1.0
+    },
+    {
+      "crop_id": "train_NYC_30587_crop1",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_30587",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 1.0
+    },
+    {
+      "crop_id": "train_NYC_30587_crop2",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_30587",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 1.0
+    },
+    {
+      "crop_id": "train_NYC_30587_crop3",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_30587",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.7301
+    },
+    {
+      "crop_id": "train_NYC_28184_crop0",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_28184",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.2222486734390259
+    },
+    {
+      "crop_id": "train_NYC_28184_crop1",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_28184",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.1948153972625732
+    },
+    {
+      "crop_id": "train_NYC_23345_crop2",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_23345",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.115567922592163
+    },
+    {
+      "crop_id": "train_NYC_23345_crop3",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_23345",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.0485116243362427
+    },
+    {
+      "crop_id": "train_NYC_32255_crop0",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_32255",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.7068772315979004
+    },
+    {
+      "crop_id": "train_NYC_32255_crop1",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_32255",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.2405335903167725
+    },
+    {
+      "crop_id": "train_NYC_32255_crop2",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_32255",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.795271873474121
+    },
+    {
+      "crop_id": "train_NYC_32255_crop3",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_32255",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.149092674255371
+    },
+    {
+      "crop_id": "train_NYC_30217_crop0",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_30217",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.859279990196228
+    },
+    {
+      "crop_id": "train_NYC_30217_crop1",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_30217",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.7878
+    },
+    {
+      "crop_id": "train_NYC_30217_crop3",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_30217",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.9415760040283203
+    },
+    {
+      "crop_id": "train_NYC_28024_crop1",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_28024",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -2.746248722076416
+    },
+    {
+      "crop_id": "train_NYC_28024_crop2",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_28024",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -2.535935878753662
+    },
+    {
+      "crop_id": "train_NYC_28383_crop0",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_28383",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.527048110961914
+    },
+    {
+      "crop_id": "train_NYC_25031_crop0",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_25031",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -2.9504642486572266
+    },
+    {
+      "crop_id": "train_NYC_25031_crop1",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_25031",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.078992247581482
+    },
+    {
+      "crop_id": "train_NYC_25031_crop3",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_25031",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.4081757068634033
+    },
+    {
+      "crop_id": "train_NYC_28250_crop0",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_28250",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.420367956161499
+    },
+    {
+      "crop_id": "train_NYC_31896_crop0",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_31896",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -2.2098000049591064
+    },
+    {
+      "crop_id": "train_NYC_31896_crop2",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_31896",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -2.2098000049591064
+    },
+    {
+      "crop_id": "train_NYC_28367_crop3",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_28367",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.2374873161315918
+    },
+    {
+      "crop_id": "train_NYC_25168_crop1",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_25168",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.350264072418213
+    },
+    {
+      "crop_id": "train_NYC_28360_crop0",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_28360",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.5148558616638184
+    },
+    {
+      "crop_id": "train_NYC_28360_crop1",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_28360",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.5087599754333496
+    },
+    {
+      "crop_id": "train_NYC_28377_crop1",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_28377",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.3563591241836548
+    },
+    {
+      "crop_id": "train_NYC_23935_crop1",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_23935",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.225296139717102
+    },
+    {
+      "crop_id": "train_NYC_23935_crop2",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_23935",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.0363192558288574
+    },
+    {
+      "crop_id": "train_NYC_23935_crop3",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_23935",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -2.4079205989837646
+    },
+    {
+      "crop_id": "train_NYC_23557_crop0",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_23557",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -2.663951873779297
+    },
+    {
+      "crop_id": "train_NYC_23557_crop1",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_23557",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -3.185159921646118
+    },
+    {
+      "crop_id": "train_NYC_23557_crop3",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_23557",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -3.185159921646118
+    },
+    {
+      "crop_id": "train_NYC_26724_crop0",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_26724",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -2.2280871868133545
+    },
+    {
+      "crop_id": "train_NYC_24119_crop1",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_24119",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.5179039239883423
+    },
+    {
+      "crop_id": "train_NYC_30588_crop0",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_30588",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.603
+    },
+    {
+      "crop_id": "train_NYC_30588_crop1",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_30588",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.6398240327835083
+    },
+    {
+      "crop_id": "train_NYC_29675_crop0",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_29675",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.2710154056549072
+    },
+    {
+      "crop_id": "train_NYC_29675_crop1",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_29675",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -4.517136096954346
+    },
+    {
+      "crop_id": "train_NYC_29675_crop2",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_29675",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.5148563385009766
+    },
+    {
+      "crop_id": "train_NYC_24243_crop0",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_24243",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -3.9654486179351807
+    },
+    {
+      "crop_id": "train_NYC_24243_crop3",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_24243",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.6885923147201538
+    },
+    {
+      "crop_id": "train_NYC_29839_crop0",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_29839",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 1.0
+    },
+    {
+      "crop_id": "train_NYC_29839_crop1",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_29839",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 1.0
+    },
+    {
+      "crop_id": "train_NYC_29839_crop2",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_29839",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.9661
+    },
+    {
+      "crop_id": "train_NYC_29839_crop3",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_29839",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 1.0
+    },
+    {
+      "crop_id": "train_NYC_28208_crop0",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_28208",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.5727691650390625
+    },
+    {
+      "crop_id": "train_NYC_28208_crop1",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_28208",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.0607026815414429
+    },
+    {
+      "crop_id": "train_NYC_28208_crop3",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_28208",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.392935872077942
+    },
+    {
+      "crop_id": "train_NYC_25543_crop0",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_25543",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.758697271347046
+    },
+    {
+      "crop_id": "train_NYC_25543_crop3",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_25543",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.8623281717300415
+    },
+    {
+      "crop_id": "train_NYC_31142_crop0",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_31142",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.1308077573776245
+    },
+    {
+      "crop_id": "train_NYC_31142_crop2",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_31142",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.0546077489852905
+    },
+    {
+      "crop_id": "train_NYC_28189_crop2",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_28189",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.078992247581482
+    },
+    {
+      "crop_id": "train_NYC_27274_crop0",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_27274",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.4051282405853271
+    },
+    {
+      "crop_id": "train_NYC_29307_crop1",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_29307",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.0972795486450195
+    },
+    {
+      "crop_id": "train_NYC_29131_crop1",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_29131",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.188720464706421
+    },
+    {
+      "crop_id": "train_NYC_29131_crop3",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_29131",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.188720464706421
+    },
+    {
+      "crop_id": "train_NYC_31890_crop2",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_31890",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -2.060446262359619
+    },
+    {
+      "crop_id": "train_NYC_24489_crop1",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_24489",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.3045448064804077
+    },
+    {
+      "crop_id": "train_NYC_24489_crop3",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_24489",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.2222486734390259
+    },
+    {
+      "crop_id": "train_NYC_27090_crop0",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_27090",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.5240000486373901
+    },
+    {
+      "crop_id": "train_NYC_23379_crop1",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_23379",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.2984486818313599
+    },
+    {
+      "crop_id": "train_NYC_29663_crop3",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_29663",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.274064064025879
+    },
+    {
+      "crop_id": "train_NYC_25005_crop2",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_25005",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.1003282070159912
+    },
+    {
+      "crop_id": "train_NYC_25005_crop3",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_25005",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.3685513734817505
+    },
+    {
+      "crop_id": "train_NYC_28945_crop0",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_28945",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -2.6273746490478516
+    },
+    {
+      "crop_id": "train_NYC_28945_crop3",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_28945",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.7556487321853638
+    },
+    {
+      "crop_id": "train_NYC_24062_crop0",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_24062",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -2.289048671722412
+    },
+    {
+      "crop_id": "train_NYC_24062_crop1",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_24062",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.4478000402450562
+    },
+    {
+      "crop_id": "train_NYC_24062_crop2",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_24062",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.1521435976028442
+    },
+    {
+      "crop_id": "train_NYC_30773_crop0",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_30773",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.1277599334716797
+    },
+    {
+      "crop_id": "train_NYC_24453_crop0",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_24453",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.0149840116500854
+    },
+    {
+      "crop_id": "train_NYC_24453_crop3",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_24453",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.874519944190979
+    },
+    {
+      "crop_id": "train_NYC_26727_crop0",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_26727",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.6916409730911255
+    },
+    {
+      "crop_id": "train_NYC_26727_crop3",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_26727",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.7708872556686401
+    },
+    {
+      "crop_id": "train_NYC_27807_crop0",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_27807",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.2649204730987549
+    },
+    {
+      "crop_id": "train_NYC_27807_crop3",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_27807",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.4691358804702759
+    },
+    {
+      "crop_id": "train_NYC_23937_crop3",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_23937",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -2.304288387298584
+    },
+    {
+      "crop_id": "train_NYC_25734_crop1",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_25734",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.0698474645614624
+    },
+    {
+      "crop_id": "train_NYC_24305_crop0",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_24305",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.3959834575653076
+    },
+    {
+      "crop_id": "train_NYC_24305_crop2",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_24305",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.9171923398971558
+    },
+    {
+      "crop_id": "train_NYC_24305_crop3",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_24305",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.8135602474212646
+    },
+    {
+      "crop_id": "train_NYC_23693_crop2",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_23693",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.155194640159607
+    },
+    {
+      "crop_id": "train_NYC_25030_crop0",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_25030",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.6093448400497437
+    },
+    {
+      "crop_id": "train_NYC_32086_crop0",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_32086",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.1064231395721436
+    },
+    {
+      "crop_id": "train_NYC_30028_crop0",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_30028",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.9978
+    },
+    {
+      "crop_id": "train_NYC_30028_crop1",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_30028",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.9899
+    },
+    {
+      "crop_id": "train_NYC_30028_crop2",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_30028",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.9976
+    },
+    {
+      "crop_id": "train_NYC_30028_crop3",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_30028",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.9899
+    },
+    {
+      "crop_id": "train_NYC_26119_crop2",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_26119",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.5788640975952148
+    },
+    {
+      "crop_id": "train_NYC_24435_crop1",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_24435",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.264922857284546
+    },
+    {
+      "crop_id": "train_NYC_24435_crop2",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_24435",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.3228309154510498
+    },
+    {
+      "crop_id": "train_NYC_23879_crop1",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_23879",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -3.9319205284118652
+    },
+    {
+      "crop_id": "train_NYC_23879_crop3",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_23879",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -2.785871744155884
+    },
+    {
+      "crop_id": "train_NYC_23748_crop3",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_23748",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.505710482597351
+    },
+    {
+      "crop_id": "train_NYC_29310_crop0",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_29310",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.5849590301513672
+    },
+    {
+      "crop_id": "train_NYC_24118_crop1",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_24118",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.9080486297607422
+    },
+    {
+      "crop_id": "train_NYC_24118_crop2",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_24118",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.249681830406189
+    },
+    {
+      "crop_id": "train_NYC_24118_crop3",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_24118",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.606296181678772
+    },
+    {
+      "crop_id": "train_NYC_24121_crop1",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_24121",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.2588231563568115
+    },
+    {
+      "crop_id": "train_NYC_24121_crop2",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_24121",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.335024356842041
+    },
+    {
+      "crop_id": "train_NYC_26509_crop0",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_26509",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.13080894947052
+    },
+    {
+      "crop_id": "train_NYC_26509_crop2",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_26509",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -2.2707602977752686
+    },
+    {
+      "crop_id": "train_NYC_23144_crop1",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_23144",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.1186155080795288
+    },
+    {
+      "crop_id": "train_NYC_23144_crop2",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_23144",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.3746486902236938
+    },
+    {
+      "crop_id": "train_NYC_23144_crop3",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_23144",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.4051282405853271
+    },
+    {
+      "crop_id": "train_NYC_29111_crop0",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_29111",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.9720563888549805
+    },
+    {
+      "crop_id": "train_NYC_29111_crop2",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_29111",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.1430000066757202
+    },
+    {
+      "crop_id": "train_NYC_26877_crop0",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_26877",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.002792239189148
+    },
+    {
+      "crop_id": "train_NYC_26877_crop2",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_26877",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.4721834659576416
+    },
+    {
+      "crop_id": "train_NYC_28567_crop1",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_28567",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.3655039072036743
+    },
+    {
+      "crop_id": "train_NYC_30030_crop1",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_30030",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.7158
+    },
+    {
+      "crop_id": "train_NYC_30030_crop3",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_30030",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -2.100071907043457
+    },
+    {
+      "crop_id": "train_NYC_29659_crop3",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_29659",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.2618718147277832
+    },
+    {
+      "crop_id": "train_NYC_25170_crop2",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_25170",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.0546077489852905
+    },
+    {
+      "crop_id": "train_NYC_26913_crop0",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_26913",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.5422872304916382
+    },
+    {
+      "crop_id": "train_NYC_26913_crop2",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_26913",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.7830795049667358
+    },
+    {
+      "crop_id": "train_NYC_26913_crop3",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_26913",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -2.785871744155884
+    },
+    {
+      "crop_id": "train_NYC_30067_crop3",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_30067",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.6367757320404053
+    },
+    {
+      "crop_id": "train_NYC_24488_crop1",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_24488",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -4.962144374847412
+    },
+    {
+      "crop_id": "train_NYC_24488_crop3",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_24488",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -3.038855791091919
+    },
+    {
+      "crop_id": "train_NYC_26730_crop1",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_26730",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.8582563400268555
+    },
+    {
+      "crop_id": "train_NYC_29287_crop2",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_29287",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -2.5085039138793945
+    },
+    {
+      "crop_id": "train_NYC_29691_crop1",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_29691",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.0972795486450195
+    },
+    {
+      "crop_id": "train_NYC_29691_crop3",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_29691",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.2649204730987549
+    },
+    {
+      "crop_id": "train_NYC_30228_crop2",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_30228",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.1003282070159912
+    },
+    {
+      "crop_id": "train_NYC_26883_crop0",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_26883",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.0637513399124146
+    },
+    {
+      "crop_id": "train_NYC_28972_crop1",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_28972",
+      "action": "drop",
+      "reason": "entirely_class_0_background"
+    },
+    {
+      "crop_id": "train_NYC_27070_crop2",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_27070",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.2954000234603882
+    },
+    {
+      "crop_id": "train_NYC_27461_crop2",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_27461",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.1765270233154297
+    },
+    {
+      "crop_id": "train_NYC_27461_crop3",
+      "city": "NYC",
+      "split": "train",
+      "tile_name": "NYC_27461",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -2.118361473083496
+    },
+    {
+      "crop_id": "val_DC_42_63_crop0",
+      "city": "DC",
+      "split": "val",
+      "tile_name": "DC_42_63",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "val_DC_42_63_crop2",
+      "city": "DC",
+      "split": "val",
+      "tile_name": "DC_42_63",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "val_DC_42_63_crop3",
+      "city": "DC",
+      "split": "val",
+      "tile_name": "DC_42_63",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "val_DC_38_11_crop0",
+      "city": "DC",
+      "split": "val",
+      "tile_name": "DC_38_11",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "val_DC_38_11_crop2",
+      "city": "DC",
+      "split": "val",
+      "tile_name": "DC_38_11",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.7722
+    },
+    {
+      "crop_id": "val_DC_38_11_crop3",
+      "city": "DC",
+      "split": "val",
+      "tile_name": "DC_38_11",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.3776
+    },
+    {
+      "crop_id": "val_DC_29_23_crop0",
+      "city": "DC",
+      "split": "val",
+      "tile_name": "DC_29_23",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "val_DC_29_23_crop2",
+      "city": "DC",
+      "split": "val",
+      "tile_name": "DC_29_23",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "val_DC_29_23_crop3",
+      "city": "DC",
+      "split": "val",
+      "tile_name": "DC_29_23",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "val_DC_48_26_crop0",
+      "city": "DC",
+      "split": "val",
+      "tile_name": "DC_48_26",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 1.0
+    },
+    {
+      "crop_id": "val_DC_48_26_crop1",
+      "city": "DC",
+      "split": "val",
+      "tile_name": "DC_48_26",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 1.0
+    },
+    {
+      "crop_id": "val_DC_48_26_crop2",
+      "city": "DC",
+      "split": "val",
+      "tile_name": "DC_48_26",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 1.0
+    },
+    {
+      "crop_id": "val_DC_48_26_crop3",
+      "city": "DC",
+      "split": "val",
+      "tile_name": "DC_48_26",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.5468
+    },
+    {
+      "crop_id": "val_DC_17_20_crop0",
+      "city": "DC",
+      "split": "val",
+      "tile_name": "DC_17_20",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "val_DC_17_20_crop2",
+      "city": "DC",
+      "split": "val",
+      "tile_name": "DC_17_20",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "val_DC_54_25_crop0",
+      "city": "DC",
+      "split": "val",
+      "tile_name": "DC_54_25",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.982
+    },
+    {
+      "crop_id": "val_DC_54_25_crop1",
+      "city": "DC",
+      "split": "val",
+      "tile_name": "DC_54_25",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.8151
+    },
+    {
+      "crop_id": "val_DC_54_25_crop2",
+      "city": "DC",
+      "split": "val",
+      "tile_name": "DC_54_25",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 1.0
+    },
+    {
+      "crop_id": "val_DC_54_25_crop3",
+      "city": "DC",
+      "split": "val",
+      "tile_name": "DC_54_25",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.7942
+    },
+    {
+      "crop_id": "val_DC_27_02_crop0",
+      "city": "DC",
+      "split": "val",
+      "tile_name": "DC_27_02",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "val_DC_27_02_crop2",
+      "city": "DC",
+      "split": "val",
+      "tile_name": "DC_27_02",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "val_DC_75_30_crop0",
+      "city": "DC",
+      "split": "val",
+      "tile_name": "DC_75_30",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "val_DC_75_30_crop2",
+      "city": "DC",
+      "split": "val",
+      "tile_name": "DC_75_30",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "val_DC_76_32_crop0",
+      "city": "DC",
+      "split": "val",
+      "tile_name": "DC_76_32",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "val_DC_76_32_crop1",
+      "city": "DC",
+      "split": "val",
+      "tile_name": "DC_76_32",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "val_DC_76_32_crop2",
+      "city": "DC",
+      "split": "val",
+      "tile_name": "DC_76_32",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "val_DC_39_56_crop0",
+      "city": "DC",
+      "split": "val",
+      "tile_name": "DC_39_56",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "val_DC_39_56_crop1",
+      "city": "DC",
+      "split": "val",
+      "tile_name": "DC_39_56",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "val_DC_39_56_crop3",
+      "city": "DC",
+      "split": "val",
+      "tile_name": "DC_39_56",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "val_DC_35_20_crop0",
+      "city": "DC",
+      "split": "val",
+      "tile_name": "DC_35_20",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "val_DC_35_20_crop1",
+      "city": "DC",
+      "split": "val",
+      "tile_name": "DC_35_20",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "val_DC_35_20_crop3",
+      "city": "DC",
+      "split": "val",
+      "tile_name": "DC_35_20",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "test_DC_20_38_crop2",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_20_38",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "test_DC_20_38_crop3",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_20_38",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "test_DC_17_25_crop0",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_17_25",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "test_DC_17_25_crop2",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_17_25",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "test_DC_18_20_crop0",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_18_20",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "test_DC_18_20_crop1",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_18_20",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "test_DC_18_20_crop3",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_18_20",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "test_DC_24_22_crop0",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_24_22",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "test_DC_24_22_crop2",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_24_22",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "test_DC_25_23_crop0",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_25_23",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "test_DC_25_23_crop2",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_25_23",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "test_DC_25_23_crop3",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_25_23",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "test_DC_39_17_crop0",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_39_17",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "test_DC_39_17_crop1",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_39_17",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "test_DC_39_17_crop2",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_39_17",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.5858
+    },
+    {
+      "crop_id": "test_DC_39_17_crop3",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_39_17",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "test_DC_69_37_crop3",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_69_37",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "test_DC_30_23_crop0",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_30_23",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "test_DC_30_23_crop1",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_30_23",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "test_DC_30_23_crop2",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_30_23",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "test_DC_19_24_crop0",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_19_24",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "test_DC_19_24_crop1",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_19_24",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "test_DC_19_24_crop2",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_19_24",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "test_DC_46_24_crop3",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_46_24",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "test_DC_44_50_crop0",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_44_50",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.4903
+    },
+    {
+      "crop_id": "test_DC_44_50_crop1",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_44_50",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.3943
+    },
+    {
+      "crop_id": "test_DC_44_50_crop2",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_44_50",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.5113
+    },
+    {
+      "crop_id": "test_DC_44_50_crop3",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_44_50",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.5468
+    },
+    {
+      "crop_id": "test_DC_41_50_crop0",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_41_50",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.4793
+    },
+    {
+      "crop_id": "test_DC_41_50_crop2",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_41_50",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.4291
+    },
+    {
+      "crop_id": "test_DC_38_16_crop2",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_38_16",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "test_DC_48_28_crop0",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_48_28",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.3621
+    },
+    {
+      "crop_id": "test_DC_48_28_crop1",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_48_28",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.3178
+    },
+    {
+      "crop_id": "test_DC_48_28_crop3",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_48_28",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.7655
+    },
+    {
+      "crop_id": "test_DC_34_19_crop1",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_34_19",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "test_DC_34_19_crop3",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_34_19",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "test_DC_36_51_crop0",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_36_51",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "test_DC_36_51_crop1",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_36_51",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "test_DC_36_51_crop2",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_36_51",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "test_DC_36_51_crop3",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_36_51",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "test_DC_58_31_crop0",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_58_31",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.7115
+    },
+    {
+      "crop_id": "test_DC_58_31_crop1",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_58_31",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "test_DC_58_31_crop2",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_58_31",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.9907
+    },
+    {
+      "crop_id": "test_DC_58_31_crop3",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_58_31",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "test_DC_22_21_crop1",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_22_21",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "test_DC_43_66_crop2",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_43_66",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "test_DC_36_21_crop1",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_36_21",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "test_DC_25_22_crop0",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_25_22",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "test_DC_25_22_crop1",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_25_22",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "test_DC_54_40_crop0",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_54_40",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "test_DC_54_40_crop1",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_54_40",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.493
+    },
+    {
+      "crop_id": "test_DC_42_62_crop1",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_42_62",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "test_DC_20_23_crop1",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_20_23",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "test_DC_20_23_crop3",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_20_23",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "test_DC_65_45_crop1",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_65_45",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "test_DC_65_45_crop2",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_65_45",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "test_DC_65_45_crop3",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_65_45",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "test_DC_36_53_crop1",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_36_53",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "test_DC_36_53_crop2",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_36_53",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "test_DC_36_53_crop3",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_36_53",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.6545
+    },
+    {
+      "crop_id": "test_DC_35_56_crop0",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_35_56",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "test_DC_35_56_crop1",
+      "city": "DC",
+      "split": "test",
+      "tile_name": "DC_35_56",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.0
+    },
+    {
+      "crop_id": "test_NYC_18254_crop1",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_18254",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.1765270233154297
+    },
+    {
+      "crop_id": "test_NYC_11783_crop0",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_11783",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 1.0
+    },
+    {
+      "crop_id": "test_NYC_11783_crop1",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_11783",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 1.0
+    },
+    {
+      "crop_id": "test_NYC_11783_crop2",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_11783",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.8192
+    },
+    {
+      "crop_id": "test_NYC_11783_crop3",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_11783",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 1.0
+    },
+    {
+      "crop_id": "test_NYC_18073_crop0",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_18073",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.3716000318527222
+    },
+    {
+      "crop_id": "test_NYC_18073_crop2",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_18073",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -2.602992296218872
+    },
+    {
+      "crop_id": "test_NYC_10847_crop0",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_10847",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -3.1028640270233154
+    },
+    {
+      "crop_id": "test_NYC_10847_crop2",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_10847",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -2.2585692405700684
+    },
+    {
+      "crop_id": "test_NYC_10847_crop3",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_10847",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -3.0175204277038574
+    },
+    {
+      "crop_id": "test_NYC_21279_crop1",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_21279",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -2.1915128231048584
+    },
+    {
+      "crop_id": "test_NYC_20915_crop1",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_20915",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.0850872993469238
+    },
+    {
+      "crop_id": "test_NYC_06595_crop0",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_06595",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.7676
+    },
+    {
+      "crop_id": "test_NYC_06595_crop1",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_06595",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.971
+    },
+    {
+      "crop_id": "test_NYC_06595_crop2",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_06595",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -2.6609039306640625
+    },
+    {
+      "crop_id": "test_NYC_06595_crop3",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_06595",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.432
+    },
+    {
+      "crop_id": "test_NYC_01459_crop2",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_01459",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.350264072418213
+    },
+    {
+      "crop_id": "test_NYC_16211_crop2",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_16211",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -2.9504642486572266
+    },
+    {
+      "crop_id": "test_NYC_10849_crop0",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_10849",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.2954022884368896
+    },
+    {
+      "crop_id": "test_NYC_10849_crop1",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_10849",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.0820409059524536
+    },
+    {
+      "crop_id": "test_NYC_10849_crop2",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_10849",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.0607026815414429
+    },
+    {
+      "crop_id": "test_NYC_21099_crop1",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_21099",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.8562308549880981
+    },
+    {
+      "crop_id": "test_NYC_18906_crop0",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_18906",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -16.22755241394043
+    },
+    {
+      "crop_id": "test_NYC_18906_crop1",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_18906",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -3.4564309120178223
+    },
+    {
+      "crop_id": "test_NYC_18906_crop2",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_18906",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -6.778751373291016
+    },
+    {
+      "crop_id": "test_NYC_18906_crop3",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_18906",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.1155691146850586
+    },
+    {
+      "crop_id": "test_NYC_15469_crop1",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_15469",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.9354795217514038
+    },
+    {
+      "crop_id": "test_NYC_15469_crop2",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_15469",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -2.0208237171173096
+    },
+    {
+      "crop_id": "test_NYC_15469_crop3",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_15469",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -5.690615653991699
+    },
+    {
+      "crop_id": "test_NYC_22658_crop0",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_22658",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -4.7518310546875
+    },
+    {
+      "crop_id": "test_NYC_22658_crop1",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_22658",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -3.42900013923645
+    },
+    {
+      "crop_id": "test_NYC_22658_crop3",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_22658",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.3959845304489136
+    },
+    {
+      "crop_id": "test_NYC_22407_crop0",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_22407",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -2.468879461288452
+    },
+    {
+      "crop_id": "test_NYC_22407_crop1",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_22407",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.6367745399475098
+    },
+    {
+      "crop_id": "test_NYC_22407_crop2",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_22407",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.0667999982833862
+    },
+    {
+      "crop_id": "test_NYC_16029_crop3",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_16029",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.4752331972122192
+    },
+    {
+      "crop_id": "test_NYC_19717_crop1",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_19717",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.947671890258789
+    },
+    {
+      "crop_id": "test_NYC_19717_crop3",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_19717",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.155192255973816
+    },
+    {
+      "crop_id": "test_NYC_15289_crop1",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_15289",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.1917691230773926
+    },
+    {
+      "crop_id": "test_NYC_15289_crop3",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_15289",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.7160232067108154
+    },
+    {
+      "crop_id": "test_NYC_01836_crop1",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_01836",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.8928077220916748
+    },
+    {
+      "crop_id": "test_NYC_16960_crop3",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_16960",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.2649192810058594
+    },
+    {
+      "crop_id": "test_NYC_16952_crop3",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_16952",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.3533127307891846
+    },
+    {
+      "crop_id": "test_NYC_18427_crop0",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_18427",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.1948165893554688
+    },
+    {
+      "crop_id": "test_NYC_18427_crop2",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_18427",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.0424165725708008
+    },
+    {
+      "crop_id": "test_NYC_18427_crop3",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_18427",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.7404077053070068
+    },
+    {
+      "crop_id": "test_NYC_05140_crop0",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_05140",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.4382
+    },
+    {
+      "crop_id": "test_NYC_05140_crop1",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_05140",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.3182
+    },
+    {
+      "crop_id": "test_NYC_05140_crop2",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_05140",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.3581
+    },
+    {
+      "crop_id": "test_NYC_05140_crop3",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_05140",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.359
+    },
+    {
+      "crop_id": "test_NYC_03299_crop0",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_03299",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.34
+    },
+    {
+      "crop_id": "test_NYC_17502_crop2",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_17502",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.3136895895004272
+    },
+    {
+      "crop_id": "test_NYC_15288_crop0",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_15288",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.5392409563064575
+    },
+    {
+      "crop_id": "test_NYC_15288_crop1",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_15288",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.5392409563064575
+    },
+    {
+      "crop_id": "test_NYC_15288_crop2",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_15288",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.3685513734817505
+    },
+    {
+      "crop_id": "test_NYC_04776_crop0",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_04776",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.4328
+    },
+    {
+      "crop_id": "test_NYC_04776_crop1",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_04776",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.4287
+    },
+    {
+      "crop_id": "test_NYC_04776_crop3",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_04776",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.3555
+    },
+    {
+      "crop_id": "test_NYC_03873_crop3",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_03873",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.563624382019043
+    },
+    {
+      "crop_id": "test_NYC_21469_crop1",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_21469",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.0667999982833862
+    },
+    {
+      "crop_id": "test_NYC_21917_crop3",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_21917",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -1.1369026899337769
+    },
+    {
+      "crop_id": "test_NYC_03298_crop0",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_03298",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.3024
+    },
+    {
+      "crop_id": "test_NYC_03298_crop1",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_03298",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.3443
+    },
+    {
+      "crop_id": "test_NYC_03298_crop2",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_03298",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.3579
+    },
+    {
+      "crop_id": "test_NYC_03298_crop3",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_03298",
+      "action": "drop",
+      "reason": "nan_fraction_gt_30_percent",
+      "nan_fraction": 0.3374
+    },
+    {
+      "crop_id": "test_NYC_22169_crop1",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_22169",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -2.9047439098358154
+    },
+    {
+      "crop_id": "test_NYC_22169_crop3",
+      "city": "NYC",
+      "split": "test",
+      "tile_name": "NYC_22169",
+      "action": "drop",
+      "reason": "height_lt_minus_1m",
+      "min_height": -4.6603922843933105
+    }
+  ]
+}

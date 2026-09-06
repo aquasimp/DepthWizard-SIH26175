@@ -1,0 +1,51 @@
+[2026-09-06 03:07:01 UTC] [INFO] DepthWizard v1.1.0 Training Session Initialized. Config: configs\v1.1.0-train.yaml
+[2026-09-06 03:07:02 UTC] [INFO] Target Device: cuda (NVIDIA GeForce RTX 4050 Laptop GPU)
+[2026-09-06 03:07:02 UTC] [INFO] Parameters: epochs=60, batch_size=8, lr=3e-05, amp=True, seed=1337, smoke=False
+[2026-09-06 03:07:02 UTC] [INFO] Resuming model weights from existing checkpoint: X:\DepthWizard SIH26175\models\v1.1.0\last.pt
+[2026-09-06 03:07:02 UTC] [INFO] Architecture: 22,056,576 frozen encoder params, 2,728,513 trainable decoder params
+[2026-09-06 03:07:02 UTC] [INFO] Data Loaders Ready: 3817 train crops (478 batches/epoch), 568 val crops (71 batches)
+[2026-09-06 03:07:04 UTC] [INFO] Reading existing training history from: X:\DepthWizard SIH26175\logs\v1.1.0\train_metrics.csv
+[2026-09-06 03:07:04 UTC] [INFO] Resuming training at Epoch 22/60 (Step 10038). Prior Best Val RMSE: 3.905m (Epoch 18), Best Tall RMSE: 8.066m
+[2026-09-06 03:07:04 UTC] [INFO] Beginning training from epoch 22 to 60...
+[2026-09-06 03:12:31 UTC] [INFO] Epoch 22/60 | Train Loss: 5.5885 | Train RMSE: 6.270m | Val Loss: 4.6188 | Val RMSE: 4.014m | Val Tall RMSE (>=15m): 7.785m | LR: 0.000023 | Time: 326.5s [NEW BEST TALL]
+[2026-09-06 03:18:02 UTC] [INFO] Epoch 23/60 | Train Loss: 5.5762 | Train RMSE: 6.233m | Val Loss: 4.4061 | Val RMSE: 3.915m | Val Tall RMSE (>=15m): 8.366m | LR: 0.000023 | Time: 329.4s
+[2026-09-06 03:23:33 UTC] [INFO] Epoch 24/60 | Train Loss: 5.5733 | Train RMSE: 6.288m | Val Loss: 4.5447 | Val RMSE: 3.956m | Val Tall RMSE (>=15m): 8.406m | LR: 0.000022 | Time: 331.3s
+[2026-09-06 03:29:02 UTC] [INFO] Epoch 25/60 | Train Loss: 5.5512 | Train RMSE: 6.252m | Val Loss: 4.5723 | Val RMSE: 4.144m | Val Tall RMSE (>=15m): 7.975m | LR: 0.000021 | Time: 328.1s
+[2026-09-06 03:34:29 UTC] [INFO] Epoch 26/60 | Train Loss: 5.5218 | Train RMSE: 6.185m | Val Loss: 4.6506 | Val RMSE: 4.011m | Val Tall RMSE (>=15m): 8.208m | LR: 0.000021 | Time: 326.6s
+[2026-09-06 03:40:06 UTC] [INFO] Epoch 27/60 | Train Loss: 5.5132 | Train RMSE: 6.189m | Val Loss: 4.4456 | Val RMSE: 3.985m | Val Tall RMSE (>=15m): 8.917m | LR: 0.000020 | Time: 336.6s
+[2026-09-06 03:45:44 UTC] [INFO] Epoch 28/60 | Train Loss: 5.4895 | Train RMSE: 6.145m | Val Loss: 4.5571 | Val RMSE: 4.097m | Val Tall RMSE (>=15m): 8.032m | LR: 0.000019 | Time: 337.3s
+[2026-09-06 03:51:10 UTC] [INFO] Epoch 29/60 | Train Loss: 5.4557 | Train RMSE: 6.155m | Val Loss: 4.4767 | Val RMSE: 3.887m | Val Tall RMSE (>=15m): 8.516m | LR: 0.000018 | Time: 325.2s [NEW BEST VAL]
+[2026-09-06 03:56:40 UTC] [INFO] Epoch 30/60 | Train Loss: 5.4668 | Train RMSE: 6.123m | Val Loss: 4.3047 | Val RMSE: 4.065m | Val Tall RMSE (>=15m): 7.882m | LR: 0.000018 | Time: 330.2s
+[2026-09-06 04:01:59 UTC] [INFO] Epoch 31/60 | Train Loss: 5.4333 | Train RMSE: 6.088m | Val Loss: 4.4926 | Val RMSE: 3.970m | Val Tall RMSE (>=15m): 8.509m | LR: 0.000017 | Time: 318.0s
+[2026-09-06 04:07:13 UTC] [INFO] Epoch 32/60 | Train Loss: 5.4273 | Train RMSE: 6.056m | Val Loss: 4.5805 | Val RMSE: 3.905m | Val Tall RMSE (>=15m): 8.321m | LR: 0.000016 | Time: 314.1s
+[2026-09-06 04:12:27 UTC] [INFO] Epoch 33/60 | Train Loss: 5.4222 | Train RMSE: 6.040m | Val Loss: 4.5902 | Val RMSE: 3.857m | Val Tall RMSE (>=15m): 7.734m | LR: 0.000015 | Time: 313.5s [NEW BEST VAL] [NEW BEST TALL]
+[2026-09-06 04:17:38 UTC] [INFO] Epoch 34/60 | Train Loss: 5.3841 | Train RMSE: 6.051m | Val Loss: 4.3292 | Val RMSE: 3.821m | Val Tall RMSE (>=15m): 7.805m | LR: 0.000015 | Time: 310.5s [NEW BEST VAL]
+[2026-09-06 04:22:49 UTC] [INFO] Epoch 35/60 | Train Loss: 5.3710 | Train RMSE: 6.041m | Val Loss: 4.2894 | Val RMSE: 3.816m | Val Tall RMSE (>=15m): 8.188m | LR: 0.000014 | Time: 310.6s [NEW BEST VAL]
+[2026-09-06 04:28:02 UTC] [INFO] Epoch 36/60 | Train Loss: 5.3793 | Train RMSE: 6.022m | Val Loss: 4.2727 | Val RMSE: 3.774m | Val Tall RMSE (>=15m): 8.321m | LR: 0.000013 | Time: 311.3s [NEW BEST VAL]
+[2026-09-06 04:33:13 UTC] [INFO] Epoch 37/60 | Train Loss: 5.3471 | Train RMSE: 6.013m | Val Loss: 4.5053 | Val RMSE: 3.868m | Val Tall RMSE (>=15m): 8.109m | LR: 0.000012 | Time: 311.0s
+[2026-09-06 04:38:23 UTC] [INFO] Epoch 38/60 | Train Loss: 5.3626 | Train RMSE: 6.000m | Val Loss: 4.4434 | Val RMSE: 3.807m | Val Tall RMSE (>=15m): 7.963m | LR: 0.000012 | Time: 309.4s
+[2026-09-06 04:43:34 UTC] [INFO] Epoch 39/60 | Train Loss: 5.3299 | Train RMSE: 5.979m | Val Loss: 4.2655 | Val RMSE: 3.971m | Val Tall RMSE (>=15m): 7.976m | LR: 0.000011 | Time: 310.8s
+[2026-09-06 04:48:45 UTC] [INFO] Epoch 40/60 | Train Loss: 5.3051 | Train RMSE: 5.938m | Val Loss: 4.4836 | Val RMSE: 3.866m | Val Tall RMSE (>=15m): 8.227m | LR: 0.000010 | Time: 310.0s
+[2026-09-06 04:53:55 UTC] [INFO] Epoch 41/60 | Train Loss: 5.2902 | Train RMSE: 5.938m | Val Loss: 4.2451 | Val RMSE: 3.842m | Val Tall RMSE (>=15m): 8.359m | LR: 0.000010 | Time: 309.8s
+[2026-09-06 04:59:05 UTC] [INFO] Epoch 42/60 | Train Loss: 5.2970 | Train RMSE: 5.984m | Val Loss: 4.1846 | Val RMSE: 3.850m | Val Tall RMSE (>=15m): 7.784m | LR: 0.000009 | Time: 310.0s
+[2026-09-06 05:04:15 UTC] [INFO] Epoch 43/60 | Train Loss: 5.2740 | Train RMSE: 5.905m | Val Loss: 4.3842 | Val RMSE: 3.920m | Val Tall RMSE (>=15m): 8.136m | LR: 0.000009 | Time: 309.5s
+[2026-09-06 05:09:26 UTC] [INFO] Epoch 44/60 | Train Loss: 5.2648 | Train RMSE: 5.917m | Val Loss: 4.3160 | Val RMSE: 3.837m | Val Tall RMSE (>=15m): 8.429m | LR: 0.000008 | Time: 309.9s
+[2026-09-06 05:14:37 UTC] [INFO] Epoch 45/60 | Train Loss: 5.2523 | Train RMSE: 5.901m | Val Loss: 4.3369 | Val RMSE: 3.794m | Val Tall RMSE (>=15m): 8.232m | LR: 0.000007 | Time: 310.5s
+[2026-09-06 05:19:47 UTC] [INFO] Epoch 46/60 | Train Loss: 5.2560 | Train RMSE: 5.907m | Val Loss: 4.5002 | Val RMSE: 3.845m | Val Tall RMSE (>=15m): 8.031m | LR: 0.000007 | Time: 309.5s
+[2026-09-06 05:24:59 UTC] [INFO] Epoch 47/60 | Train Loss: 5.2503 | Train RMSE: 5.880m | Val Loss: 4.3858 | Val RMSE: 3.837m | Val Tall RMSE (>=15m): 8.195m | LR: 0.000006 | Time: 311.5s
+[2026-09-06 05:30:10 UTC] [INFO] Epoch 48/60 | Train Loss: 5.2439 | Train RMSE: 5.901m | Val Loss: 4.1087 | Val RMSE: 3.733m | Val Tall RMSE (>=15m): 7.825m | LR: 0.000006 | Time: 311.0s [NEW BEST VAL]
+[2026-09-06 05:35:22 UTC] [INFO] Epoch 49/60 | Train Loss: 5.2239 | Train RMSE: 5.886m | Val Loss: 4.2734 | Val RMSE: 3.897m | Val Tall RMSE (>=15m): 7.836m | LR: 0.000005 | Time: 311.3s
+[2026-09-06 05:40:33 UTC] [INFO] Epoch 50/60 | Train Loss: 5.2154 | Train RMSE: 5.867m | Val Loss: 4.3142 | Val RMSE: 3.834m | Val Tall RMSE (>=15m): 7.795m | LR: 0.000005 | Time: 310.7s
+[2026-09-06 05:45:44 UTC] [INFO] Epoch 51/60 | Train Loss: 5.2093 | Train RMSE: 5.879m | Val Loss: 4.2794 | Val RMSE: 3.811m | Val Tall RMSE (>=15m): 8.464m | LR: 0.000005 | Time: 310.7s
+[2026-09-06 05:50:55 UTC] [INFO] Epoch 52/60 | Train Loss: 5.2103 | Train RMSE: 5.846m | Val Loss: 4.2262 | Val RMSE: 3.877m | Val Tall RMSE (>=15m): 7.785m | LR: 0.000004 | Time: 310.8s
+[2026-09-06 05:56:08 UTC] [INFO] Epoch 53/60 | Train Loss: 5.2017 | Train RMSE: 5.821m | Val Loss: 4.4452 | Val RMSE: 3.793m | Val Tall RMSE (>=15m): 8.139m | LR: 0.000004 | Time: 312.1s
+[2026-09-06 06:01:19 UTC] [INFO] Epoch 54/60 | Train Loss: 5.2012 | Train RMSE: 5.881m | Val Loss: 4.2269 | Val RMSE: 3.779m | Val Tall RMSE (>=15m): 7.790m | LR: 0.000004 | Time: 311.1s
+[2026-09-06 06:06:31 UTC] [INFO] Epoch 55/60 | Train Loss: 5.1749 | Train RMSE: 5.843m | Val Loss: 4.3729 | Val RMSE: 3.813m | Val Tall RMSE (>=15m): 8.145m | LR: 0.000004 | Time: 311.6s
+[2026-09-06 06:11:43 UTC] [INFO] Epoch 56/60 | Train Loss: 5.1797 | Train RMSE: 5.848m | Val Loss: 4.2931 | Val RMSE: 3.806m | Val Tall RMSE (>=15m): 7.912m | LR: 0.000003 | Time: 311.2s
+[2026-09-06 06:16:55 UTC] [INFO] Epoch 57/60 | Train Loss: 5.1820 | Train RMSE: 5.848m | Val Loss: 4.3403 | Val RMSE: 3.807m | Val Tall RMSE (>=15m): 8.006m | LR: 0.000003 | Time: 312.2s
+[2026-09-06 06:22:08 UTC] [INFO] Epoch 58/60 | Train Loss: 5.1842 | Train RMSE: 5.830m | Val Loss: 4.2668 | Val RMSE: 3.787m | Val Tall RMSE (>=15m): 8.257m | LR: 0.000003 | Time: 312.3s
+[2026-09-06 06:27:21 UTC] [INFO] Epoch 59/60 | Train Loss: 5.1704 | Train RMSE: 5.816m | Val Loss: 4.1085 | Val RMSE: 3.805m | Val Tall RMSE (>=15m): 8.116m | LR: 0.000003 | Time: 312.0s
+[2026-09-06 06:32:49 UTC] [INFO] Epoch 60/60 | Train Loss: 5.1660 | Train RMSE: 5.884m | Val Loss: 4.1188 | Val RMSE: 3.769m | Val Tall RMSE (>=15m): 7.840m | LR: 0.000003 | Time: 327.6s
+[2026-09-06 06:32:49 UTC] [INFO] 
+Training completed in 12348.04 s (205.8 min). Best Val RMSE: 3.733 m, Best Tall RMSE: 7.734 m
+[2026-09-06 06:32:49 UTC] [INFO] Checkpoints saved: last=X:\DepthWizard SIH26175\models\v1.1.0\last.pt, best=X:\DepthWizard SIH26175\models\v1.1.0\best.pt, best_tall=X:\DepthWizard SIH26175\models\v1.1.0\best_tall.pt

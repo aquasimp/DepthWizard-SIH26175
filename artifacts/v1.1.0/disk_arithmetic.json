@@ -1,0 +1,19 @@
+{
+  "S_bytes": 11540480,
+  "target_tiles": 1500,
+  "train_tiles": 1050,
+  "val_tiles": 150,
+  "test_tiles": 300,
+  "raw_bytes": 17310720000,
+  "raw_gb": 16.122,
+  "total_crops": 6000,
+  "bytes_per_crop_compressed": 1380000,
+  "crop_cache_bytes": 8280000000,
+  "crop_cache_gb": 7.711,
+  "total_required_bytes": 25590720000,
+  "total_required_gb": 23.833,
+  "free_bytes_X": 96928804864,
+  "free_gb_X": 90.272,
+  "headroom_ratio": 3.79,
+  "headroom_criterion_met": true
+}

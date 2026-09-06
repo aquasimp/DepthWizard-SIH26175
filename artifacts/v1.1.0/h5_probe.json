@@ -1,0 +1,76 @@
+{
+  "RGB": {
+    "file": "artifacts\\v1.1.0\\sample_triplet\\images\\train\\DC_01_25_RGB.h5",
+    "keys": [
+      "image"
+    ],
+    "datasets": {
+      "image": {
+        "shape": [
+          1024,
+          1024,
+          3
+        ],
+        "dtype": "uint8",
+        "min": 0.0,
+        "max": 255.0,
+        "nan_count": 0,
+        "total_elements": 3145728
+      }
+    }
+  },
+  "AGL": {
+    "file": "artifacts\\v1.1.0\\sample_triplet\\heights\\train\\DC_01_25_AGL.h5",
+    "keys": [
+      "image"
+    ],
+    "datasets": {
+      "image": {
+        "shape": [
+          1024,
+          1024
+        ],
+        "dtype": "float32",
+        "min": 0.0,
+        "max": 44.51300048828125,
+        "nan_count": 0,
+        "total_elements": 1048576
+      }
+    }
+  },
+  "CLS": {
+    "file": "artifacts\\v1.1.0\\sample_triplet\\classes\\train\\DC_01_25_CLS.h5",
+    "keys": [
+      "image"
+    ],
+    "datasets": {
+      "image": {
+        "shape": [
+          1024,
+          1024
+        ],
+        "dtype": "float32",
+        "min": 0.0,
+        "max": 6.0,
+        "nan_count": 0,
+        "total_elements": 1048576,
+        "unique_values": [
+          0,
+          1,
+          2,
+          3,
+          5,
+          6
+        ],
+        "unique_value_counts": {
+          "0": 216,
+          "1": 115665,
+          "2": 88777,
+          "3": 206119,
+          "5": 166843,
+          "6": 470956
+        }
+      }
+    }
+  }
+}

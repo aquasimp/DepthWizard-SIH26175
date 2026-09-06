@@ -1,0 +1,22 @@
+{
+  "python_version": "Python 3.11.9",
+  "pip_freeze": "affine==3.0.1\nannotated-doc==0.0.5\nannotated-types==0.8.0\nanyio==4.15.1\nast-serialize==0.9.0\nattrs==26.1.0\ncertifi==2026.7.22\ncharset-normalizer==3.5.1\nclick==8.5.0\nclick-plugins==1.1.1.2\ncligj==0.7.2\ncloudpickle==3.1.2\ncolorama==0.4.6\ncontourpy==1.3.3\ncoverage==7.16.0\ncycler==0.12.1\ndataclasses-json==0.6.7\ndeprecated==1.3.1\nfastapi==0.141.1\nfilelock==3.32.5\nfonttools==4.64.0\nfsspec==2026.7.0\nh11==0.16.0\nh5py==3.16.0\nhf-xet==1.6.0\nhttpcore==1.0.9\nhttpx==0.28.1\nhuggingface-hub==1.30.0\nidna==3.19\nimageio==2.37.4\niniconfig==2.3.0\njinja2==3.1.6\njoblib==1.6.0\nkiwisolver==1.5.1\nlazy-loader==0.5\nlibrt==0.15.0\nmarkupsafe==3.0.3\nmarshmallow==3.26.2\nmatplotlib==3.11.1\nmpmath==1.3.0\nmypy==2.3.1\nmypy-extensions==1.1.0\nnarwhals==2.25.0\nnetworkx==3.6.1\nnumpy==2.4.6\nopencv-python-headless==5.0.0.93\npackaging==26.3\npathspec==1.1.1\npillow==12.3.0\npluggy==1.6.0\npydantic==2.13.5\npydantic-core==2.46.5\npydantic-settings==2.15.0\npygltflib==1.16.5\npygments==2.21.0\npyparsing==3.3.2\npyproj==3.7.2\npytest==9.1.1\npytest-cov==7.1.0\npython-dateutil==2.9.0.post0\npython-dotenv==1.2.3\npython-multipart==0.0.32\npyyaml==6.0.3\nrasterio==1.4.4\nrequests==2.34.2\nruff==0.16.6\nscikit-image==0.26.0\nscikit-learn==1.9.0\nscipy==1.17.1\nsix==1.17.0\nstarlette==1.6.0\nsympy==1.13.1\nthreadpoolctl==3.6.0\ntifffile==2026.3.3\ntorch==2.6.0+cu124\ntorchvision==0.21.0+cu124\ntqdm==4.70.0\ntrimesh==5.1.0\ntyping-extensions==4.16.0\ntyping-inspect==0.9.0\ntyping-inspection==0.4.4\nurllib3==2.7.0\nuvicorn==0.52.4\nwrapt==2.4.0\n",
+  "nvidia_smi": "Sat Sep  5 22:00:03 2026       \n+-----------------------------------------------------------------------------------------+\n| NVIDIA-SMI 616.56                 KMD Version: 616.56        CUDA UMD Version: 13.4     |\n+-----------------------------------------+------------------------+----------------------+\n| GPU  Name                  Driver-Model | Bus-Id          Disp.A | Volatile Uncorr. ECC |\n| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |\n|                                         |                        |               MIG M. |\n|=========================================+========================+======================|\n|   0  NVIDIA GeForce RTX 4050 ...  WDDM  |   00000000:01:00.0 Off |                  N/A |\n| N/A   42C    P8              2W /   42W |     285MiB /   6141MiB |      5%      Default |\n|                                         |                        |                  N/A |\n+-----------------------------------------+------------------------+----------------------+\n\n+-----------------------------------------------------------------------------------------+\n| Processes:                                                                              |\n|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |\n|        ID   ID                                                               Usage      |\n|=========================================================================================|\n|    0   N/A  N/A            7132    C+G   ...Browser\\Application\\brave.exe      N/A      |\n|    0   N/A  N/A           33180    C+G   ...Browser\\Application\\brave.exe      N/A      |\n+-----------------------------------------------------------------------------------------+\n",
+  "torch_version": "2.6.0+cu124",
+  "cuda_available": true,
+  "cuda_device_name": "NVIDIA GeForce RTX 4050 Laptop GPU",
+  "cuda_total_memory": 6438780928,
+  "df_h": "Filesystem            Size  Used Avail Use% Mounted on\nC:/Program Files/Git  307G  280G   27G  92% /\nX:                    170G   80G   91G  47% /x\n",
+  "disk_usage_X": {
+    "total": 181982457856,
+    "used": 85037285376,
+    "free": 96945172480,
+    "free_gb": 90.29
+  },
+  "disk_usage_C": {
+    "total": 329017978880,
+    "used": 300547862528,
+    "free": 28470116352,
+    "free_gb": 26.51
+  }
+}

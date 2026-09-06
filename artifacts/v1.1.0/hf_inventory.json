@@ -1,0 +1,69 @@
+{
+  "repo_id": "earthflow/GAMUS",
+  "total_files": 26174,
+  "top_level_dirs": {
+    "[root]": 2,
+    "classes": 8724,
+    "heights": 8724,
+    "images": 8724
+  },
+  "splits_per_top_level": {
+    "classes": {
+      "test": 2861,
+      "train": 5004,
+      "val": 859
+    },
+    "heights": {
+      "test": 2861,
+      "train": 5004,
+      "val": 859
+    },
+    "images": {
+      "test": 2861,
+      "train": 5004,
+      "val": 859
+    }
+  },
+  "city_prefixes": {
+    "DC": 6477,
+    "NYC": 6501,
+    "PHL": 13194
+  },
+  "city_prefixes_by_modality": {
+    "classes": {
+      "DC": 2159,
+      "NYC": 2167,
+      "PHL": 4398
+    },
+    "heights": {
+      "DC": 2159,
+      "NYC": 2167,
+      "PHL": 4398
+    },
+    "images": {
+      "DC": 2159,
+      "NYC": 2167,
+      "PHL": 4398
+    }
+  },
+  "city_prefixes_by_split": {
+    "test": {
+      "DC": 1083,
+      "NYC": 3000,
+      "PHL": 4500
+    },
+    "train": {
+      "DC": 4317,
+      "NYC": 3501,
+      "PHL": 7194
+    },
+    "val": {
+      "DC": 1077,
+      "PHL": 1500
+    }
+  },
+  "non_data_files": [
+    ".gitattributes",
+    "README.md"
+  ]
+}

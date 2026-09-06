@@ -2,7 +2,7 @@
 
 import csv
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import torch
@@ -17,35 +17,44 @@ def apply_geometric_augmentations(
     rgb: np.ndarray,
     ndsm: np.ndarray,
     mask: np.ndarray,
+    cls: Optional[np.ndarray] = None,
     k: int = 0,
     flip_lr: bool = False,
     flip_ud: bool = False,
-) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
-    """Apply spatial rotation and flips identically across rgb, ndsm, and mask.
+) -> Union[Tuple[np.ndarray, np.ndarray, np.ndarray], Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]]:
+    """Apply spatial rotation and flips identically across rgb, ndsm, mask, and optional cls.
 
     Ensures that spatial dimensions are transformed synchronously with no
-    negation or value-level inversion of height values.
+    negation, value-level inversion, or interpolation of height or class values.
     """
     if k > 0:
         rgb = np.rot90(rgb, k=k, axes=(0, 1)).copy()
         ndsm = np.rot90(ndsm, k=k, axes=(0, 1)).copy()
         mask = np.rot90(mask, k=k, axes=(0, 1)).copy()
+        if cls is not None:
+            cls = np.rot90(cls, k=k, axes=(0, 1)).copy()
 
     if flip_lr:
         rgb = np.fliplr(rgb).copy()
         ndsm = np.fliplr(ndsm).copy()
         mask = np.fliplr(mask).copy()
+        if cls is not None:
+            cls = np.fliplr(cls).copy()
 
     if flip_ud:
         rgb = np.flipud(rgb).copy()
         ndsm = np.flipud(ndsm).copy()
         mask = np.flipud(mask).copy()
+        if cls is not None:
+            cls = np.flipud(cls).copy()
 
+    if cls is not None:
+        return rgb, ndsm, mask, cls
     return rgb, ndsm, mask
 
 
 class GAMUSDataset(Dataset):
-    """GAMUS Paired RGB and Metric nDSM Dataset."""
+    """GAMUS Paired RGB and Metric nDSM Dataset with optional Semantic Class."""
 
     def __init__(
         self,
@@ -68,11 +77,12 @@ class GAMUSDataset(Dataset):
             for row in reader:
                 if split is None or row.get("split") == split:
                     self.samples.append(row)
+        self.rows = self.samples
 
     def __len__(self) -> int:
         return len(self.samples)
 
-    def __getitem__(self, idx: int) -> Dict[str, torch.Tensor]:
+    def __getitem__(self, idx: int) -> Dict[str, Any]:
         row = self.samples[idx]
         file_path = self.repo_root / row["file_path"]
 
@@ -80,12 +90,15 @@ class GAMUSDataset(Dataset):
         rgb = data["image"]  # uint8 (518, 518, 3)
         ndsm = data["depth"].astype(np.float32)  # float32 (518, 518) in metres
         mask = data["mask"]  # bool (518, 518)
+        cls_arr = data["cls"].astype(np.int64) if "cls" in data else None
 
         # Ensure shapes
         if rgb.shape[0] != self.crop_size or rgb.shape[1] != self.crop_size:
             rgb = rgb[: self.crop_size, : self.crop_size]
             ndsm = ndsm[: self.crop_size, : self.crop_size]
             mask = mask[: self.crop_size, : self.crop_size]
+            if cls_arr is not None:
+                cls_arr = cls_arr[: self.crop_size, : self.crop_size]
 
         # Geometry-preserving augmentations: rotations in {0, 90, 180, 270} and flips
         # CRITICAL: rotate/flip spatial dimensions TOGETHER.
@@ -95,9 +108,14 @@ class GAMUSDataset(Dataset):
             k = int(np.random.choice([0, 1, 2, 3]))
             flip_lr = bool(np.random.rand() > 0.5)
             flip_ud = bool(np.random.rand() > 0.5)
-            rgb, ndsm, mask = apply_geometric_augmentations(
-                rgb, ndsm, mask, k=k, flip_lr=flip_lr, flip_ud=flip_ud
-            )
+            if cls_arr is not None:
+                rgb, ndsm, mask, cls_arr = apply_geometric_augmentations(
+                    rgb, ndsm, mask, cls=cls_arr, k=k, flip_lr=flip_lr, flip_ud=flip_ud
+                )
+            else:
+                rgb, ndsm, mask = apply_geometric_augmentations(
+                    rgb, ndsm, mask, k=k, flip_lr=flip_lr, flip_ud=flip_ud
+                )
 
             # Color jitter (brightness=0.2, contrast=0.2 on RGB only)
             if np.random.rand() > 0.5:
@@ -113,8 +131,19 @@ class GAMUSDataset(Dataset):
         ndsm_tensor = ndsm[np.newaxis, :, :].astype(np.float32)
         mask_tensor = mask[np.newaxis, :, :].astype(bool)
 
-        return {
+        item = {
             "image": torch.from_numpy(rgb_norm),
             "depth": torch.from_numpy(ndsm_tensor),
             "mask": torch.from_numpy(mask_tensor),
+            "city": row.get("city", "UNKNOWN"),
+            "crop_id": row.get("crop_id", ""),
         }
+        if cls_arr is not None:
+            cls_t = torch.from_numpy(cls_arr[np.newaxis, :, :])
+        else:
+            cls_t = torch.zeros(ndsm_tensor.shape, dtype=torch.int64)
+        item["cls"] = cls_t
+        item["class"] = cls_t
+        return item
+
+

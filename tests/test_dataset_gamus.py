@@ -63,7 +63,7 @@ def test_manifest_csv_matches_files_on_disk() -> None:
     assert len(rows) > 0, "Manifest contains 0 rows"
 
     disk_files_count = 0
-    for split in ["train", "val"]:
+    for split in ["train", "val", "test"]:
         split_dir = Path("data/gamus") / split
         if split_dir.exists():
             disk_files_count += len(list(split_dir.glob("*.npz")))

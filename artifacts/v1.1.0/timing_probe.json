@@ -1,0 +1,57 @@
+{
+  "device": "NVIDIA GeForce RTX 4050 Laptop GPU",
+  "total_vram_mb": 6140.5,
+  "encoder_frozen": true,
+  "encoder_params_frozen": 22056576,
+  "decoder_params_trainable": 2728513,
+  "vram_tests": {
+    "8": {
+      "batch_size": 8,
+      "fits": true,
+      "peak_vram_mb": 1072.75,
+      "headroom_mb": 5067.75
+    },
+    "6": {
+      "batch_size": 6,
+      "fits": true,
+      "peak_vram_mb": 840.84,
+      "headroom_mb": 5299.66
+    },
+    "4": {
+      "batch_size": 4,
+      "fits": true,
+      "peak_vram_mb": 603.96,
+      "headroom_mb": 5536.54
+    },
+    "2": {
+      "batch_size": 2,
+      "fits": true,
+      "peak_vram_mb": 366.59,
+      "headroom_mb": 5773.91
+    }
+  },
+  "selected_batch_size": 8,
+  "step_seconds_30steps": {
+    "mean_s": 0.585,
+    "median_s": 0.5792,
+    "min_s": 0.551,
+    "max_s": 0.6438,
+    "std_s": 0.0237
+  },
+  "epoch_timing": {
+    "total_epoch_seconds": 303.912,
+    "train_epoch_seconds": 271.853,
+    "val_epoch_seconds": 32.059,
+    "train_batches": 478,
+    "val_batches": 71
+  },
+  "epoch_count_arithmetic": {
+    "budget_hours": 9,
+    "budget_seconds": 32400,
+    "raw_epochs": 106,
+    "clamped_epochs": 80,
+    "target_epochs": 60,
+    "estimated_total_runtime_minutes": 303.91,
+    "estimated_total_runtime_hours": 5.07
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "v110_checkpoint": "models\\v1.1.0\\best.pt",
+  "base_checkpoint": "models\\depth_anything_v2_vits.pth",
+  "v103_checkpoint": "models\\dav2s_gamus_ft_v1.pth",
+  "encoder_audit": {
+    "total_encoder_tensors": 175,
+    "bitwise_identical": true,
+    "max_abs_diff": 0.0,
+    "differing_tensors": 0
+  },
+  "decoder_audit_vs_base": {
+    "total_decoder_tensors": 64,
+    "changed_tensors": 60,
+    "changed_percentage": 93.75,
+    "min_required_percentage": 90.0,
+    "assertion_passed": true
+  },
+  "decoder_audit_vs_v103": {
+    "total_decoder_tensors": 64,
+    "changed_tensors": 60,
+    "changed_percentage": 93.75,
+    "max_abs_diff": 0.110938,
+    "is_distinct_from_v103": true
+  }
+}
