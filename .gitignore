@@ -25,6 +25,9 @@ data/gamus_raw/
 data/cache/srtm/*.tif
 !data/cache/srtm/.gitkeep
 !data/cache/srtm/demo_*.tif
+data/cache/huggingface/
+.cache/
+*.cache
 
 # Models
 models/*.pth

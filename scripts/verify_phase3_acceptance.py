@@ -1,7 +1,8 @@
-import csv, json
+import csv
+import json
 from pathlib import Path
 
-data_dir = Path("X:/DepthWizard SIH26175/data")
+data_dir = Path(__file__).resolve().parent.parent / "data"
 manifest_csv = data_dir / "gamus/manifest.csv"
 qc_json = Path("artifacts/v1.1.0/data_qc_report.json")
 stats_json = Path("artifacts/v1.1.0/dataset_stats_v1.1.0.json")

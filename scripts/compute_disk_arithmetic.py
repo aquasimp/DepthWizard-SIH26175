@@ -20,9 +20,10 @@ crop_cache_bytes = total_crops * bytes_per_crop_compressed
 
 total_required = raw_bytes + crop_cache_bytes
 
-# Real disk free space on repo volume (X:)
-usage_x = shutil.disk_usage("X:\\")
-free_bytes = usage_x.free
+# Real disk free space on repo volume
+repo_drive = Path(__file__).resolve().anchor
+usage_repo = shutil.disk_usage(repo_drive)
+free_bytes = usage_repo.free
 
 headroom = free_bytes / total_required
 

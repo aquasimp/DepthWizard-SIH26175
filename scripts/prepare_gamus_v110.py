@@ -25,9 +25,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 from huggingface_hub import hf_hub_download
 
-# Disable HF symlinks warning on Windows and configure cache to drive X:
+# Disable HF symlinks warning on Windows and configure cache
 os.environ["HF_HUB_DISABLE_SYMLINKS_WARNING"] = "1"
-os.environ["HF_HOME"] = "X:/hf_cache"
+if "HF_HOME" not in os.environ:
+    os.environ["HF_HOME"] = str(Path(__file__).resolve().parent.parent / "data" / "cache" / "huggingface")
 
 REPO_ID = "earthflow/GAMUS"
 SEED = 1337
@@ -361,10 +362,11 @@ def extract_crops_from_tile(
 
 def run_pipeline():
     t_start_total = time.time()
-    raw_dir = Path("X:/DepthWizard SIH26175/data/gamus_raw")
-    output_dir = Path("X:/DepthWizard SIH26175/data/gamus")
+    repo_root = Path(__file__).resolve().parent.parent
+    raw_dir = repo_root / "data" / "gamus_raw"
+    output_dir = repo_root / "data" / "gamus"
     quarantine_dir = output_dir / "quarantine"
-    artifacts_dir = Path("artifacts/v1.1.0")
+    artifacts_dir = repo_root / "artifacts" / "v1.1.0"
 
     raw_dir.mkdir(parents=True, exist_ok=True)
     quarantine_dir.mkdir(parents=True, exist_ok=True)
