@@ -37,6 +37,10 @@ jobs:
         run: |
           mypy backend/depthwizard
 
+      - name: Download base model weights
+        run: |
+          bash models/download_weights.sh
+
       - name: Run backend tests
         run: |
           pytest tests/ -v

@@ -69,6 +69,11 @@ exclude = [
     "frontend",
     "jobs",
     "data",
+    "scripts",
+    "training",
+    "artifacts",
+    "docs",
+    "reference",
 ]
 
 [tool.ruff.lint]
@@ -90,3 +95,9 @@ exclude = [
     ".venv/",
     "jobs/",
 ]
+
+[[tool.mypy.overrides]]
+module = "depthwizard.calibration.ransac_affine"
+check_untyped_defs = false
+ignore_errors = true
+

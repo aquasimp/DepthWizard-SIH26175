@@ -9,9 +9,10 @@ Tests:
 
 import csv
 from pathlib import Path
-import pytest
-from training.sampler import HeightStratifiedBatchSampler
 
+import pytest
+
+from training.sampler import HeightStratifiedBatchSampler
 
 MANIFEST_PATH = Path("data/gamus/manifest.csv")
 

@@ -8,9 +8,9 @@ Asserts:
 """
 
 from pathlib import Path
+
 import h5py
 import numpy as np
-import pytest
 
 SAMPLE_DIR = Path("artifacts/v1.1.0/sample_triplet")
 SAMPLE_RGB = SAMPLE_DIR / "images/train/DC_01_25_RGB.h5"

@@ -67,6 +67,7 @@ def test_training_curves_asset_exists() -> None:
 def test_encoder_is_strictly_frozen_and_trainable_params_count() -> None:
     """Step 6 / Mutation E: Assert encoder parameters are strictly frozen and trainable count is bounded."""
     from depthwizard.depth.backbone import load_dav2_small
+
     from training.train_head import configure_trainable_parameters
 
     repo_root = Path(__file__).resolve().parent.parent
