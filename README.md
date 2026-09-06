@@ -43,7 +43,11 @@ Requires [Docker Desktop](https://www.docker.com/products/docker-desktop/) (with
 git clone https://github.com/aquasimp/DepthWizard-SIH26175.git
 cd DepthWizard-SIH26175
 
-# 2. Launch container stack (FastAPI Backend + Vite Frontend)
+# 2. Download base foundation model weights (Apache-2.0 DAV2 Small, ~99 MB)
+python models/download_weights.py
+# (Or: bash models/download_weights.sh)
+
+# 3. Launch container stack (FastAPI Backend + Vite Frontend)
 docker compose up --build
 ```
 Access the application at **`http://localhost:8080`** (API docs at `http://localhost:8000/docs`).
@@ -72,9 +76,7 @@ source .venv/bin/activate
 pip install -r backend/requirements-dev.txt
 
 # 3. Download base foundation model weights (Apache-2.0 DAV2 Small)
-bash models/download_weights.sh
-# (Or on Windows PowerShell without bash):
-# python -c "import urllib.request; urllib.request.urlretrieve('https://huggingface.co/depth-anything/Depth-Anything-V2-Small/resolve/main/depth_anything_v2_vits.pth', 'models/depth_anything_v2_vits.pth')"
+python models/download_weights.py
 
 # 4. Install frontend dependencies
 cd frontend
