@@ -58,35 +58,49 @@ export function DisplacedTerrain({
     return tex;
   }, [textureUrl]);
 
-  const uniforms = useMemo(
-    () => ({
-      uHeightMap: { value: heightTexture },
-      uHMin: { value: meta.h_min_raw },
-      uHMax: { value: meta.h_max_raw },
-      uZExag: { value: zExag },
-      uShowSlope: { value: showSlope ? 1.0 : 0.0 },
-      uGsd: { value: meta.assumed_gsd_m || 0.33 },
-      uTexelSize: { value: new THREE.Vector2(1.0 / meta.width, 1.0 / meta.height) },
-    }),
-    [heightTexture, meta, zExag, showSlope]
-  );
+  const uniformsRef = useRef({
+    uHeightMap: { value: heightTexture },
+    uHMin: { value: meta.h_min_raw },
+    uHMax: { value: meta.h_max_raw },
+    uZExag: { value: zExag },
+    uShowSlope: { value: showSlope ? 1.0 : 0.0 },
+    uGsd: { value: meta.assumed_gsd_m || 0.33 },
+    uTexelSize: { value: new THREE.Vector2(1.0 / meta.width, 1.0 / meta.height) },
+  });
 
-  // Update uniform values continuously
+  // Keep static inputs in sync
   useEffect(() => {
-    uniforms.uZExag.value = zExag;
-    uniforms.uShowSlope.value = showSlope ? 1.0 : 0.0;
-  }, [zExag, showSlope, uniforms]);
+    uniformsRef.current.uHeightMap.value = heightTexture;
+    uniformsRef.current.uHMin.value = meta.h_min_raw;
+    uniformsRef.current.uHMax.value = meta.h_max_raw;
+    uniformsRef.current.uGsd.value = meta.assumed_gsd_m || 0.33;
+    uniformsRef.current.uTexelSize.value.set(1.0 / meta.width, 1.0 / meta.height);
+  }, [heightTexture, meta]);
+
+  // Update dynamic uniform values continuously
+  useEffect(() => {
+    uniformsRef.current.uZExag.value = zExag;
+    uniformsRef.current.uShowSlope.value = showSlope ? 1.0 : 0.0;
+  }, [zExag, showSlope]);
+
+  // Sync wireframe updates to material
+  useEffect(() => {
+    if (materialRef.current) {
+      materialRef.current.wireframe = wireframe;
+      materialRef.current.needsUpdate = true;
+    }
+  }, [wireframe]);
 
   // Custom vertex displacement and procedural slope shading via onBeforeCompile
   const onBeforeCompile = useMemo(
     () => (shader: THREE.WebGLProgramParametersWithUniforms) => {
-      shader.uniforms.uHeightMap = uniforms.uHeightMap;
-      shader.uniforms.uHMin = uniforms.uHMin;
-      shader.uniforms.uHMax = uniforms.uHMax;
-      shader.uniforms.uZExag = uniforms.uZExag;
-      shader.uniforms.uShowSlope = uniforms.uShowSlope;
-      shader.uniforms.uGsd = uniforms.uGsd;
-      shader.uniforms.uTexelSize = uniforms.uTexelSize;
+      shader.uniforms.uHeightMap = uniformsRef.current.uHeightMap;
+      shader.uniforms.uHMin = uniformsRef.current.uHMin;
+      shader.uniforms.uHMax = uniformsRef.current.uHMax;
+      shader.uniforms.uZExag = uniformsRef.current.uZExag;
+      shader.uniforms.uShowSlope = uniformsRef.current.uShowSlope;
+      shader.uniforms.uGsd = uniformsRef.current.uGsd;
+      shader.uniforms.uTexelSize = uniformsRef.current.uTexelSize;
 
       // Inject custom vertex shader displacement logic
       shader.vertexShader = `
@@ -94,6 +108,7 @@ export function DisplacedTerrain({
         uniform float uHMin;
         uniform float uHMax;
         uniform float uZExag;
+        uniform float uGsd;
         uniform vec2 uTexelSize;
         varying vec2 vTerrainUv;
         varying float vSlopeDeg;
@@ -102,17 +117,9 @@ export function DisplacedTerrain({
       `;
 
       shader.vertexShader = shader.vertexShader.replace(
-        '#include <begin_vertex>',
+        '#include <beginnormal_vertex>',
         `
-        vTerrainUv = uv;
-
-        // Sample normalized height [0.0, 1.0]
-        float rawNorm = texture2D(uHeightMap, uv).r;
-        // Decode metric elevation via sidecar formula
-        float elevM = uHMin + rawNorm * (uHMax - uHMin);
-
-        // Displace along Y-UP
-        transformed.y = elevM * uZExag;
+        #include <beginnormal_vertex>
 
         // Calculate elevation gradient for procedural slope & normals
         float hL = uHMin + texture2D(uHeightMap, uv - vec2(uTexelSize.x, 0.0)).r * (uHMax - uHMin);
@@ -120,14 +127,30 @@ export function DisplacedTerrain({
         float hD = uHMin + texture2D(uHeightMap, uv - vec2(0.0, uTexelSize.y)).r * (uHMax - uHMin);
         float hU = uHMin + texture2D(uHeightMap, uv + vec2(0.0, uTexelSize.y)).r * (uHMax - uHMin);
 
-        vec3 normalCalc = normalize(vec3((hL - hR) * uZExag, 2.0, (hD - hU) * uZExag));
-        vNormal = normalMatrix * normalCalc;
+        float dzDx = (hR - hL) / (2.0 * max(uGsd, 0.001));
+        float dzDy = (hU - hD) / (2.0 * max(uGsd, 0.001));
+        objectNormal = normalize(vec3(-dzDx * uZExag, -dzDy * uZExag, 1.0));
 
         // Slope calculation in degrees
-        float dzDx = (hR - hL) / 2.0;
-        float dzDy = (hU - hD) / 2.0;
         float grad = sqrt(dzDx * dzDx + dzDy * dzDy);
         vSlopeDeg = atan(grad) * 57.2957795;
+        `
+      );
+
+      shader.vertexShader = shader.vertexShader.replace(
+        '#include <begin_vertex>',
+        `
+        #include <begin_vertex>
+
+        vTerrainUv = uv;
+
+        // Sample normalized height [0.0, 1.0]
+        float rawNorm = texture2D(uHeightMap, uv).r;
+        // Decode metric elevation via sidecar formula
+        float elevM = uHMin + rawNorm * (uHMax - uHMin);
+
+        // Displace along local +Z (which corresponds to World +Y UP after rotation -PI/2 on X)
+        transformed.z = elevM * uZExag;
         `
       );
 
@@ -158,7 +181,7 @@ export function DisplacedTerrain({
         `
       );
     },
-    [uniforms]
+    []
   );
 
   return (
