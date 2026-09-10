@@ -36,6 +36,7 @@ export const ViewerPage: React.FC<ViewerPageProps> = ({
   const [sunAzimuth, setSunAzimuth] = useState(135);
   const [sunElevation, setSunElevation] = useState(45);
   const [fps, setFps] = useState(60);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   // Height Probe & Measure Tool states
   const [probe, setProbe] = useState<ProbeData | null>(null);
@@ -51,10 +52,19 @@ export const ViewerPage: React.FC<ViewerPageProps> = ({
 
   // 1. Fetch sidecar metadata
   useEffect(() => {
+    setLoadError(null);
     fetch(metaUrl)
-      .then((r) => r.json())
+      .then((r) => {
+        if (!r.ok) {
+          throw new Error(`Failed to load terrain metadata (${r.status} ${r.statusText})`);
+        }
+        return r.json();
+      })
       .then((data: HeightmapMeta) => setMeta(data))
-      .catch((err) => console.error('Failed to load heightmap metadata:', err));
+      .catch((err) => {
+        console.error('Failed to load heightmap metadata:', err);
+        setLoadError(err.message || 'Failed to connect to backend server.');
+      });
   }, [metaUrl]);
 
   // 2. Decode authoritative CPU Float32Array from 16-bit PNG via hidden 2D canvas
@@ -191,6 +201,42 @@ export const ViewerPage: React.FC<ViewerPageProps> = ({
     a.download = `terrain_${jobId}_${lod}.glb`;
     a.click();
   };
+
+  if (loadError) {
+    return (
+      <div className="relative w-screen h-screen bg-slate-950 flex flex-col items-center justify-center p-6 text-slate-200">
+        <div className="max-w-md w-full bg-slate-900/90 border border-red-500/40 rounded-2xl p-6 shadow-2xl backdrop-blur-md flex flex-col items-center text-center gap-4">
+          <div className="w-12 h-12 rounded-full bg-red-500/20 border border-red-500/40 flex items-center justify-center text-red-400">
+            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold text-white">Terrain Model Unavailable</h3>
+            <p className="text-xs text-slate-400 mt-1 font-mono">Job ID: {jobId}</p>
+            <p className="text-sm text-red-300/90 mt-2">{loadError}</p>
+          </div>
+          <p className="text-xs text-slate-400">
+            Ensure the FastAPI backend server is running on port 8000 and that this job has finished processing.
+          </p>
+          <div className="flex gap-3 mt-2 w-full">
+            <button
+              onClick={onNavigateBack}
+              className="flex-1 py-2 px-4 rounded-xl border border-slate-700 bg-slate-800 hover:bg-slate-700 text-sm font-medium transition cursor-pointer"
+            >
+              Back to Home
+            </button>
+            <button
+              onClick={() => window.location.reload()}
+              className="flex-1 py-2 px-4 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-slate-950 text-sm font-medium transition cursor-pointer"
+            >
+              Retry
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (!meta) {
     return (

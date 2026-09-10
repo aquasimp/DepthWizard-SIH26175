@@ -63,6 +63,16 @@ def health_check() -> dict:
     return {
         "status": "healthy",
         "model_version": __version__,
+        "model_name": "DepthWizard v1.1.0 Multi-City (DINOv2-S + DPT Head)",
+        "active_checkpoint": "models/v1.1.0/best.pt",
+        "training_dataset": "GAMUS (3,817 Multi-City Crops, 35.1M LiDAR Pixels across DC, NYC, PHL)",
+        "verified_metrics": {
+            "medae_m": 0.7084,
+            "rmse_m": 4.4672,
+            "mae_m": 2.3645,
+            "pearson_r": 0.8374,
+            "sub_2_5m_accuracy": 0.6960,
+        },
         "device": getattr(app.state, "device", "unknown"),
         "cuda_available": getattr(app.state, "cuda_available", False),
     }

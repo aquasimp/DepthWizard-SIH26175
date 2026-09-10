@@ -95,7 +95,7 @@ def write_16bit_heightmap(
     assumed_gsd_m: float = 0.33,
     is_absolute: bool = True,
     units: str = "metres",
-    model_version: str = "dav2s_v1",
+    model_version: str = "v1.1.0_best",
     calibration_status: str = "calibrated",
 ) -> Dict[str, Any]:
     """Write 16-bit PNG heightmap normalized to [0, 65535] and sidecar metadata.
@@ -231,7 +231,7 @@ def export_job_rasters(
     is_georeferenced: bool = False,
     metadata: Optional[Dict[str, Any]] = None,
     assumed_gsd_m: float = 0.33,
-    model_version: str = "dav2s_v1",
+    model_version: str = "v1.1.0_best",
     calibration_status: str = "calibrated",
 ) -> Dict[str, Path]:
     """Export all required raster artifacts for a processing job.

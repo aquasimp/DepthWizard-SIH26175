@@ -126,3 +126,7 @@ class MetricNDSMLoss(nn.Module):
         l_l1 = self.l1(pred, target, mask)
         l_grad = self.grad(pred, target, mask)
         return l_silog + 0.5 * l_l1 + 0.5 * l_grad
+
+
+# Alias for architectural naming convention
+CompositeLoss = MetricNDSMLoss

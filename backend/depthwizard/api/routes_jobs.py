@@ -30,6 +30,7 @@ async def create_job(
     assumed_gsd_m: float = Form(default=0.33),
     calibration_path: Optional[str] = Form(default=None),
     z_exag: float = Form(default=1.0),
+    model_version: Optional[str] = Form(default="v1.1.0_best"),
     manager: JobManager = Depends(get_job_manager),
 ) -> JobCreateResponse:
     """Upload imagery and launch asynchronous height estimation and meshing pipeline."""
@@ -88,6 +89,7 @@ async def create_job(
         "assumed_gsd_m": assumed_gsd_m,
         "calibration_path": calibration_path,
         "z_exag": z_exag,
+        "model_version": model_version or "v1.1.0_best",
     }
     job_id = manager.create_job(filename=file.filename, options=options)
     job_dir = manager.get_job_dir(job_id)

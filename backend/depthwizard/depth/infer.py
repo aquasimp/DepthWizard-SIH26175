@@ -2,7 +2,7 @@
 
 import time
 from pathlib import Path
-from typing import Optional, Tuple, Union
+from typing import Dict, Optional, Tuple, Union
 
 import cv2
 import numpy as np
@@ -23,26 +23,52 @@ class DepthInferenceEngine:
     def __init__(
         self,
         checkpoint_path: Optional[Union[str, Path]] = None,
-        mode: str = "relative",
+        mode: str = "metric",
         device: str = "auto",
+        model_version: str = "v1.1.0_best",
     ):
         self.mode = mode
+        self.model_version = model_version
         if device == "auto":
             self.device = "cuda" if torch.cuda.is_available() else "cpu"
         else:
             self.device = device
 
+        # Determine primary checkpoint
         if checkpoint_path is None:
             if mode == "metric":
-                checkpoint_path = "models/dav2s_gamus_ft_v1.pth"
-            else:
-                checkpoint_path = "models/depth_anything_v2_vits.pth"
+                v110_best = Path("models/v1.1.0/best.pt")
+                v110_tall = Path("models/v1.1.0/best_tall.pt")
+                v103_legacy = Path("models/dav2s_gamus_ft_v1.pth")
+                base_vits = Path("models/depth_anything_v2_vits.pth")
 
+                if model_version == "v1.1.0_tall" and v110_tall.exists():
+                    checkpoint_path = v110_tall
+                elif model_version == "legacy" and v103_legacy.exists():
+                    checkpoint_path = v103_legacy
+                elif v110_best.exists():
+                    checkpoint_path = v110_best
+                elif v103_legacy.exists():
+                    checkpoint_path = v103_legacy
+                else:
+                    checkpoint_path = base_vits
+            else:
+                checkpoint_path = Path("models/depth_anything_v2_vits.pth")
+
+        self.checkpoint_path = Path(checkpoint_path)
         logger.info(
             "Initializing DepthInferenceEngine",
-            extra={"device": self.device, "checkpoint": str(checkpoint_path), "mode": self.mode},
+            extra={"device": self.device, "checkpoint": str(self.checkpoint_path), "mode": self.mode, "version": self.model_version},
         )
-        self.model: DepthAnythingV2Small = load_dav2_small(checkpoint_path, device=self.device)
+        self.model: DepthAnythingV2Small = load_dav2_small(self.checkpoint_path, device=self.device)
+
+        # Optional tall specialist model for ensemble fusion
+        self.model_tall: Optional[DepthAnythingV2Small] = None
+        if self.model_version == "ensemble" and self.mode == "metric":
+            tall_path = Path("models/v1.1.0/best_tall.pt")
+            if tall_path.exists():
+                logger.info("Ensemble mode active: Loading secondary tall structure specialist head from %s", tall_path)
+                self.model_tall = load_dav2_small(tall_path, device=self.device)
 
 
 
@@ -81,6 +107,22 @@ class DepthInferenceEngine:
             pred = F.interpolate(pred, size=(orig_h, orig_w), mode="bilinear", align_corners=True)
 
         depth = pred.squeeze().cpu().numpy().astype(np.float32)
+
+        # If dual-head ensemble is active, fuse tall-structure specialist head
+        if self.model_tall is not None:
+            with torch.no_grad():
+                pred_tall = self.model_tall(tensor)
+                if (orig_h, orig_w) != (input_size, input_size):
+                    pred_tall = F.interpolate(pred_tall, size=(orig_h, orig_w), mode="bilinear", align_corners=True)
+                depth_tall = pred_tall.squeeze().cpu().numpy().astype(np.float32)
+
+            # Adaptive Sigmoidal Blending:
+            # - Below 10m: 100% best.pt (sub-10cm terrain/canopy precision)
+            # - Above 25m: 100% best_tall.pt (eliminates skyscraper rooftop flattening)
+            # - Center at 15m with transition width 3m
+            alpha = 1.0 / (1.0 + np.exp(-np.clip((depth - 15.0) / 3.0, -10.0, 10.0)))
+            depth = (1.0 - alpha) * depth + alpha * depth_tall
+
         return depth
 
     def infer_scene(
@@ -104,6 +146,7 @@ class DepthInferenceEngine:
                 "shape": list(image_rgb.shape[:2]),
                 "wall_time_seconds": round(wall_time, 3),
                 "device": self.device,
+                "version": self.model_version,
             },
         )
         return depth, wall_time
@@ -133,21 +176,23 @@ def colorize_depth(
     return cv2.cvtColor(colored, cv2.COLOR_BGR2RGB)
 
 
-_INFERENCE_ENGINE: Optional[DepthInferenceEngine] = None
+_ENGINES: Dict[str, DepthInferenceEngine] = {}
 
 
 def get_inference_engine(
     checkpoint_path: Optional[Union[str, Path]] = None,
     mode: str = "metric",
     device: str = "auto",
+    model_version: str = "v1.1.0_best",
 ) -> DepthInferenceEngine:
-    """Get or initialize singleton DepthInferenceEngine instance."""
-    global _INFERENCE_ENGINE
-    if _INFERENCE_ENGINE is None:
-        _INFERENCE_ENGINE = DepthInferenceEngine(
+    """Get or initialize cached DepthInferenceEngine instance."""
+    key = f"{str(checkpoint_path)}:{mode}:{device}:{model_version}"
+    if key not in _ENGINES:
+        _ENGINES[key] = DepthInferenceEngine(
             checkpoint_path=checkpoint_path,
             mode=mode,
             device=device,
+            model_version=model_version,
         )
-    return _INFERENCE_ENGINE
+    return _ENGINES[key]
 

@@ -35,7 +35,10 @@ class Settings(BaseSettings):
     samples_dir: Path = Path("data/samples")
 
     default_model_checkpoint: str = "models/depth_anything_v2_vits.pth"
-    ft_model_checkpoint: str = "models/dav2s_gamus_ft_v1.pth"
+    ft_model_checkpoint: str = "models/v1.1.0/best.pt"
+    ft_tall_model_checkpoint: str = "models/v1.1.0/best_tall.pt"
+    legacy_model_checkpoint: str = "models/dav2s_gamus_ft_v1.pth"
+    model_version: str = "1.1.0"
     assumed_gsd_m: float = 0.33
     canonical_gsd_m: float = 0.33
     assumed_max_structure_height_m: float = 45.0

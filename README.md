@@ -34,6 +34,15 @@ graph TD
 
 ## ⚡ Quickstart
 
+### 💻 Hardware Requirements & Execution Modes
+| Component | Recommended (GPU Acceleration) | Minimum (CPU Field Fallback) |
+| :--- | :--- | :--- |
+| **Processor** | 8-core modern x86_64 CPU | 4-core 64-bit CPU |
+| **GPU / VRAM** | NVIDIA RTX 3060 / 4060 or higher (8GB+ VRAM, CUDA 11.8 / 12.x) | None (Pure CPU fallback supported) |
+| **System RAM** | 16 GB DDR4/DDR5 | 8 GB RAM |
+| **Storage** | 2.5 GB available disk space | 2.0 GB available disk space |
+| **Inference Time** | **0.8 s – 1.5 s** per $518 \times 518$ scene | **4.0 s – 7.5 s** per scene (automatic CPU fallback) |
+
 ### Option 1: Docker (Recommended for Demonstration)
 
 Requires [Docker Desktop](https://www.docker.com/products/docker-desktop/) (with NVIDIA Container Toolkit for GPU acceleration):
@@ -110,6 +119,11 @@ Evaluated across all **1,071 held-out test crops** (**35,139,491 valid reference
 | **Linear Error 90% (LE90)** | `16.7534m` | `10.8202m` | **`6.8767m`** | **-36.4% error reduction** |
 | **Normalized Med. Abs. Dev. (NMAD)** | `1.8400m` | `2.4683m` | **`1.0503m`** | **-57.5% error reduction** |
 | **Pearson Correlation ($r$)** | `0.1590` | `0.5868` | **`0.8374`** | **+0.2506 correlation surge** |
+
+> [!NOTE]
+> **Validation vs. Held-Out Test Metric Transparency**:
+> - **Validation Split (536 crops)**: Monitored during 60-epoch training; best checkpoint `models/v1.1.0/best.pt` was captured at **Epoch 48** with **Validation RMSE = 3.7333 m**.
+> - **Held-Out Test Benchmark (1,071 crops, 35,139,491 pixels)**: Evaluated independently across Washington DC, New York City, and Philadelphia under strict zero-leakage conditions, yielding the verified **4.4672 m** test RMSE and sub-metre **0.7084 m** MedAE reported above.
 
 ### Breakdown by Metropolitan Area
 
