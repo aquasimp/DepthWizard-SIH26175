@@ -7,8 +7,8 @@ Tests:
 """
 
 from pathlib import Path
+
 import numpy as np
-import pytest
 import torch
 
 
@@ -65,7 +65,10 @@ def test_calibration_gcp_and_ransac():
 
 def test_calibration_dtm_decompose():
     """Verify backend/depthwizard/calibration/dtm_decompose.py bare earth filtering."""
-    from depthwizard.calibration.dtm_decompose import compute_terrain_slope_deg, decompose_bare_earth_dtm
+    from depthwizard.calibration.dtm_decompose import (
+        compute_terrain_slope_deg,
+        decompose_bare_earth_dtm,
+    )
 
     dem = np.zeros((100, 100), dtype=np.float32)
     dem[40:60, 40:60] = 15.0  # 20x20 building
@@ -81,7 +84,7 @@ def test_calibration_dtm_decompose():
 
 def test_training_loss_computation():
     """Verify training/losses.py composite loss functions."""
-    from training.losses import CompositeLoss, MetricNDSMLoss
+    from training.losses import CompositeLoss
 
     criterion = CompositeLoss()
     pred = torch.ones((2, 1, 64, 64), dtype=torch.float32, requires_grad=True) * 10.0
@@ -120,20 +123,21 @@ def test_frontend_control_hud_exists():
     assert "ControlHud" in content
 
 
-def test_validate_reference_guard_rejects_optical_rgb():
+def test_validate_reference_guard_rejects_optical_rgb(tmp_path: Path):
     """Verify that uploading a 3-band uint8 optical image as a DEM reference is rejected with HTTP 422."""
-    from fastapi.testclient import TestClient
-    from depthwizard.main import app
+    import rasterio
     from depthwizard.jobs.manager import JobManager
+    from depthwizard.main import app
+    from fastapi.testclient import TestClient
+    from rasterio.transform import from_origin
 
-    client = TestClient(app)
-    mgr = JobManager()
-    job_id = mgr.create_job("test_guard.png")
-    job_dir = mgr.get_job_dir(job_id)
+    manager = JobManager(jobs_dir=tmp_path / "test_guard_jobs")
+    app.state.job_manager = manager
+
+    job_id = manager.create_job("test_guard.png")
+    job_dir = manager.get_job_dir(job_id)
 
     # Put a dummy rdsm.tif
-    import rasterio
-    from rasterio.transform import from_origin
     dummy_pred = np.full((64, 64), 0.5, dtype=np.float32)
     with rasterio.open(
         job_dir / "rdsm.tif",
@@ -147,9 +151,10 @@ def test_validate_reference_guard_rejects_optical_rgb():
     ) as dst:
         dst.write(dummy_pred, 1)
 
-    # Upload an optical 3-band uint8 TIFF as reference
-    with open("data/samples/sample_georeferenced.tif", "rb") as f:
-        resp = client.post(f"/api/jobs/{job_id}/reference", files={"file": ("optical.tif", f, "image/tiff")})
+    with TestClient(app) as client:
+        # Upload an optical 3-band uint8 TIFF as reference
+        with open("data/samples/sample_georeferenced.tif", "rb") as f:
+            resp = client.post(f"/api/jobs/{job_id}/reference", files={"file": ("optical.tif", f, "image/tiff")})
 
     assert resp.status_code == 422
     assert "OPTICAL_IMAGE_NOT_DEM" in str(resp.json())
@@ -157,9 +162,9 @@ def test_validate_reference_guard_rejects_optical_rgb():
 
 def test_benchmark_lidar_gt_validation_metrics():
     """Verify ground truth LiDAR benchmark metrics calculation on the pre-bundled GAMUS pair."""
-    import rasterio
     import json
-    from depthwizard.eval.metrics import compute_elevation_metrics
+
+    import rasterio
 
     # Load authentic benchmark ground truth
     with rasterio.open("data/samples/benchmark_lidar_gt.tif") as ref_src:
