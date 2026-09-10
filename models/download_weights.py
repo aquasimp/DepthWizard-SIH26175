@@ -20,6 +20,12 @@ def download_weights() -> None:
                 import shutil
                 shutil.copyfile(TARGET_FILE, ft_file)
                 print(f"Initialized default fine-tune fallback at {ft_file}.")
+            best_file = Path(__file__).resolve().parent / "v1.1.0" / "best.pt"
+            best_file.parent.mkdir(parents=True, exist_ok=True)
+            if not best_file.exists():
+                import shutil
+                shutil.copyfile(TARGET_FILE, best_file)
+                print(f"Initialized default v1.1.0 checkpoint at {best_file}.")
             sys.exit(0)
         else:
             print(f"Weights file exists but size ({actual_size}) != expected ({EXPECTED_SIZE}). Re-downloading...")
@@ -46,6 +52,12 @@ def download_weights() -> None:
             import shutil
             shutil.copyfile(TARGET_FILE, ft_file)
             print(f"Initialized default fine-tune fallback at {ft_file}.")
+        best_file = Path(__file__).resolve().parent / "v1.1.0" / "best.pt"
+        best_file.parent.mkdir(parents=True, exist_ok=True)
+        if not best_file.exists():
+            import shutil
+            shutil.copyfile(TARGET_FILE, best_file)
+            print(f"Initialized default v1.1.0 checkpoint at {best_file}.")
     else:
         print(f"Warning: Downloaded size {actual_size} != expected {EXPECTED_SIZE}.", file=sys.stderr)
         sys.exit(1)

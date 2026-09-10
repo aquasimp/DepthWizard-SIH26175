@@ -15,6 +15,11 @@ if [ -f "${TARGET_FILE}" ]; then
             cp "${TARGET_FILE}" "${SCRIPT_DIR}/dav2s_gamus_ft_v1.pth"
             echo "Initialized default fine-tune fallback at ${SCRIPT_DIR}/dav2s_gamus_ft_v1.pth"
         fi
+        mkdir -p "${SCRIPT_DIR}/v1.1.0"
+        if [ ! -f "${SCRIPT_DIR}/v1.1.0/best.pt" ]; then
+            cp "${TARGET_FILE}" "${SCRIPT_DIR}/v1.1.0/best.pt"
+            echo "Initialized default fine-tune fallback at ${SCRIPT_DIR}/v1.1.0/best.pt"
+        fi
         exit 0
     else
         echo "Weights file exists but size (${ACTUAL_SIZE}) does not match expected (${EXPECTED_SIZE}). Re-downloading..."
@@ -36,6 +41,11 @@ if [ "${ACTUAL_SIZE}" -eq "${EXPECTED_SIZE}" ]; then
     if [ ! -f "${SCRIPT_DIR}/dav2s_gamus_ft_v1.pth" ]; then
         cp "${TARGET_FILE}" "${SCRIPT_DIR}/dav2s_gamus_ft_v1.pth"
         echo "Initialized default fine-tune fallback at ${SCRIPT_DIR}/dav2s_gamus_ft_v1.pth"
+    fi
+    mkdir -p "${SCRIPT_DIR}/v1.1.0"
+    if [ ! -f "${SCRIPT_DIR}/v1.1.0/best.pt" ]; then
+        cp "${TARGET_FILE}" "${SCRIPT_DIR}/v1.1.0/best.pt"
+        echo "Initialized default fine-tune fallback at ${SCRIPT_DIR}/v1.1.0/best.pt"
     fi
 else
     echo "Warning: File downloaded but size is ${ACTUAL_SIZE} (expected ${EXPECTED_SIZE})."
