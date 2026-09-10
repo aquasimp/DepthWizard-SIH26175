@@ -49,10 +49,14 @@ async def upload_reference_dsm(
         f.write(content)
 
     # Read reference raster
+    is_optical = False
     try:
         with rasterio.open(str(ref_path)) as ref_src:
-            ref_data = ref_src.read(1).astype(np.float32)
-            ref_nodata = ref_src.nodata
+            if ref_src.count >= 3 and ref_src.dtypes[0] == "uint8":
+                is_optical = True
+            else:
+                ref_data = ref_src.read(1).astype(np.float32)
+                ref_nodata = ref_src.nodata
     except Exception as e:
         ref_path.unlink(missing_ok=True)
         raise HTTPException(
@@ -60,8 +64,19 @@ async def upload_reference_dsm(
             detail={"error_code": "CORRUPT_REFERENCE", "detail": f"Cannot open reference DSM: {e}"},
         ) from e
 
-    # Read predicted DSM
+    if is_optical:
+        ref_path.unlink(missing_ok=True)
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail={
+                "error_code": "OPTICAL_IMAGE_NOT_DEM",
+                "detail": "Uploaded reference raster has 3 optical uint8 bands (RGB imagery), not a 1-band digital elevation model (DEM/LiDAR). Please upload a 1-band GeoTIFF containing metric elevation values.",
+            },
+        )
+
+    # Read predicted DSM or nDSM based on reference base elevation
     dsm_path = job_dir / "dsm.tif"
+    ndsm_path = job_dir / "ndsm.tif"
     if not dsm_path.exists():
         dsm_path = job_dir / "rdsm.tif"
 
@@ -70,6 +85,20 @@ async def upload_reference_dsm(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Predicted DSM not found for this job yet.",
         )
+
+    # If both absolute DSM and normalized nDSM exist, select the one that aligns with reference datum
+    if ndsm_path.exists() and dsm_path.name == "dsm.tif":
+        ref_valid = ref_data[np.isfinite(ref_data) & (ref_data != -9999.0)]
+        if ref_valid.size > 0 and ref_valid.min() >= -0.5:
+            try:
+                with rasterio.open(str(dsm_path)) as dsm_src, rasterio.open(str(ndsm_path)) as ndsm_src:
+                    d_mean = float(np.nanmean(dsm_src.read(1)))
+                    n_mean = float(np.nanmean(ndsm_src.read(1)))
+                    r_mean = float(np.nanmean(ref_valid))
+                    if abs(n_mean - r_mean) < abs(d_mean - r_mean):
+                        dsm_path = ndsm_path
+            except Exception as e:
+                logger.warning(f"Datum alignment comparison failed, defaulting to dsm.tif: {e}")
 
     with rasterio.open(str(dsm_path)) as pred_src:
         pred_data = pred_src.read(1).astype(np.float32)
@@ -98,6 +127,26 @@ async def upload_reference_dsm(
     )
     if ref_nodata is not None:
         mask = mask & (~np.isclose(aligned_ref, ref_nodata))
+
+    # If predicted DSM is a relative uncalibrated heightmap (Path D, e.g. rdsm.tif with values in [0, 1])
+    # fit a least-squares affine scale & shift to ground truth metric elevations.
+    is_relative = (dsm_path.name == "rdsm.tif")
+    if is_relative and mask.sum() > 10:
+        p_valid = pred_data[mask]
+        r_valid = aligned_ref[mask]
+        p_span = float(np.percentile(p_valid, 99) - np.percentile(p_valid, 1))
+        r_span = float(np.percentile(r_valid, 99) - np.percentile(r_valid, 1))
+        if p_span > 1e-4 and r_span > 1.0:
+            A = np.vstack([p_valid, np.ones_like(p_valid)]).T
+            scale, shift = np.linalg.lstsq(A, r_valid, rcond=None)[0]
+            if scale > 0:
+                pred_data[mask] = (pred_data[mask] * scale + shift).astype(np.float32)
+                shift_info["relative_calibration"] = {
+                    "applied": True,
+                    "scale": round(float(scale), 4),
+                    "shift_m": round(float(shift), 4),
+                    "note": "Path D relative disparity scaled to ground truth elevation datum",
+                }
 
     metrics_abs = compute_elevation_metrics(pred_data, aligned_ref, mask=mask)
 

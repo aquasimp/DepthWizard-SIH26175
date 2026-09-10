@@ -44,11 +44,20 @@ interface SampleTile {
 
 const SAMPLE_TILES: SampleTile[] = [
   {
+    name: 'Washington D.C. LiDAR Benchmark',
+    filename: 'benchmark_optical.tif',
+    path: '/samples/benchmark_optical.tif',
+    gsd: '0.33',
+    desc: 'GAMUS test tile with paired 0.33m USGS LiDAR ground truth GeoTIFF (WGS84 UTM 18N)',
+    location: 'District 20/38, Washington D.C.',
+    type: 'Benchmark Pair (Optical + LiDAR GT)',
+  },
+  {
     name: 'Washington D.C. Urban Core',
     filename: 'sample_georeferenced.tif',
     path: '/samples/sample_georeferenced.tif',
     gsd: '0.33',
-    desc: 'USGS/GAMUS High-density commercial & federal district (GeoTIFF · WGS84 UTM 18N)',
+    desc: 'High-density commercial & federal district (GeoTIFF · WGS84 UTM 18N)',
     location: 'Washington D.C., USA',
     type: 'GeoTIFF (Calibrated)',
   },

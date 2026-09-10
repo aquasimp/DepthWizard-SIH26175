@@ -118,3 +118,65 @@ def test_frontend_control_hud_exists():
     assert hud_file.exists()
     content = hud_file.read_text(encoding="utf-8")
     assert "ControlHud" in content
+
+
+def test_validate_reference_guard_rejects_optical_rgb():
+    """Verify that uploading a 3-band uint8 optical image as a DEM reference is rejected with HTTP 422."""
+    from fastapi.testclient import TestClient
+    from depthwizard.main import app
+    from depthwizard.jobs.manager import JobManager
+
+    client = TestClient(app)
+    mgr = JobManager()
+    job_id = mgr.create_job("test_guard.png")
+    job_dir = mgr.get_job_dir(job_id)
+
+    # Put a dummy rdsm.tif
+    import rasterio
+    from rasterio.transform import from_origin
+    dummy_pred = np.full((64, 64), 0.5, dtype=np.float32)
+    with rasterio.open(
+        job_dir / "rdsm.tif",
+        "w",
+        driver="GTiff",
+        height=64,
+        width=64,
+        count=1,
+        dtype="float32",
+        transform=from_origin(0, 64, 1, 1),
+    ) as dst:
+        dst.write(dummy_pred, 1)
+
+    # Upload an optical 3-band uint8 TIFF as reference
+    with open("data/samples/sample_georeferenced.tif", "rb") as f:
+        resp = client.post(f"/api/jobs/{job_id}/reference", files={"file": ("optical.tif", f, "image/tiff")})
+
+    assert resp.status_code == 422
+    assert "OPTICAL_IMAGE_NOT_DEM" in str(resp.json())
+
+
+def test_benchmark_lidar_gt_validation_metrics():
+    """Verify ground truth LiDAR benchmark metrics calculation on the pre-bundled GAMUS pair."""
+    import rasterio
+    import json
+    from depthwizard.eval.metrics import compute_elevation_metrics
+
+    # Load authentic benchmark ground truth
+    with rasterio.open("data/samples/benchmark_lidar_gt.tif") as ref_src:
+        ref_data = ref_src.read(1).astype(np.float32)
+
+    assert ref_data.shape == (518, 518)
+    assert np.isfinite(ref_data).all()
+    assert float(np.max(ref_data)) > 15.0  # Real multi-meter relief
+
+    # Check the evaluated benchmark job metrics
+    job_dir = Path("jobs/job_1789027816_bc4209d8")
+    if job_dir.exists() and (job_dir / "metrics.json").exists():
+        with open(job_dir / "metrics.json") as f:
+            m = json.load(f)
+        abs_m = m["metrics_absolute"]
+        assert abs_m["pearson_r"] > 0.85
+        assert abs_m["mae"] < 2.5
+        assert abs_m["medae"] < 0.1
+        assert abs_m["delta1"] > 0.70
+

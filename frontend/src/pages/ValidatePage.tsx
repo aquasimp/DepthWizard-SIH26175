@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
+  AlertTriangle,
   ArrowLeft,
   CheckCircle2,
   Download,
@@ -60,6 +61,7 @@ export const ValidatePage: React.FC<ValidatePageProps> = ({
   onNavigateStatus,
 }) => {
   const [metrics, setMetrics] = useState<MetricsData | null>(null);
+  const [jobStatus, setJobStatus] = useState<any>(null);
   const [refFile, setRefFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -79,6 +81,13 @@ export const ValidatePage: React.FC<ValidatePageProps> = ({
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
         if (data) setMetrics(data);
+      })
+      .catch(() => {});
+
+    fetch(`/api/jobs/${jobId}/status`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (data) setJobStatus(data);
       })
       .catch(() => {});
   }, [jobId]);
@@ -114,16 +123,13 @@ export const ValidatePage: React.FC<ValidatePageProps> = ({
     setIsUploading(true);
     setError(null);
     try {
-      const resFile = await fetch(`/api/jobs/${jobId}/artifacts/dsm.tif`).catch(() => null);
-      let blob: Blob;
-      const filename = 'lidar_reference.tif';
-      if (resFile && resFile.ok) {
-        blob = await resFile.blob();
-      } else {
-        const fallback = await fetch('/samples/sample_georeferenced.tif');
-        if (!fallback.ok) throw new Error('Could not load sample reference LiDAR DSM.');
-        blob = await fallback.blob();
+      // Load bundled LiDAR ground truth elevation GeoTIFF (GAMUS / USGS 0.33m GSD)
+      const resp = await fetch('/samples/benchmark_lidar_gt.tif');
+      if (!resp.ok) {
+        throw new Error('Could not load pre-bundled LiDAR ground truth benchmark raster (/samples/benchmark_lidar_gt.tif).');
       }
+      const blob = await resp.blob();
+      const filename = 'benchmark_lidar_gt.tif';
       const file = new File([blob], filename, { type: 'image/tiff' });
       setRefFile(file);
 
@@ -294,6 +300,21 @@ export const ValidatePage: React.FC<ValidatePageProps> = ({
           </div>
         )}
 
+        {/* Path D Relative Advisory Banner if applicable */}
+        {jobStatus?.metadata?.calibration_path === 'PATH_D_RELATIVE' && (
+          <div className="p-3.5 rounded-lg border border-amber-500/40 bg-[#161208] text-xs font-mono text-amber-300 flex items-start gap-2.5">
+            <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+            <div className="space-y-1">
+              <div className="font-bold text-amber-200 uppercase tracking-wide">
+                Relative Relief Mode (Path D Active)
+              </div>
+              <p className="text-[11px] text-amber-300/90 leading-relaxed">
+                This job was generated from unreferenced optical imagery without embedded coordinate tags. Elevation values are normalized relative units [0.0, 1.0]. Benchmarking against ground truth applies standard affine disparity-to-height scale fitting. For absolute metric photogrammetric verification (sub-meter vertical accuracy), load the <strong>Washington D.C. LiDAR Benchmark</strong> preset on the upload console.
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* Reference Upload Box */}
         <div className="mission-panel rounded-xl border border-[#1e315b] p-5 flex flex-col gap-3">
           <div className="flex items-center justify-between border-b border-[#1e315b]/60 pb-2">
@@ -325,9 +346,9 @@ export const ValidatePage: React.FC<ValidatePageProps> = ({
               onClick={handleLoadSampleRef}
               disabled={isUploading}
               className="px-4 py-2 rounded-lg bg-[#09152b] hover:bg-[#11244a] text-[#00c2cb] hover:text-white border border-[#00c2cb]/40 font-mono text-xs font-bold transition cursor-pointer flex items-center gap-1.5 shrink-0"
-              title="1-click benchmark using pre-loaded LiDAR reference"
+              title="1-click benchmark using bundled GAMUS/USGS 0.33m LiDAR Ground Truth reference (EPSG:32618)"
             >
-              <span>🎯 1-CLICK TEST BENCHMARK WITH GROUND TRUTH</span>
+              <span>🎯 1-CLICK TEST BENCHMARK (GAMUS LiDAR GT)</span>
             </button>
           </div>
 
