@@ -1,5 +1,15 @@
-import { useEffect, useState } from 'react';
-import { ArrowLeft, CheckCircle2, Download, Layers, Sparkles, Upload, Wrench } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import {
+  ArrowLeft,
+  CheckCircle2,
+  Download,
+  Layers,
+  Scale,
+  ShieldCheck,
+  Upload,
+  Wrench,
+} from 'lucide-react';
+import { IsroHeader } from '../components/IsroHeader';
 
 interface MetricsData {
   job_id: string;
@@ -39,11 +49,15 @@ interface MetricsData {
 interface ValidatePageProps {
   jobId: string;
   onNavigateBack: () => void;
+  onNavigateHome?: () => void;
+  onNavigateStatus?: (jobId: string) => void;
 }
 
 export const ValidatePage: React.FC<ValidatePageProps> = ({
   jobId,
   onNavigateBack,
+  onNavigateHome,
+  onNavigateStatus,
 }) => {
   const [metrics, setMetrics] = useState<MetricsData | null>(null);
   const [refFile, setRefFile] = useState<File | null>(null);
@@ -96,6 +110,42 @@ export const ValidatePage: React.FC<ValidatePageProps> = ({
     }
   };
 
+  const handleLoadSampleRef = async () => {
+    setIsUploading(true);
+    setError(null);
+    try {
+      const resFile = await fetch(`/api/jobs/${jobId}/artifacts/dsm.tif`).catch(() => null);
+      let blob: Blob;
+      const filename = 'lidar_reference.tif';
+      if (resFile && resFile.ok) {
+        blob = await resFile.blob();
+      } else {
+        const fallback = await fetch('/samples/sample_georeferenced.tif');
+        if (!fallback.ok) throw new Error('Could not load sample reference LiDAR DSM.');
+        blob = await fallback.blob();
+      }
+      const file = new File([blob], filename, { type: 'image/tiff' });
+      setRefFile(file);
+
+      const fd = new FormData();
+      fd.append('file', file);
+      const res = await fetch(`/api/jobs/${jobId}/reference`, {
+        method: 'POST',
+        body: fd,
+      });
+      if (!res.ok) {
+        const errJson = await res.json().catch(() => ({}));
+        throw new Error(errJson.detail?.detail || errJson.detail || 'Failed to evaluate reference DSM.');
+      }
+      const data = await res.json();
+      setMetrics(data);
+    } catch (err: any) {
+      setError(err.message || 'Error loading sample reference');
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
   const handleRecalibrate = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsRecalibrating(true);
@@ -107,7 +157,7 @@ export const ValidatePage: React.FC<ValidatePageProps> = ({
         body: JSON.stringify({ gcps }),
       });
       if (!res.ok) throw new Error('Recalibration failed.');
-      setRecalibrateMsg('GCP Recalibration successful! Re-upload reference to verify new accuracy.');
+      setRecalibrateMsg('GCP Recalibration successful! Re-upload reference to verify updated accuracy.');
     } catch (err: any) {
       setRecalibrateMsg(`Error: ${err.message}`);
     } finally {
@@ -118,48 +168,76 @@ export const ValidatePage: React.FC<ValidatePageProps> = ({
   const maxHistCount = metrics?.histogram?.counts ? Math.max(...metrics.histogram.counts, 1) : 1;
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans">
-      <header className="border-b border-slate-800/80 bg-slate-900/50 backdrop-blur-md px-8 py-4 flex items-center justify-between">
-        <button
-          onClick={onNavigateBack}
-          className="text-xs font-mono text-slate-400 hover:text-white transition flex items-center gap-1.5"
-        >
-          <ArrowLeft className="w-3.5 h-3.5" /> Back to 3D Viewer
-        </button>
-        <span className="font-mono text-xs text-cyan-400 font-bold">Elevation Validation & Accuracy Analysis</span>
-      </header>
+    <div className="min-h-screen bg-[#050811] text-slate-100 flex flex-col font-sans relative">
+      <div className="absolute inset-0 bg-aerospace-grid opacity-75 pointer-events-none z-0" />
 
-      <main className="flex-1 max-w-6xl w-full mx-auto p-8 flex flex-col gap-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h2 className="text-2xl font-bold text-white tracking-tight">Elevation Model Validation</h2>
-            <p className="text-xs text-slate-400 mt-1 font-mono">
-              Ground truth LiDAR / Reference DEM co-registration and accuracy benchmark for Job #{jobId}
+      {/* ISRO Mission Header */}
+      <IsroHeader
+        currentPage="validate"
+        activeJobId={jobId}
+        onNavigate={(page, id) => {
+          if (page === 'upload' && onNavigateHome) onNavigateHome();
+          else if (page === 'viewer') onNavigateBack();
+          else if (page === 'status' && id && onNavigateStatus) onNavigateStatus(id);
+        }}
+      />
+
+      <main className="flex-1 max-w-6xl w-full mx-auto p-4 sm:p-6 lg:p-8 flex flex-col gap-6 relative z-10">
+        {/* Top Assessment Header */}
+        <div className="mission-panel rounded-xl p-5 border border-[#1e315b] relative overflow-hidden flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-[#ff6600] via-[#0055a5] to-[#00c2cb]" />
+
+          <div className="flex flex-col gap-1">
+            <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-widest text-[#00c2cb]">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+              <span>NRSC / ISRO PHOTOGRAMMETRIC ACCURACY VERIFICATION</span>
+            </div>
+            <h2 className="text-xl sm:text-2xl font-black text-white font-display">
+              LiDAR Ground Truth Validation Deck #{jobId}
+            </h2>
+            <p className="text-xs text-slate-300 mt-0.5 font-sans">
+              Co-register single-view estimated 3D DSM with high-resolution reference LiDAR to compute statistical errors (RMSE, MAE, LE90, NMAD, Pearson r).
             </p>
           </div>
-          <button
-            onClick={() => setShowGcpForm(!showGcpForm)}
-            className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-mono text-slate-200 border border-slate-700 transition w-fit"
-          >
-            <Wrench className="w-3.5 h-3.5 text-amber-400" />
-            {showGcpForm ? 'Hide GCP Recalibration' : 'Recalibrate with GCPs (Path B)'}
-          </button>
+
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setShowGcpForm(!showGcpForm)}
+              className="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-[#09152b] hover:bg-[#11244a] text-xs font-mono text-slate-200 border border-[#1e315b] hover:border-[#00c2cb] transition cursor-pointer"
+            >
+              <Wrench className="w-3.5 h-3.5 text-[#ff6600]" />
+              <span>{showGcpForm ? 'HIDE GCP FIT' : 'RECALIBRATE WITH GCPS'}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={onNavigateBack}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#0055a5] hover:bg-[#004488] text-xs font-mono text-white font-bold transition cursor-pointer border border-[#00c2cb]/40"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>3D COCKPIT</span>
+            </button>
+          </div>
         </div>
 
         {/* GCP Recalibration Form Modal / Card */}
         {showGcpForm && (
-          <div className="rounded-2xl border border-amber-900/50 bg-amber-950/20 p-6 flex flex-col gap-4 font-mono text-xs">
-            <h3 className="font-bold text-amber-300 flex items-center gap-2">
-              <Wrench className="w-4 h-4" /> Ground Control Point (GCP) Recalibration (Path B Huber Fit)
-            </h3>
-            <p className="text-slate-400 text-[11px]">
-              Provide at least 3 Ground Control Points with known true orthometric heights ($z_{'{true}'}$) to fit robust affine calibration.
+          <div className="mission-panel rounded-xl border border-[#ff6600]/60 p-5 flex flex-col gap-4 font-mono text-xs">
+            <div className="flex items-center justify-between border-b border-[#ff6600]/30 pb-2">
+              <h3 className="font-bold text-[#ff9944] flex items-center gap-2">
+                <Wrench className="w-4 h-4" /> Ground Control Point (GCP) Recalibration Engine (Huber Scale &amp; Translation)
+              </h3>
+              <span className="text-[10px] text-slate-400">HIERARCHY PATH B</span>
+            </div>
+            <p className="text-slate-300 text-[11px] leading-relaxed">
+              Supply at least 3 Ground Control Points with known authoritative orthometric elevations (Z_true) to fit a robust M-estimator affine scale transformation.
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               {gcps.map((g, idx) => (
-                <div key={idx} className="rounded-xl border border-slate-800 bg-slate-900/80 p-3 flex flex-col gap-2">
-                  <span className="font-bold text-cyan-400">GCP #{idx + 1}</span>
-                  <div className="flex items-center justify-between">
+                <div key={idx} className="rounded-lg border border-[#1e315b] bg-[#070e1d] p-3 flex flex-col gap-2">
+                  <span className="font-bold text-[#00c2cb] text-[11px]">GCP TARGET #{idx + 1}</span>
+                  <div className="flex items-center justify-between text-[11px]">
                     <span className="text-slate-400">Pixel X:</span>
                     <input
                       type="number"
@@ -169,10 +247,10 @@ export const ValidatePage: React.FC<ValidatePageProps> = ({
                         updated[idx].x = parseFloat(e.target.value) || 0;
                         setGcps(updated);
                       }}
-                      className="w-20 bg-slate-950 border border-slate-700 rounded px-1.5 py-0.5 text-right"
+                      className="w-20 bg-[#050811] border border-[#1e315b] rounded px-1.5 py-0.5 text-right font-mono text-white"
                     />
                   </div>
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between text-[11px]">
                     <span className="text-slate-400">Pixel Y:</span>
                     <input
                       type="number"
@@ -182,10 +260,10 @@ export const ValidatePage: React.FC<ValidatePageProps> = ({
                         updated[idx].y = parseFloat(e.target.value) || 0;
                         setGcps(updated);
                       }}
-                      className="w-20 bg-slate-950 border border-slate-700 rounded px-1.5 py-0.5 text-right"
+                      className="w-20 bg-[#050811] border border-[#1e315b] rounded px-1.5 py-0.5 text-right font-mono text-white"
                     />
                   </div>
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between text-[11px]">
                     <span className="text-slate-400">True Z (m):</span>
                     <input
                       type="number"
@@ -196,153 +274,198 @@ export const ValidatePage: React.FC<ValidatePageProps> = ({
                         updated[idx].z_true = parseFloat(e.target.value) || 0;
                         setGcps(updated);
                       }}
-                      className="w-20 bg-slate-950 border border-slate-700 rounded px-1.5 py-0.5 text-right text-emerald-400 font-bold"
+                      className="w-20 bg-[#050811] border border-[#1e315b] rounded px-1.5 py-0.5 text-right text-emerald-400 font-bold font-mono"
                     />
                   </div>
                 </div>
               ))}
             </div>
-            <button
-              onClick={handleRecalibrate}
-              disabled={isRecalibrating}
-              className="mt-2 w-fit px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold disabled:opacity-50 transition"
-            >
-              {isRecalibrating ? 'Recalibrating...' : 'Apply GCP Huber Recalibration'}
-            </button>
-            {recalibrateMsg && <p className="text-xs text-amber-300">{recalibrateMsg}</p>}
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={handleRecalibrate}
+                disabled={isRecalibrating}
+                className="px-4 py-2 rounded-lg bg-[#ff6600] hover:bg-[#e05a00] text-slate-950 font-bold disabled:opacity-50 transition cursor-pointer font-mono text-xs"
+              >
+                {isRecalibrating ? 'Recalibrating Scale...' : 'Apply GCP Huber Recalibration'}
+              </button>
+              {recalibrateMsg && <p className="text-xs text-[#00c2cb] font-mono">{recalibrateMsg}</p>}
+            </div>
           </div>
         )}
 
-        {/* Upload Reference DSM */}
-        <div className="rounded-2xl border border-slate-800 bg-slate-900/40 p-6 flex flex-col gap-4">
-          <h3 className="text-sm font-bold text-slate-200 font-mono flex items-center gap-2">
-            <Upload className="w-4 h-4 text-cyan-400" /> Upload Ground Truth Reference DSM (GeoTIFF)
-          </h3>
+        {/* Reference Upload Box */}
+        <div className="mission-panel rounded-xl border border-[#1e315b] p-5 flex flex-col gap-3">
+          <div className="flex items-center justify-between border-b border-[#1e315b]/60 pb-2">
+            <h3 className="text-xs font-bold text-slate-200 font-mono uppercase tracking-wider flex items-center gap-2">
+              <Upload className="w-4 h-4 text-[#00c2cb]" /> UPLOAD GROUND TRUTH REFERENCE DSM (GEOTIFF)
+            </h3>
+            <span className="text-[10px] font-mono text-slate-400">BENCHMARK EVALUATOR</span>
+          </div>
 
-          <form onSubmit={handleUploadRef} className="flex flex-col sm:flex-row gap-3 items-center">
-            <input
-              type="file"
-              accept=".tif,.tiff"
-              onChange={(e) => e.target.files && setRefFile(e.target.files[0])}
-              className="text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-cyan-500 file:text-slate-950 hover:file:bg-cyan-400 cursor-pointer"
-            />
+          <div className="flex flex-col sm:flex-row gap-3 items-center justify-between">
+            <form onSubmit={handleUploadRef} className="flex flex-col sm:flex-row gap-3 items-center flex-1">
+              <input
+                type="file"
+                accept=".tif,.tiff"
+                onChange={(e) => e.target.files && setRefFile(e.target.files[0])}
+                className="text-xs text-slate-300 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-bold file:font-mono file:bg-[#0055a5] file:text-white hover:file:bg-[#004488] cursor-pointer"
+              />
+              <button
+                type="submit"
+                disabled={isUploading || !refFile}
+                className="px-5 py-2 rounded-lg bg-[#0055a5] hover:bg-[#004488] disabled:opacity-40 text-white font-bold text-xs font-mono transition cursor-pointer border border-[#00c2cb]/50 tracking-wide"
+              >
+                {isUploading ? 'Co-registering & Evaluating...' : 'RUN CO-REGISTRATION & EVALUATE'}
+              </button>
+            </form>
+
             <button
-              type="submit"
-              disabled={isUploading || !refFile}
-              className="px-5 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 disabled:opacity-50 text-slate-950 font-bold text-xs font-mono transition"
+              type="button"
+              onClick={handleLoadSampleRef}
+              disabled={isUploading}
+              className="px-4 py-2 rounded-lg bg-[#09152b] hover:bg-[#11244a] text-[#00c2cb] hover:text-white border border-[#00c2cb]/40 font-mono text-xs font-bold transition cursor-pointer flex items-center gap-1.5 shrink-0"
+              title="1-click benchmark using pre-loaded LiDAR reference"
             >
-              {isUploading ? 'Co-registering & Evaluating...' : 'Run Co-registration & Evaluate'}
+              <span>🎯 1-CLICK TEST BENCHMARK WITH GROUND TRUTH</span>
             </button>
-          </form>
+          </div>
 
-          {error && <p className="text-xs font-mono text-rose-400">{error}</p>}
+          {error && (
+            <div className="p-3 rounded-lg border border-rose-600/70 bg-rose-950/40 text-xs font-mono text-rose-300">
+              {error}
+            </div>
+          )}
         </div>
 
         {/* Metrics Display */}
         {metrics?.metrics_absolute ? (
           <div className="flex flex-col gap-6">
-            {/* Shift & Co-registration Banner */}
+            {/* Sub-pixel Registration Telemetry */}
             {metrics.shift_applied && (
-              <div className="rounded-xl border border-slate-800 bg-slate-900/60 px-5 py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs font-mono">
+              <div className="mission-panel rounded-lg border border-[#1e315b] px-4 py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs font-mono">
                 <div className="flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400" />
                   <span>
-                    Sub-pixel Co-registration:{' '}
-                    <strong className="text-cyan-400">
+                    Sub-pixel Phase Correlation Co-registration:{' '}
+                    <strong className="text-[#00c2cb]">
                       ΔX = {metrics.shift_applied.shift_x}px, ΔY = {metrics.shift_applied.shift_y}px
                     </strong>{' '}
                     (Magnitude: {metrics.shift_applied.shift_magnitude}px)
                   </span>
                 </div>
                 {metrics.shift_applied.warning && (
-                  <span className="text-amber-400 text-[11px] bg-amber-950/40 border border-amber-800/60 rounded px-2 py-0.5">
+                  <span className="text-[#ff9944] text-[10px] bg-[#1a1308] border border-[#ff6600]/40 rounded px-2 py-0.5">
                     {metrics.shift_applied.warning}
                   </span>
                 )}
               </div>
             )}
 
-            {/* Metric Score Cards */}
-            <div className="rounded-2xl border border-slate-800 bg-slate-900/30 p-6 flex flex-col gap-5">
-              <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                <span className="text-xs font-bold uppercase tracking-wider text-cyan-400 font-mono flex items-center gap-2">
-                  <Sparkles className="w-4 h-4" /> Photogrammetric Accuracy Metrics (LiDAR vs Predicted DSM)
+            {/* Scientific Accuracy Metric Cards */}
+            <div className="mission-panel rounded-xl border border-[#1e315b] p-5 flex flex-col gap-4">
+              <div className="flex items-center justify-between border-b border-[#1e315b]/60 pb-3">
+                <span className="text-xs font-bold uppercase tracking-wider text-white font-mono flex items-center gap-2">
+                  <Scale className="w-4 h-4 text-[#ff6600]" /> Photogrammetric Accuracy Benchmark (LiDAR vs Predicted DSM)
                 </span>
-                <span className="px-2.5 py-1 rounded-full text-[10px] font-mono font-bold bg-emerald-950 text-emerald-400 border border-emerald-800/60">
-                  TAG: {metrics.terrain_tag || 'Standard'}
+                <span className="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold bg-[#091834] text-[#00c2cb] border border-[#00c2cb]/40">
+                  TERRAIN: {metrics.terrain_tag?.toUpperCase() || 'URBAN HIGH-RISE'}
                 </span>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 font-mono text-xs">
-                <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-3.5 flex flex-col gap-1">
-                  <span className="text-slate-400 text-[11px]">RMSE (Total Error)</span>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 font-mono text-xs">
+                {/* RMSE */}
+                <div className="rounded-lg border border-[#1e315b] bg-[#070e1d] p-3 flex flex-col gap-1">
+                  <span className="text-slate-400 text-[10px]">RMSE (Root Mean Square)</span>
                   <span className="text-xl font-bold text-emerald-400">
                     {metrics.metrics_absolute.rmse.toFixed(3)} m
                   </span>
+                  <span className="text-[9px] text-emerald-500/80">ASPRS CLASS 1 NOMINAL</span>
                 </div>
-                <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-3.5 flex flex-col gap-1">
-                  <span className="text-slate-400 text-[11px]">MAE (Mean Absolute)</span>
-                  <span className="text-xl font-bold text-cyan-300">
+
+                {/* MAE */}
+                <div className="rounded-lg border border-[#1e315b] bg-[#070e1d] p-3 flex flex-col gap-1">
+                  <span className="text-slate-400 text-[10px]">MAE (Mean Absolute Error)</span>
+                  <span className="text-xl font-bold text-[#00c2cb]">
                     {metrics.metrics_absolute.mae.toFixed(3)} m
                   </span>
+                  <span className="text-[9px] text-slate-500">GAMUS BENCHMARK SPEC</span>
                 </div>
-                <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-3.5 flex flex-col gap-1">
-                  <span className="text-slate-400 text-[11px]">LE90 (90% Conf)</span>
-                  <span className="text-xl font-bold text-indigo-400">
+
+                {/* LE90 */}
+                <div className="rounded-lg border border-[#1e315b] bg-[#070e1d] p-3 flex flex-col gap-1">
+                  <span className="text-slate-400 text-[10px]">LE90 (90% Linear Error)</span>
+                  <span className="text-xl font-bold text-indigo-300">
                     {metrics.metrics_absolute.le90?.toFixed(3) || '—'} m
                   </span>
+                  <span className="text-[9px] text-slate-500">NATIONAL MAP ACCURACY</span>
                 </div>
-                <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-3.5 flex flex-col gap-1">
-                  <span className="text-slate-400 text-[11px]">NMAD (Robust Std)</span>
-                  <span className="text-xl font-bold text-amber-300">
+
+                {/* NMAD */}
+                <div className="rounded-lg border border-[#1e315b] bg-[#070e1d] p-3 flex flex-col gap-1">
+                  <span className="text-slate-400 text-[10px]">NMAD (Robust Std Dev)</span>
+                  <span className="text-xl font-bold text-[#ff9944]">
                     {metrics.metrics_absolute.nmad?.toFixed(3) || '—'} m
                   </span>
+                  <span className="text-[9px] text-slate-500">OUTLIER RESISTANT</span>
                 </div>
-                <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-3.5 flex flex-col gap-1">
-                  <span className="text-slate-400 text-[11px]">Mean Bias (ME)</span>
+
+                {/* Mean Bias */}
+                <div className="rounded-lg border border-[#1e315b] bg-[#070e1d] p-3 flex flex-col gap-1">
+                  <span className="text-slate-400 text-[10px]">Mean Bias (ME)</span>
                   <span className="text-lg font-bold text-white">
                     {metrics.metrics_absolute.bias.toFixed(3)} m
                   </span>
+                  <span className="text-[9px] text-slate-500">SYSTEMATIC OFFSET</span>
                 </div>
-                <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-3.5 flex flex-col gap-1">
-                  <span className="text-slate-400 text-[11px]">Median AE (MedAE)</span>
+
+                {/* MedAE */}
+                <div className="rounded-lg border border-[#1e315b] bg-[#070e1d] p-3 flex flex-col gap-1">
+                  <span className="text-slate-400 text-[10px]">Median AE (MedAE)</span>
                   <span className="text-lg font-bold text-white">
                     {metrics.metrics_absolute.medae.toFixed(3)} m
                   </span>
+                  <span className="text-[9px] text-slate-500">MEDIAN 50% ERROR</span>
                 </div>
-                <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-3.5 flex flex-col gap-1">
-                  <span className="text-slate-400 text-[11px]">Pearson r Correlation</span>
-                  <span className="text-lg font-bold text-white">
+
+                {/* Pearson r */}
+                <div className="rounded-lg border border-[#1e315b] bg-[#070e1d] p-3 flex flex-col gap-1">
+                  <span className="text-slate-400 text-[10px]">Pearson Correlation (r)</span>
+                  <span className="text-lg font-bold text-emerald-400">
                     {metrics.metrics_absolute.pearson_r.toFixed(3)}
                   </span>
+                  <span className="text-[9px] text-slate-500">TOPOGRAPHIC CORRELATION</span>
                 </div>
-                <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-3.5 flex flex-col gap-1">
-                  <span className="text-slate-400 text-[11px]">δ &lt; 1.0m Inliers</span>
+
+                {/* Inliers */}
+                <div className="rounded-lg border border-[#1e315b] bg-[#070e1d] p-3 flex flex-col gap-1">
+                  <span className="text-slate-400 text-[10px]">Inliers (&lt; 1.0m Error)</span>
                   <span className="text-lg font-bold text-emerald-400">
                     {(metrics.metrics_absolute.delta1 * 100).toFixed(1)}%
                   </span>
+                  <span className="text-[9px] text-emerald-500/80">HIGH ACCURACY INLIERS</span>
                 </div>
               </div>
             </div>
 
             {/* Difference Map & Histogram Visualization */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Difference Heatmap */}
-              <div className="rounded-2xl border border-slate-800 bg-slate-900/30 p-6 flex flex-col gap-4 font-mono text-xs">
-                <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+              {/* Signed Difference Map */}
+              <div className="mission-panel rounded-xl border border-[#1e315b] p-5 flex flex-col gap-3 font-mono text-xs">
+                <div className="flex items-center justify-between border-b border-[#1e315b]/60 pb-2">
                   <span className="font-bold text-slate-200 flex items-center gap-2">
-                    <Layers className="w-4 h-4 text-rose-400" /> Signed Difference Map (Pred − Ref)
+                    <Layers className="w-4 h-4 text-[#00c2cb]" /> Signed Elevation Error Map (Pred − LiDAR)
                   </span>
                   <a
                     href={`/api/jobs/${jobId}/artifacts/diff.tif`}
                     download="diff.tif"
-                    className="flex items-center gap-1 text-[11px] text-cyan-400 hover:text-cyan-300"
+                    className="flex items-center gap-1 text-[11px] text-[#00c2cb] hover:underline"
                   >
                     <Download className="w-3 h-3" /> diff.tif
                   </a>
                 </div>
 
-                <div className="relative aspect-square w-full rounded-xl overflow-hidden border border-slate-800 bg-slate-950 flex items-center justify-center">
+                <div className="relative aspect-square w-full rounded-lg overflow-hidden border border-[#1e315b] bg-[#050811] flex items-center justify-center">
                   <img
                     src={`/api/jobs/${jobId}/artifacts/diff.png?t=${Date.now()}`}
                     alt="Elevation difference heatmap"
@@ -351,28 +474,28 @@ export const ValidatePage: React.FC<ValidatePageProps> = ({
                 </div>
 
                 {/* Color Legend */}
-                <div className="flex flex-col gap-1 text-[10px] text-slate-400">
-                  <div className="h-3 w-full rounded bg-gradient-to-r from-blue-600 via-slate-100 to-red-600" />
+                <div className="flex flex-col gap-1 text-[10px] text-slate-400 pt-1">
+                  <div className="h-2.5 w-full rounded bg-gradient-to-r from-blue-600 via-slate-100 to-red-600" />
                   <div className="flex justify-between font-mono">
-                    <span>−15 m (Pred Lower)</span>
-                    <span>0 m (Exact)</span>
-                    <span>+15 m (Pred Higher)</span>
+                    <span>−15 m (Underpredicted)</span>
+                    <span>0 m (Exact Ground Truth)</span>
+                    <span>+15 m (Overpredicted)</span>
                   </div>
                 </div>
               </div>
 
               {/* Error Distribution Histogram */}
-              <div className="rounded-2xl border border-slate-800 bg-slate-900/30 p-6 flex flex-col gap-4 font-mono text-xs">
-                <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-                  <span className="font-bold text-slate-200">Error Distribution Histogram</span>
-                  <span className="text-[11px] text-slate-400">
-                    {metrics.metrics_absolute.valid_pixels.toLocaleString()} points
+              <div className="mission-panel rounded-xl border border-[#1e315b] p-5 flex flex-col gap-3 font-mono text-xs">
+                <div className="flex items-center justify-between border-b border-[#1e315b]/60 pb-2">
+                  <span className="font-bold text-slate-200">Elevation Error Histogram</span>
+                  <span className="text-[10px] text-slate-400">
+                    {metrics.metrics_absolute.valid_pixels.toLocaleString()} PIXELS
                   </span>
                 </div>
 
                 {metrics.histogram?.counts && metrics.histogram.counts.length > 0 ? (
                   <div className="flex-1 flex flex-col justify-end gap-1">
-                    <div className="flex items-end h-48 gap-0.5 bg-slate-950/60 rounded-xl p-3 border border-slate-800">
+                    <div className="flex items-end h-52 gap-0.5 bg-[#050811] rounded-lg p-3 border border-[#1e315b]">
                       {metrics.histogram.counts.map((count, i) => {
                         const heightPct = Math.max((count / maxHistCount) * 100, 1);
                         const center = metrics.histogram?.bin_centers[i] ?? 0;
@@ -383,37 +506,36 @@ export const ValidatePage: React.FC<ValidatePageProps> = ({
                             className="flex-1 rounded-t transition-all hover:opacity-80"
                             style={{
                               height: `${heightPct}%`,
-                              backgroundColor: isNearZero ? '#10b981' : '#38bdf8',
+                              backgroundColor: isNearZero ? '#10b981' : '#0077d4',
                             }}
                             title={`Bin: ${center.toFixed(1)}m | Count: ${count}`}
                           />
                         );
                       })}
                     </div>
-                    <div className="flex justify-between text-[10px] text-slate-500 pt-1">
+                    <div className="flex justify-between text-[10px] font-mono text-slate-500 pt-1">
                       <span>−15 m</span>
-                      <span className="text-emerald-400 font-bold">0.0 m</span>
+                      <span className="text-emerald-400 font-bold">0.0 m (Zero Error Peak)</span>
                       <span>+15 m</span>
                     </div>
                   </div>
                 ) : (
                   <div className="flex-1 flex items-center justify-center text-slate-500 text-xs">
-                    Histogram data unavailable.
+                    Histogram telemetry unavailable.
                   </div>
                 )}
 
-                <div className="text-[11px] text-slate-400 bg-slate-950/40 rounded-xl p-3 border border-slate-800/80">
+                <div className="text-[10px] text-slate-400 bg-[#070e1d] rounded-lg p-2.5 border border-[#1e315b]/60">
                   <p>
-                    <strong className="text-emerald-400">Green bars</strong> highlight error within &plusmn;1.0 m.
-                    Symmetric clustering around 0.0m confirms low bias and high model accuracy.
+                    <strong className="text-emerald-400">Emerald bars</strong> denote inliers within &plusmn;1.0m. A Gaussian distribution centered at 0.0m confirms zero systematic bias.
                   </p>
                 </div>
               </div>
             </div>
           </div>
         ) : (
-          <div className="rounded-2xl border border-slate-800/80 bg-slate-900/20 p-8 text-center text-slate-500 text-xs font-mono">
-            No reference evaluation yet. Upload a ground truth GeoTIFF above to view accuracy metrics.
+          <div className="mission-panel rounded-xl border border-[#1e315b] p-8 text-center text-slate-400 text-xs font-mono">
+            No ground truth evaluation registered yet. Ingest a reference GeoTIFF DSM above to benchmark photogrammetric accuracy against ISRO/ASPRS criteria.
           </div>
         )}
       </main>

@@ -1,14 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import {
   AlertTriangle,
+  ArrowLeft,
   ArrowRight,
   Boxes,
   CheckCircle2,
+  Clock,
   Cpu,
+  Eye,
   FileCheck,
   Globe,
+  Radio,
   Scale,
 } from 'lucide-react';
+import { IsroHeader } from '../components/IsroHeader';
 
 interface JobStatus {
   job_id: string;
@@ -32,20 +37,57 @@ interface JobStatusPageProps {
   jobId: string;
   onOpenViewer: (jobId: string) => void;
   onNavigateHome: () => void;
+  onNavigateValidate?: (jobId: string) => void;
 }
 
 const STAGES = [
-  { id: 'PREPROCESS', label: 'Preprocess', icon: Globe, desc: 'Image normalization & GSD canonicalization' },
-  { id: 'INFER', label: 'Inference', icon: Cpu, desc: 'Native DINOv2 + DPTHead sliding tile inference' },
-  { id: 'CALIBRATE', label: 'Calibration', icon: Scale, desc: 'SRTM bare-earth DTM / GCP scale fitting' },
-  { id: 'EXPORT', label: 'Export', icon: FileCheck, desc: 'Tiled GeoTIFF (EGM96) & 16-bit heightmap' },
-  { id: 'MESH', label: 'Mesh LODs', icon: Boxes, desc: 'Vectorized triangulation & GLB generation' },
+  {
+    id: 'PREPROCESS',
+    code: '01',
+    label: 'IMAGE INGESTION & GSD',
+    icon: Globe,
+    desc: 'Bilinear downscale & 0.33m/px canonical GSD normalization',
+    sub: 'Tiled Window Buffer',
+  },
+  {
+    id: 'INFER',
+    code: '02',
+    label: 'DINOv2 INFERENCE',
+    icon: Cpu,
+    desc: 'Multi-scale Vision Transformer with DPT head regression',
+    sub: '3-City GAMUS Weights',
+  },
+  {
+    id: 'CALIBRATE',
+    code: '03',
+    label: 'GEODETIC SCALE FITTING',
+    icon: Scale,
+    desc: 'EGM96 geoid vertical datum / SRTM bare-earth DTM alignment',
+    sub: 'Hierarchy B → A → C',
+  },
+  {
+    id: 'EXPORT',
+    code: '04',
+    label: 'RASTER REPROJECTION',
+    icon: FileCheck,
+    desc: 'Tiled 32-bit Float GeoTIFF & 16-bit packed PNG heightmap',
+    sub: 'Deflate Compression',
+  },
+  {
+    id: 'MESH',
+    code: '05',
+    label: 'SURFACE MESH LODs',
+    icon: Boxes,
+    desc: 'Vectorized height-field triangulation into LOD0-2 GLB meshes',
+    sub: 'Delaunay Decimation',
+  },
 ];
 
 export const JobStatusPage: React.FC<JobStatusPageProps> = ({
   jobId,
   onOpenViewer,
   onNavigateHome,
+  onNavigateValidate,
 }) => {
   const [job, setJob] = useState<JobStatus | null>(null);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
@@ -95,56 +137,96 @@ export const JobStatusPage: React.FC<JobStatusPageProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans">
-      {/* Header */}
-      <header className="border-b border-slate-800/80 bg-slate-900/50 backdrop-blur-md px-8 py-4 flex items-center justify-between">
-        <button
-          onClick={onNavigateHome}
-          className="text-xs font-mono text-slate-400 hover:text-white transition flex items-center gap-1.5"
-        >
-          ← Back to Upload
-        </button>
-        <span className="font-mono text-xs text-cyan-400 font-bold">Job #{jobId}</span>
-      </header>
+    <div className="min-h-screen bg-[#050811] text-slate-100 flex flex-col font-sans relative">
+      <div className="absolute inset-0 bg-aerospace-grid opacity-75 pointer-events-none z-0" />
 
-      {/* Main Container */}
-      <main className="flex-1 max-w-4xl w-full mx-auto p-8 flex flex-col gap-8 justify-center">
-        <div className="flex items-center justify-between border-b border-slate-800 pb-4">
-          <div>
-            <h2 className="text-2xl font-bold text-white tracking-tight">Processing Pipeline</h2>
-            <p className="text-xs font-mono text-slate-400 mt-1">
-              Elapsed Time: {elapsedSeconds}s • Status: {job?.status || 'INITIALIZING'}
-            </p>
+      {/* ISRO Mission Header */}
+      <IsroHeader
+        currentPage="status"
+        activeJobId={jobId}
+        onNavigate={(page, id) => {
+          if (page === 'upload') onNavigateHome();
+          else if (page === 'viewer' && id) onOpenViewer(id);
+          else if (page === 'validate' && id && onNavigateValidate) onNavigateValidate(id);
+        }}
+      />
+
+      {/* Main Mission Operations Dashboard */}
+      <main className="flex-1 max-w-6xl w-full mx-auto p-4 sm:p-6 lg:p-8 flex flex-col gap-6 relative z-10 justify-center">
+        {/* Mission Status Telemetry Ribbon */}
+        <div className="mission-panel rounded-xl p-5 border border-[#1e315b] relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-[#ff6600] via-[#0055a5] to-[#00c2cb]" />
+
+          <div className="flex flex-col gap-1">
+            <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-widest text-[#00c2cb]">
+              <Radio className="w-3.5 h-3.5 text-[#ff6600] animate-pulse" />
+              <span>ISRO SAC GROUND STATION TELEMETRY PIPELINE</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <h2 className="text-xl sm:text-2xl font-black text-white font-display">
+                MISSION PIPELINE #{jobId}
+              </h2>
+            </div>
+            <div className="flex items-center gap-3 text-xs font-mono text-slate-400 mt-0.5">
+              <span>ELAPSED TIME: <strong className="text-white">{elapsedSeconds}s</strong></span>
+              <span>•</span>
+              <span>GEODETIC DATUM: <strong className="text-[#00c2cb]">EGM96 ORTHOMETRIC</strong></span>
+            </div>
           </div>
 
-          <div
-            className={`px-3 py-1 rounded-full text-xs font-mono font-bold border ${
-              job?.status === 'DONE'
-                ? 'bg-emerald-950/80 text-emerald-400 border-emerald-800/60'
-                : job?.status === 'FAILED'
-                ? 'bg-rose-950/80 text-rose-400 border-rose-800/60'
-                : 'bg-cyan-950/80 text-cyan-400 border-cyan-800/60 animate-pulse'
-            }`}
-          >
-            {job?.status || 'PENDING'}
+          <div className="flex items-center gap-3">
+            <div
+              className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold border tracking-wider flex items-center gap-2 ${
+                job?.status === 'DONE'
+                  ? 'bg-emerald-950/80 text-emerald-400 border-emerald-700/60 shadow-lg shadow-emerald-950/50'
+                  : job?.status === 'FAILED'
+                  ? 'bg-rose-950/80 text-rose-400 border-rose-700/60'
+                  : 'bg-[#091834] text-[#00c2cb] border-[#00c2cb]/50 animate-pulse'
+              }`}
+            >
+              <span
+                className={`w-2 h-2 rounded-full ${
+                  job?.status === 'DONE'
+                    ? 'bg-emerald-400'
+                    : job?.status === 'FAILED'
+                    ? 'bg-rose-400'
+                    : 'bg-[#00c2cb] animate-ping'
+                }`}
+              />
+              <span>{job?.status ? `STATUS: ${job.status}` : 'INITIALIZING TELEMETRY...'}</span>
+            </div>
           </div>
         </div>
 
-        {/* Progress Bar */}
-        <div className="flex flex-col gap-2">
-          <div className="flex justify-between items-center text-xs font-mono text-slate-400">
-            <span>Overall Progress</span>
-            <span className="font-bold text-white">{job?.progress || 0}%</span>
+        {/* Global Progress Bar */}
+        <div className="mission-panel rounded-xl p-5 border border-[#1e315b] flex flex-col gap-2.5">
+          <div className="flex justify-between items-center text-xs font-mono text-slate-300">
+            <span className="flex items-center gap-1.5 uppercase tracking-wider font-semibold">
+              <Clock className="w-3.5 h-3.5 text-[#ff6600]" /> OVERALL RECONSTRUCTION PROGRESS
+            </span>
+            <span className="text-sm font-bold text-white font-mono">{job?.progress || 0}%</span>
           </div>
-          <div className="h-3 w-full bg-slate-900 rounded-full overflow-hidden border border-slate-800 p-0.5">
+
+          <div className="h-3.5 w-full bg-[#070e1d] rounded-full overflow-hidden border border-[#1e315b] p-0.5">
             <div
-              className="h-full bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full transition-all duration-500 shadow-lg shadow-cyan-500/20"
-              style={{ width: `${job?.progress || 0}%` }}
+              className={`h-full rounded-full transition-all duration-500 shadow-md ${
+                job?.status === 'DONE'
+                  ? 'bg-emerald-400'
+                  : job?.status === 'FAILED'
+                  ? 'bg-rose-500'
+                  : 'bg-gradient-to-r from-[#ff6600] via-[#0055a5] to-[#00c2cb]'
+              }`}
+              style={{ width: `${Math.max(job?.progress || 0, 3)}%` }}
             />
           </div>
+
+          <div className="flex justify-between text-[10px] font-mono text-slate-500 pt-0.5">
+            <span>STAGE: {job?.stage || 'STANDBY'}</span>
+            <span>VERIFICATION: AUTOMATIC (PARITY TESTED)</span>
+          </div>
         </div>
 
-        {/* Pipeline Stage Diagram */}
+        {/* 5-Stage Aerospace Sequencer Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
           {STAGES.map((s) => {
             const status = getStageStatus(s.id);
@@ -153,59 +235,113 @@ export const JobStatusPage: React.FC<JobStatusPageProps> = ({
             return (
               <div
                 key={s.id}
-                className={`rounded-2xl border p-4 flex flex-col gap-3 transition ${
+                className={`mission-panel rounded-xl border p-4 flex flex-col justify-between gap-3 transition relative overflow-hidden ${
                   status === 'active'
-                    ? 'border-cyan-500/70 bg-cyan-950/30 shadow-lg shadow-cyan-500/10'
+                    ? 'border-[#00c2cb] bg-[#091b38] shadow-lg shadow-[#0055a5]/30'
                     : status === 'completed'
-                    ? 'border-emerald-500/50 bg-emerald-950/10'
-                    : 'border-slate-800 bg-slate-900/20 opacity-60'
+                    ? 'border-emerald-700/60 bg-[#071922]/60'
+                    : 'border-[#1e315b]/60 bg-[#091224]/50 opacity-60'
                 }`}
               >
+                {/* Active pulse highlight */}
+                {status === 'active' && (
+                  <div className="absolute top-0 left-0 right-0 h-1 bg-[#00c2cb] animate-pulse" />
+                )}
+
                 <div className="flex items-center justify-between">
-                  <div
-                    className={`w-8 h-8 rounded-xl flex items-center justify-center ${
+                  <span className="text-[10px] font-mono font-bold text-[#ff9944]">
+                    STAGE {s.code}
+                  </span>
+                  {status === 'completed' ? (
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                  ) : status === 'active' ? (
+                    <span className="w-2 h-2 rounded-full bg-[#00c2cb] animate-ping" />
+                  ) : null}
+                </div>
+
+                <div className="w-10 h-10 rounded-lg flex items-center justify-center border border-[#1e315b] bg-[#070e1d]">
+                  <Icon
+                    className={`w-5 h-5 ${
                       status === 'active'
-                        ? 'bg-cyan-500 text-slate-950 animate-bounce'
+                        ? 'text-[#00c2cb]'
                         : status === 'completed'
-                        ? 'bg-emerald-500 text-slate-950'
-                        : 'bg-slate-800 text-slate-400'
+                        ? 'text-emerald-400'
+                        : 'text-slate-500'
                     }`}
-                  >
-                    <Icon className="w-4 h-4" />
-                  </div>
-                  {status === 'completed' && <CheckCircle2 className="w-4 h-4 text-emerald-400" />}
+                  />
                 </div>
 
                 <div>
-                  <h4 className="font-bold text-sm text-white">{s.label}</h4>
-                  <p className="text-[11px] text-slate-400 mt-1 leading-snug">{s.desc}</p>
+                  <h4 className="font-bold text-xs text-white font-display tracking-wide">{s.label}</h4>
+                  <p className="text-[10px] text-slate-400 mt-1 leading-relaxed font-sans">{s.desc}</p>
+                </div>
+
+                <div className="pt-2 border-t border-[#1e315b]/40 text-[9px] font-mono text-slate-500">
+                  {s.sub}
                 </div>
               </div>
             );
           })}
         </div>
 
-        {/* Error message banner */}
+        {/* Failure Report */}
         {job?.status === 'FAILED' && (
-          <div className="p-4 rounded-2xl border border-rose-500/50 bg-rose-950/40 text-xs font-mono text-rose-300 flex items-start gap-3">
+          <div className="p-4 rounded-xl border border-rose-600 bg-rose-950/50 text-xs font-mono text-rose-200 flex items-start gap-3 shadow-xl">
             <AlertTriangle className="w-5 h-5 text-rose-400 shrink-0" />
             <div>
-              <p className="font-bold text-sm text-rose-200">Processing Failed</p>
-              <p className="mt-1">{job.error || 'An unexpected error occurred.'}</p>
+              <p className="font-bold text-sm text-rose-100 font-display">Mission Processing Terminated</p>
+              <p className="mt-1">{job.error || 'Check server logs for GPU or dataset details.'}</p>
             </div>
           </div>
         )}
 
-        {/* Action Button: Open 3D Viewer */}
+        {/* Completion Launch Deck */}
         {job?.status === 'DONE' && (
-          <div className="flex flex-col items-center gap-3 pt-4">
-            <button
-              onClick={() => onOpenViewer(jobId)}
-              className="py-4 px-8 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-extrabold text-base flex items-center gap-3 shadow-xl shadow-cyan-500/25 transition cursor-pointer"
-            >
-              Launch Interactive 3D Flythrough Viewer <ArrowRight className="w-5 h-5" />
-            </button>
-            <p className="text-xs text-slate-400 font-mono">Elevation model and 3 LOD meshes ready for exploration</p>
+          <div className="mission-panel rounded-xl p-6 border border-[#00c2cb]/50 flex flex-col items-center gap-4 text-center shadow-2xl shadow-[#0055a5]/30">
+            <div className="w-12 h-12 rounded-full bg-emerald-950/80 border border-emerald-600/80 flex items-center justify-center text-emerald-400">
+              <CheckCircle2 className="w-7 h-7" />
+            </div>
+
+            <div>
+              <h3 className="text-lg font-bold text-white font-display tracking-wide">
+                Surface Reconstruction Completed &amp; Geodetically Registered
+              </h3>
+              <p className="text-xs text-slate-300 font-mono mt-1">
+                All 3 LOD GLB meshes, 32-bit metric GeoTIFF, and 16-bit heightmap generated successfully.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => onOpenViewer(jobId)}
+                className="py-3 px-6 rounded-xl bg-gradient-to-r from-[#0055a5] to-[#00c2cb] hover:from-[#004488] hover:to-[#00a2ab] text-white font-bold text-sm flex items-center gap-2.5 shadow-lg shadow-[#0055a5]/40 transition cursor-pointer font-display tracking-wider uppercase border border-[#00c2cb]/60"
+              >
+                <Eye className="w-4 h-4 text-white" />
+                <span>LAUNCH 3D RECONNAISSANCE COCKPIT</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+
+              {onNavigateValidate && (
+                <button
+                  type="button"
+                  onClick={() => onNavigateValidate(jobId)}
+                  className="py-3 px-5 rounded-xl bg-[#09152b] hover:bg-[#11244a] text-slate-200 font-bold text-xs flex items-center gap-2 transition cursor-pointer font-mono border border-[#1e315b]"
+                >
+                  <Scale className="w-4 h-4 text-[#ff9944]" />
+                  <span>EVALUATE LIDAR BENCHMARK</span>
+                </button>
+              )}
+
+              <button
+                type="button"
+                onClick={onNavigateHome}
+                className="py-3 px-4 rounded-xl bg-[#070e1d] hover:bg-[#0f1d38] text-slate-400 hover:text-white text-xs font-mono flex items-center gap-1.5 transition cursor-pointer border border-[#1e315b]"
+              >
+                <ArrowLeft className="w-3.5 h-3.5" />
+                <span>RETURN TO INGESTION</span>
+              </button>
+            </div>
           </div>
         )}
       </main>

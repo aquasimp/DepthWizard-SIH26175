@@ -53,6 +53,7 @@ export function App() {
         jobId={activeJobId}
         onOpenViewer={(id) => navigateTo('viewer', id)}
         onNavigateHome={() => navigateTo('upload')}
+        onNavigateValidate={(id) => navigateTo('validate', id)}
       />
     );
   }
@@ -62,6 +63,8 @@ export function App() {
       <ValidatePage
         jobId={activeJobId}
         onNavigateBack={() => navigateTo('viewer', activeJobId)}
+        onNavigateHome={() => navigateTo('upload')}
+        onNavigateStatus={(id) => navigateTo('status', id)}
       />
     );
   }
@@ -70,6 +73,7 @@ export function App() {
     <UploadPage
       onJobSelect={(id) => navigateTo('viewer', id)}
       onJobCreated={(id) => navigateTo('status', id)}
+      onNavigateValidate={(id) => navigateTo('validate', id)}
     />
   );
 }

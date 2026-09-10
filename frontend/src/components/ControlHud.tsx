@@ -6,6 +6,8 @@ import {
   Eye,
   Layers,
   Maximize2,
+  Minimize2,
+  Scale,
   Sliders,
   Sun,
   TrendingUp,
@@ -66,66 +68,73 @@ export const ControlHud: React.FC<ControlHudProps> = ({
 
   return (
     <>
-      {/* Fly mode instructions banner */}
+      {/* Fly mode tactical instructions banner */}
       {isFlyMode && (
-        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-30 flex items-center gap-3 rounded-full border border-cyan-500/40 bg-slate-950/90 px-5 py-2 shadow-2xl backdrop-blur-md text-xs font-mono text-cyan-200 animate-pulse">
-          <span className="font-bold text-cyan-400">FLY MODE:</span>
-          <span>Click canvas to lock cursor | WASD to move | QE for altitude | Shift for 3x boost | ESC to release</span>
+        <div className="absolute top-16 left-1/2 -translate-x-1/2 z-30 flex items-center gap-3 rounded-lg border border-[#00c2cb]/60 bg-[#061022]/95 px-5 py-2 shadow-2xl backdrop-blur-md text-xs font-mono text-slate-100 animate-pulse">
+          <span className="font-bold text-[#ff9944]">TACTICAL FLIGHT COCKPIT:</span>
+          <span>Click canvas to lock crosshair · WASD move · QE altitude · Shift 3× boost · ESC release</span>
         </div>
       )}
 
-      {/* Floating HUD Controls Panel */}
-      <div className="absolute top-4 right-4 z-20 flex flex-col gap-2 min-w-[280px] max-w-[320px]">
+      {/* Floating ISRO Telemetry HUD Controls Panel */}
+      <div className="absolute top-16 right-4 z-20 flex flex-col gap-2 min-w-[290px] max-w-[320px]">
         {/* Top Header Card */}
-        <div className="flex items-center justify-between rounded-xl border border-slate-700/60 bg-slate-900/90 p-3 shadow-xl backdrop-blur-md text-slate-200">
+        <div className="mission-panel rounded-lg border border-[#1e315b] p-3 shadow-xl flex items-center justify-between text-slate-200">
           <div className="flex items-center gap-2">
-            <Sliders className="w-4 h-4 text-cyan-400" />
-            <span className="text-xs font-bold tracking-wider uppercase font-mono">
-              Viewer HUD
+            <Sliders className="w-4 h-4 text-[#ff6600]" />
+            <span className="text-xs font-bold tracking-wider uppercase font-mono text-white">
+              COCKPIT CONTROLS HUD
             </span>
           </div>
-          <div className="flex items-center gap-3">
+
+          <div className="flex items-center gap-2.5">
             {/* FPS Counter badge */}
             <div
-              className={`px-2 py-0.5 rounded font-mono text-[11px] font-bold border ${
+              className={`px-2 py-0.5 rounded font-mono text-[10px] font-bold border ${
                 fps >= 50
-                  ? 'bg-emerald-950/80 text-emerald-400 border-emerald-700/60'
+                  ? 'bg-emerald-950/90 text-emerald-400 border-emerald-700/60'
                   : fps >= 30
-                  ? 'bg-amber-950/80 text-amber-400 border-amber-700/60'
-                  : 'bg-rose-950/80 text-rose-400 border-rose-700/60'
+                  ? 'bg-amber-950/90 text-amber-400 border-amber-700/60'
+                  : 'bg-rose-950/90 text-rose-400 border-rose-700/60'
               }`}
             >
               {fps} FPS
             </div>
+
             <button
+              type="button"
               onClick={() => setCollapsed(!collapsed)}
-              className="text-slate-400 hover:text-white transition p-1"
+              className="text-slate-400 hover:text-white transition p-1 cursor-pointer"
               title="Toggle HUD details"
             >
-              <Maximize2 className="w-3.5 h-3.5" />
+              {collapsed ? <Maximize2 className="w-3.5 h-3.5" /> : <Minimize2 className="w-3.5 h-3.5" />}
             </button>
           </div>
         </div>
 
         {!collapsed && (
-          <div className="flex flex-col gap-3 rounded-xl border border-slate-700/60 bg-slate-900/90 p-3.5 shadow-2xl backdrop-blur-md text-xs text-slate-300 max-h-[calc(100vh-100px)] overflow-y-auto">
-            {/* Camera Mode Toggle */}
+          <div className="mission-panel rounded-lg border border-[#1e315b] p-3.5 shadow-2xl flex flex-col gap-3 text-xs text-slate-300 max-h-[calc(100vh-140px)] overflow-y-auto">
+            {/* Camera Mode Rig */}
             <div className="flex flex-col gap-1.5">
-              <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider flex items-center gap-1.5 font-mono">
-                <Camera className="w-3 h-3 text-cyan-400" /> Camera Rig (1 / 2 / 3)
+              <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider flex items-center justify-between font-mono">
+                <span className="flex items-center gap-1.5">
+                  <Camera className="w-3 h-3 text-[#00c2cb]" /> FLIGHT CAMERA RIG
+                </span>
+                <span className="text-slate-500">[KEY 1/2/3]</span>
               </span>
-              <div className="grid grid-cols-3 gap-1 p-0.5 rounded-lg bg-slate-950/60 border border-slate-800">
+              <div className="grid grid-cols-3 gap-1 p-0.5 rounded-lg bg-[#070e1d] border border-[#1e315b]">
                 {(['ORBIT', 'FLY', 'TOP'] as CameraMode[]).map((m) => (
                   <button
                     key={m}
+                    type="button"
                     onClick={() => onCameraModeChange(m)}
-                    className={`py-1 rounded text-[11px] font-mono font-semibold transition ${
+                    className={`py-1 rounded text-[11px] font-mono font-semibold transition cursor-pointer ${
                       cameraMode === m
-                        ? 'bg-cyan-500 text-slate-950 shadow-md font-bold'
-                        : 'text-slate-400 hover:text-white'
+                        ? 'bg-[#0055a5] text-white shadow font-bold border border-[#00c2cb]/50'
+                        : 'text-slate-400 hover:text-white hover:bg-[#0d1b38]'
                     }`}
                   >
-                    {m}
+                    {m === 'ORBIT' ? 'ORBIT 360' : m === 'FLY' ? 'TACTICAL' : 'NADIR 2D'}
                   </button>
                 ))}
               </div>
@@ -134,25 +143,27 @@ export const ControlHud: React.FC<ControlHudProps> = ({
             {/* Render Path Toggle */}
             <div className="flex flex-col gap-1.5">
               <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider flex items-center gap-1.5 font-mono">
-                <Layers className="w-3 h-3 text-cyan-400" /> Render Path
+                <Layers className="w-3 h-3 text-[#00c2cb]" /> RENDER PIPELINE
               </span>
-              <div className="grid grid-cols-2 gap-1 p-0.5 rounded-lg bg-slate-950/60 border border-slate-800">
+              <div className="grid grid-cols-2 gap-1 p-0.5 rounded-lg bg-[#070e1d] border border-[#1e315b]">
                 <button
+                  type="button"
                   onClick={() => onRenderPathChange('DISPLACEMENT')}
-                  className={`py-1 rounded text-[10px] font-mono font-semibold transition ${
+                  className={`py-1 rounded text-[10px] font-mono font-semibold transition cursor-pointer ${
                     renderPath === 'DISPLACEMENT'
-                      ? 'bg-cyan-500 text-slate-950 shadow-md font-bold'
-                      : 'text-slate-400 hover:text-white'
+                      ? 'bg-[#0055a5] text-white shadow font-bold border border-[#00c2cb]/50'
+                      : 'text-slate-400 hover:text-white hover:bg-[#0d1b38]'
                   }`}
                 >
-                  Shader Displace
+                  GPU Displace
                 </button>
                 <button
+                  type="button"
                   onClick={() => onRenderPathChange('GLB')}
-                  className={`py-1 rounded text-[10px] font-mono font-semibold transition ${
+                  className={`py-1 rounded text-[10px] font-mono font-semibold transition cursor-pointer ${
                     renderPath === 'GLB'
-                      ? 'bg-cyan-500 text-slate-950 shadow-md font-bold'
-                      : 'text-slate-400 hover:text-white'
+                      ? 'bg-[#0055a5] text-white shadow font-bold border border-[#00c2cb]/50'
+                      : 'text-slate-400 hover:text-white hover:bg-[#0d1b38]'
                   }`}
                 >
                   GLB Mesh LOD
@@ -160,26 +171,30 @@ export const ControlHud: React.FC<ControlHudProps> = ({
               </div>
             </div>
 
-            {/* LOD Level Selector (active in GLB mode or mesh) */}
+            {/* LOD Level Selector */}
             <div className="flex flex-col gap-1.5">
-              <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider flex items-center gap-1.5 font-mono">
-                <Compass className="w-3 h-3 text-cyan-400" /> Mesh Resolution / LOD
+              <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider flex items-center justify-between font-mono">
+                <span className="flex items-center gap-1.5">
+                  <Compass className="w-3 h-3 text-[#00c2cb]" /> MESH RESOLUTION LOD
+                </span>
+                <span className="text-[9px] text-slate-500">TRIANGLES</span>
               </span>
-              <div className="grid grid-cols-3 gap-1 p-0.5 rounded-lg bg-slate-950/60 border border-slate-800 font-mono text-[11px]">
+              <div className="grid grid-cols-3 gap-1 p-0.5 rounded-lg bg-[#070e1d] border border-[#1e315b] font-mono text-[10px]">
                 {(
                   [
-                    { id: 'lod0', label: 'LOD0 (512)' },
-                    { id: 'lod1', label: 'LOD1 (256)' },
-                    { id: 'lod2', label: 'LOD2 (128)' },
+                    { id: 'lod0', label: 'LOD0 (262k)' },
+                    { id: 'lod1', label: 'LOD1 (65k)' },
+                    { id: 'lod2', label: 'LOD2 (16k)' },
                   ] as const
                 ).map((l) => (
                   <button
                     key={l.id}
+                    type="button"
                     onClick={() => onLodChange(l.id)}
-                    className={`py-1 rounded font-semibold transition ${
+                    className={`py-1 rounded font-semibold transition cursor-pointer ${
                       lod === l.id
-                        ? 'bg-cyan-500 text-slate-950 shadow-md font-bold'
-                        : 'text-slate-400 hover:text-white'
+                        ? 'bg-[#0055a5] text-white shadow font-bold border border-[#00c2cb]/50'
+                        : 'text-slate-400 hover:text-white hover:bg-[#0d1b38]'
                     }`}
                   >
                     {l.label}
@@ -191,8 +206,10 @@ export const ControlHud: React.FC<ControlHudProps> = ({
             {/* Vertical Exaggeration Slider */}
             <div className="flex flex-col gap-1">
               <div className="flex justify-between items-center text-[11px] font-mono">
-                <span className="text-slate-400">Vertical Exaggeration:</span>
-                <span className="font-bold text-cyan-400">{zExag.toFixed(1)}x</span>
+                <span className="text-slate-300">Vertical Relief Exaggeration:</span>
+                <span className="font-bold text-[#ff9944] bg-[#1a1408] px-1.5 py-0.5 rounded border border-[#ff6600]/40">
+                  {zExag.toFixed(1)}×
+                </span>
               </div>
               <input
                 type="range"
@@ -201,44 +218,46 @@ export const ControlHud: React.FC<ControlHudProps> = ({
                 step="0.1"
                 value={zExag}
                 onChange={(e) => onZExagChange(parseFloat(e.target.value))}
-                className="accent-cyan-400 cursor-pointer h-1.5 bg-slate-800 rounded-lg"
+                className="accent-[#ff6600] cursor-pointer h-1.5 bg-[#070e1d] rounded-lg mt-1"
               />
             </div>
 
-            {/* Toggles: Slope Overlay & Wireframe */}
-            <div className="grid grid-cols-2 gap-2 pt-1">
+            {/* Analytical Shader Overlays */}
+            <div className="grid grid-cols-2 gap-2 pt-1 border-t border-[#1e315b]/60">
               <button
+                type="button"
                 onClick={onToggleSlope}
-                className={`py-1.5 px-2 rounded-lg border text-[11px] font-mono font-semibold flex items-center justify-center gap-1.5 transition ${
+                className={`py-1.5 px-2 rounded-lg border text-[11px] font-mono font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer ${
                   showSlope
-                    ? 'bg-amber-500/20 text-amber-300 border-amber-500/50 shadow-sm'
-                    : 'bg-slate-950/60 text-slate-400 border-slate-800 hover:border-slate-700'
+                    ? 'bg-[#2b1807] text-[#ff9944] border-[#ff6600] shadow-sm'
+                    : 'bg-[#070e1d] text-slate-400 border-[#1e315b] hover:border-slate-600'
                 }`}
               >
-                <TrendingUp className="w-3.5 h-3.5" /> Slope Map
+                <TrendingUp className="w-3.5 h-3.5" /> Slope Hazard
               </button>
 
               <button
+                type="button"
                 onClick={onToggleWireframe}
-                className={`py-1.5 px-2 rounded-lg border text-[11px] font-mono font-semibold flex items-center justify-center gap-1.5 transition ${
+                className={`py-1.5 px-2 rounded-lg border text-[11px] font-mono font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer ${
                   wireframe
-                    ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/50 shadow-sm'
-                    : 'bg-slate-950/60 text-slate-400 border-slate-800 hover:border-slate-700'
+                    ? 'bg-[#091b38] text-[#00c2cb] border-[#00c2cb] shadow-sm'
+                    : 'bg-[#070e1d] text-slate-400 border-[#1e315b] hover:border-slate-600'
                 }`}
               >
                 <Eye className="w-3.5 h-3.5" /> Wireframe
               </button>
             </div>
 
-            {/* Sun Lighting Controls */}
-            <div className="flex flex-col gap-2 pt-1 border-t border-slate-800">
+            {/* Solar Illumination Vector Controls */}
+            <div className="flex flex-col gap-2 pt-1 border-t border-[#1e315b]/60">
               <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider flex items-center gap-1.5 font-mono">
-                <Sun className="w-3 h-3 text-amber-400" /> Sun Angle & Elevation
+                <Sun className="w-3 h-3 text-[#ff9944]" /> SOLAR VECTOR (AZIMUTH &amp; ELEVATION)
               </span>
-              <div className="flex flex-col gap-1 text-[11px] font-mono">
+              <div className="flex flex-col gap-1.5 text-[11px] font-mono">
                 <div className="flex justify-between">
-                  <span className="text-slate-400">Azimuth:</span>
-                  <span className="text-amber-300">{sunAzimuth}°</span>
+                  <span className="text-slate-400">Solar Azimuth (&Phi;):</span>
+                  <span className="text-[#00c2cb] font-bold">{sunAzimuth}°</span>
                 </div>
                 <input
                   type="range"
@@ -247,14 +266,12 @@ export const ControlHud: React.FC<ControlHudProps> = ({
                   step="5"
                   value={sunAzimuth}
                   onChange={(e) => onSunAzimuthChange(parseInt(e.target.value, 10))}
-                  className="accent-amber-400 cursor-pointer h-1.5 bg-slate-800 rounded-lg"
+                  className="accent-[#00c2cb] cursor-pointer h-1.5 bg-[#070e1d] rounded-lg"
                 />
-              </div>
 
-              <div className="flex flex-col gap-1 text-[11px] font-mono">
-                <div className="flex justify-between">
-                  <span className="text-slate-400">Elevation:</span>
-                  <span className="text-amber-300">{sunElevation}°</span>
+                <div className="flex justify-between mt-1">
+                  <span className="text-slate-400">Solar Elevation (&Theta;):</span>
+                  <span className="text-[#ff9944] font-bold">{sunElevation}°</span>
                 </div>
                 <input
                   type="range"
@@ -263,32 +280,36 @@ export const ControlHud: React.FC<ControlHudProps> = ({
                   step="5"
                   value={sunElevation}
                   onChange={(e) => onSunElevationChange(parseInt(e.target.value, 10))}
-                  className="accent-amber-400 cursor-pointer h-1.5 bg-slate-800 rounded-lg"
+                  className="accent-[#ff6600] cursor-pointer h-1.5 bg-[#070e1d] rounded-lg"
                 />
               </div>
             </div>
 
-            {/* Download and Navigation Action Buttons */}
-            <div className="flex flex-col gap-1.5 pt-2 border-t border-slate-800">
+            {/* Exports & Benchmark Actions */}
+            <div className="flex flex-col gap-1.5 pt-2 border-t border-[#1e315b]/60">
               <button
+                type="button"
                 onClick={onDownloadDsm}
-                className="w-full py-1.5 px-3 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700/60 font-mono text-[11px] font-semibold flex items-center justify-center gap-2 transition"
+                className="w-full py-1.5 px-3 rounded-lg bg-[#09152b] hover:bg-[#11244a] text-slate-200 border border-[#1e315b] font-mono text-[11px] font-semibold flex items-center justify-center gap-2 transition cursor-pointer"
               >
-                <Download className="w-3.5 h-3.5 text-cyan-400" /> Download DSM (GeoTIFF)
+                <Download className="w-3.5 h-3.5 text-[#00c2cb]" /> Export GeoTIFF (EGM96)
               </button>
 
               <button
+                type="button"
                 onClick={onDownloadGlb}
-                className="w-full py-1.5 px-3 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700/60 font-mono text-[11px] font-semibold flex items-center justify-center gap-2 transition"
+                className="w-full py-1.5 px-3 rounded-lg bg-[#09152b] hover:bg-[#11244a] text-slate-200 border border-[#1e315b] font-mono text-[11px] font-semibold flex items-center justify-center gap-2 transition cursor-pointer"
               >
-                <Download className="w-3.5 h-3.5 text-cyan-400" /> Download 3D Mesh (.glb)
+                <Download className="w-3.5 h-3.5 text-[#00c2cb]" /> Export 3D Mesh (.glb)
               </button>
 
               <button
+                type="button"
                 onClick={onNavigateValidate}
-                className="w-full py-2 px-3 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold font-mono text-xs flex items-center justify-center gap-2 shadow-lg transition mt-1"
+                className="w-full py-2 px-3 rounded-lg bg-gradient-to-r from-[#0055a5] to-[#00c2cb] hover:from-[#004488] hover:to-[#00a2ab] text-white font-bold font-mono text-xs flex items-center justify-center gap-2 shadow-lg transition cursor-pointer mt-1 border border-[#00c2cb]/50"
               >
-                Validate Accuracy & Split-Screen →
+                <Scale className="w-3.5 h-3.5 text-[#ff9944]" />
+                <span>EVALUATE LIDAR BENCHMARK →</span>
               </button>
             </div>
           </div>

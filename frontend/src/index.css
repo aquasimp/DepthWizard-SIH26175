@@ -1,13 +1,28 @@
 @import "tailwindcss";
 
 @theme {
-  --color-space-900: #0a0f1d;
-  --color-space-800: #0f172a;
-  --color-space-700: #1e293b;
-  --color-space-600: #334155;
+  --color-isro-navy: #050811;
+  --color-isro-space: #09101f;
+  --color-isro-panel: #0d172e;
+  --color-isro-card: #111e3b;
+  --color-isro-border: #1e315b;
+  --color-isro-border-light: #2d4680;
+  
   --color-isro-orange: #ff6600;
+  --color-isro-saffron: #ff7700;
+  --color-isro-amber: #f59e0b;
   --color-isro-blue: #0055a5;
+  --color-isro-blue-light: #0077d4;
   --color-isro-cyan: #00c2cb;
+  --color-isro-teal: #06b6d4;
+  
+  --color-telemetry-green: #10b981;
+  --color-telemetry-emerald: #059669;
+  --color-telemetry-crimson: #ef4444;
+
+  --font-display: 'Chakra Petch', 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 html, body, #root {
@@ -15,13 +30,104 @@ html, body, #root {
   height: 100%;
   margin: 0;
   padding: 0;
-  overflow: hidden;
-  background-color: #020617;
-  color: #f8fafc;
-  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background-color: #050811;
+  color: #f1f5f9;
+  font-family: var(--font-sans);
   box-sizing: border-box;
 }
 
 *, *::before, *::after {
   box-sizing: border-box;
 }
+
+/* Aerospace Technical Grid Texture */
+.bg-aerospace-grid {
+  background-size: 32px 32px, 128px 128px;
+  background-image: 
+    linear-gradient(to right, rgba(30, 49, 91, 0.25) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(30, 49, 91, 0.25) 1px, transparent 1px),
+    linear-gradient(to right, rgba(0, 194, 203, 0.12) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 194, 203, 0.12) 1px, transparent 1px);
+}
+
+/* Subtle Tactical Crosshair Texture */
+.bg-crosshair-pattern {
+  background-image: radial-gradient(rgba(0, 194, 203, 0.2) 1px, transparent 0);
+  background-size: 24px 24px;
+}
+
+/* Tactical Corner Framing Reticle */
+.tactical-frame {
+  position: relative;
+}
+.tactical-frame::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  width: 10px;
+  height: 10px;
+  border-top: 2px solid #ff6600;
+  border-left: 2px solid #ff6600;
+  pointer-events: none;
+  z-index: 10;
+}
+.tactical-frame::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  right: -1px;
+  width: 10px;
+  height: 10px;
+  border-bottom: 2px solid #00c2cb;
+  border-right: 2px solid #00c2cb;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Telemetry Mission Glass Panel */
+.mission-panel {
+  background: linear-gradient(135deg, rgba(13, 23, 46, 0.85) 0%, rgba(9, 16, 31, 0.95) 100%);
+  border: 1px solid rgba(30, 49, 91, 0.7);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5), inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+}
+
+.mission-panel-glow {
+  box-shadow: 0 0 20px -5px rgba(0, 85, 165, 0.3), inset 0 1px 0 0 rgba(0, 194, 203, 0.2);
+}
+
+/* Tactical Monospace Data Readout */
+.telemetry-val {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+/* Mission Pulse */
+@keyframes radar-pulse {
+  0% { transform: scale(0.95); opacity: 0.8; }
+  50% { transform: scale(1.05); opacity: 0.3; }
+  100% { transform: scale(0.95); opacity: 0.8; }
+}
+
+.animate-radar {
+  animation: radar-pulse 3s infinite ease-in-out;
+}
+
+/* Custom Tactical Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #09101f;
+}
+::-webkit-scrollbar-thumb {
+  background: #1e315b;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #0055a5;
+}
+
