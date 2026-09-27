@@ -182,7 +182,7 @@ export const ValidatePage: React.FC<ValidatePageProps> = ({
         currentPage="validate"
         activeJobId={jobId}
         onNavigate={(page, id) => {
-          if (page === 'upload' && onNavigateHome) onNavigateHome();
+          if ((page === 'upload' || page === 'dashboard') && onNavigateHome) onNavigateHome();
           else if (page === 'viewer') onNavigateBack();
           else if (page === 'status' && id && onNavigateStatus) onNavigateStatus(id);
         }}

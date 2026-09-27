@@ -1,4 +1,4 @@
-"""Inference engine for Depth Anything V2 Small with seamless tiling."""
+"""Inference engine for Depth Anything V3 Small with seamless tiling."""
 
 import time
 from pathlib import Path
@@ -9,7 +9,7 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 
-from depthwizard.depth.backbone import DepthAnythingV2Small, load_dav2_small
+from depthwizard.depth.backbone import DepthAnythingV3Small, load_dav3_small
 from depthwizard.depth.tiling import infer_tiled
 from depthwizard.utils.logging import logger
 
@@ -18,7 +18,7 @@ IMAGENET_STD = np.array([0.229, 0.224, 0.225], dtype=np.float32).reshape(1, 1, 3
 
 
 class DepthInferenceEngine:
-    """Manages Depth Anything V2 inference over full scenes and sliding tiles."""
+    """Manages Depth Anything V3 inference over full scenes and sliding tiles."""
 
     def __init__(
         self,
@@ -39,8 +39,16 @@ class DepthInferenceEngine:
             if mode == "metric":
                 v110_best = Path("models/v1.1.0/best.pt")
                 v110_tall = Path("models/v1.1.0/best_tall.pt")
-                v103_legacy = Path("models/dav2s_gamus_ft_v1.pth")
-                base_vits = Path("models/depth_anything_v2_vits.pth")
+                v103_legacy = (
+                    Path("models/dav3s_gamus_ft_v1.pth")
+                    if Path("models/dav3s_gamus_ft_v1.pth").exists()
+                    else Path("models/dav2s_gamus_ft_v1.pth")
+                )
+                base_vits = (
+                    Path("models/depth_anything_v3_vits.pth")
+                    if Path("models/depth_anything_v3_vits.pth").exists()
+                    else Path("models/depth_anything_v2_vits.pth")
+                )
 
                 if model_version == "v1.1.0_tall" and v110_tall.exists():
                     checkpoint_path = v110_tall
@@ -53,22 +61,26 @@ class DepthInferenceEngine:
                 else:
                     checkpoint_path = base_vits
             else:
-                checkpoint_path = Path("models/depth_anything_v2_vits.pth")
+                checkpoint_path = (
+                    Path("models/depth_anything_v3_vits.pth")
+                    if Path("models/depth_anything_v3_vits.pth").exists()
+                    else Path("models/depth_anything_v2_vits.pth")
+                )
 
         self.checkpoint_path = Path(checkpoint_path)
         logger.info(
             "Initializing DepthInferenceEngine",
             extra={"device": self.device, "checkpoint": str(self.checkpoint_path), "mode": self.mode, "version": self.model_version},
         )
-        self.model: DepthAnythingV2Small = load_dav2_small(self.checkpoint_path, device=self.device)
+        self.model: DepthAnythingV3Small = load_dav3_small(self.checkpoint_path, device=self.device)
 
         # Optional tall specialist model for ensemble fusion
-        self.model_tall: Optional[DepthAnythingV2Small] = None
+        self.model_tall: Optional[DepthAnythingV3Small] = None
         if self.model_version == "ensemble" and self.mode == "metric":
             tall_path = Path("models/v1.1.0/best_tall.pt")
             if tall_path.exists():
                 logger.info("Ensemble mode active: Loading secondary tall structure specialist head from %s", tall_path)
-                self.model_tall = load_dav2_small(tall_path, device=self.device)
+                self.model_tall = load_dav3_small(tall_path, device=self.device)
 
 
 

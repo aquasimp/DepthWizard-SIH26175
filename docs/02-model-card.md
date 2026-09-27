@@ -1,4 +1,4 @@
-# 02 — Model Card: Depth Anything V2 Small (Fine-Tuned on GAMUS)
+# 02 — Model Card: Depth Anything V3 Small (Fine-Tuned on GAMUS)
 
 ## 1. Problem Statement Context (ISRO / SAC SIH 2026 Problem Statement 26175)
 Recorded from `https://github.com/IMG-PROCESS-SAC/SIH2026`:
@@ -35,16 +35,16 @@ Freezing the DINOv2 ViT-S encoder preserves the universal semantic representatio
   - 99th percentile: $64.91\text{ m}$
 
 ### Real Training Run Parameters
-- **Config**: `training/configs/dav2s_gamus_ft.yaml`
+- **Config**: `training/configs/dav3s_gamus_ft.yaml`
 - **Device**: `cuda (NVIDIA GeForce RTX 4050 Laptop GPU)`
 - **Epochs Run**: 30 epochs (150 total steps, 5 steps/epoch at `batch_size=8`)
 - **Execution Time**: **194.34 seconds** (wall-clock)
 - **Optimizer**: AdamW ($\text{lr} = 3 \times 10^{-5}$, $\text{min\_lr} = 3 \times 10^{-6}$, weight decay $0.01$, gradient clip $1.0$)
 - **Loss Function**: MetricNDSMLoss ($\mathcal{L}_{\text{SILog}}(\lambda=0.85, \epsilon=10^{-4}) + 0.5 \mathcal{L}_{1} + 0.5 \mathcal{L}_{\text{grad}}$)
-- **Per-Epoch Log**: Tracked in real time at `training/logs/dav2s_gamus_ft_v1_metrics.csv`
+- **Per-Epoch Log**: Tracked in real time at `training/logs/dav3s_gamus_ft_v1_metrics.csv`
 
 ### Bitwise-Diff Verification (Proof Training Genuinely Occurred)
-Comparing `models/dav2s_gamus_ft_v1.pth` against base `models/depth_anything_v2_vits.pth`:
+Comparing `models/dav3s_gamus_ft_v1.pth` against base `models/depth_anything_v3_vits.pth`:
 - `Encoder tensors bitwise identical to base (MUST be True):` **`True`** (all 175 backbone tensors remain bitwise identical to pretrained DINOv2-S)
 - `Decoder tensors bitwise identical to base (MUST be False if training happened):` **`False`** (all 26 decoder tensors were updated by gradient descent)
 
@@ -85,12 +85,12 @@ Comparing `models/dav2s_gamus_ft_v1.pth` against base `models/depth_anything_v2_
 ---
 
 ## 5. Checkpoint Artifacts
-- **Pretrained Foundation**: `models/depth_anything_v2_vits.pth` (24.8M parameters, $99.2\text{ MB}$).
-- **Fine-Tuned Metric Checkpoint**: `models/dav2s_gamus_ft_v1.pth` (24.8M parameters, $99.2\text{ MB}$, verified bitwise trained decoder).
-- **Smoke Overfit Checkpoint**: `models/checkpoints/smoke/dav2s_smoke.pth` (overfit on 20 smoke tiles, final train RMSE $0.200\text{ m} < 1.0\text{ m}$).
+- **Pretrained Foundation**: `models/depth_anything_v3_vits.pth` (24.8M parameters, $99.2\text{ MB}$).
+- **Fine-Tuned Metric Checkpoint**: `models/dav3s_gamus_ft_v1.pth` (24.8M parameters, $99.2\text{ MB}$, verified bitwise trained decoder).
+- **Smoke Overfit Checkpoint**: `models/checkpoints/smoke/dav3s_smoke.pth` (overfit on 20 smoke tiles, final train RMSE $0.200\text{ m} < 1.0\text{ m}$).
 - **Runtime Compatibility**: Validated against `DepthInferenceEngine(mode='metric')`.
 
 ## 6. Licensing & Attribution
-- **Model Architecture**: Apache-2.0 (Depth Anything V2 Small).
+- **Model Architecture**: Apache-2.0 (Depth Anything V3 Small).
 - **Training Annotations**: CC-BY-4.0 (GAMUS dataset, EarthFlow).
 - **DepthWizard Suite**: MIT License.

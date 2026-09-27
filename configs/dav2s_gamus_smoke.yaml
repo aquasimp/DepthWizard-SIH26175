@@ -2,7 +2,7 @@
 model:
   encoder: "vits"
   features: 64
-  checkpoint: "models/depth_anything_v2_vits.pth"
+  checkpoint: "models/depth_anything_v3_vits.pth"
   freeze_encoder: true
 
 data:
@@ -18,7 +18,7 @@ training:
   lr: 0.0005
   weight_decay: 0.0001
   warmup_ratio: 0.05
-  output_checkpoint: "models/dav2s_gamus_ft_v1.pth"
+  output_checkpoint: "models/dav3s_gamus_ft_v1.pth"
   loss:
     silog_lambda: 0.85
     silog_eps: 0.0001

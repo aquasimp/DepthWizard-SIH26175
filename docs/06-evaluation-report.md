@@ -13,7 +13,7 @@ Evaluation of DepthWizard Single-View Height Estimation across real held-out tes
 >
 > *Note on Overall RMSE (8.26 m):* While overall RMSE decreased from 14.00 m to 8.26 m (-41.0%), this composite figure is pulled heavily upward by the severe under-prediction on extreme tall structures ($\ge 15\text{ m}$, where stratum RMSE is 15.11 m and bias is -10.06 m). Tall commercial buildings are significantly underrepresented in the 40-crop training sample. For typical ground, low canopy, and suburban terrain (the vast majority of pixels), MedAE (1.63 m) and region-specific metrics (Philadelphia RMSE 1.86 m, MedAE 1.02 m) reflect actual operational performance.
 
-In compliance with the ground-truth audit, the table below compares the initial zero-shot baseline (evaluated prior to fine-tuning on base DINOv2-S weights) against the fine-tuned model (`models/dav2s_gamus_ft_v1.pth`) evaluated over all 16 held-out GAMUS validation crops ($4,286,501$ valid LiDAR nDSM pixels).
+In compliance with the ground-truth audit, the table below compares the initial zero-shot baseline (evaluated prior to fine-tuning on base DINOv2-S weights) against the fine-tuned model (`models/dav3s_gamus_ft_v1.pth`) evaluated over all 16 held-out GAMUS validation crops ($4,286,501$ valid LiDAR nDSM pixels).
 
 | Metric | Pre-Training Zero-Shot (v1.0.1) | Real Fine-Tuned (v1.0.2) | Change / Delta |
 |---|:---:|:---:|:---:|

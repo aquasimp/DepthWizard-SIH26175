@@ -90,8 +90,16 @@ def run_pipeline(
 
             v110_best = Path("models/v1.1.0/best.pt")
             v110_tall = Path("models/v1.1.0/best_tall.pt")
-            v103_legacy = Path("models/dav2s_gamus_ft_v1.pth")
-            base_ckpt = Path("models/depth_anything_v2_vits.pth")
+            v103_legacy = (
+                Path("models/dav3s_gamus_ft_v1.pth")
+                if Path("models/dav3s_gamus_ft_v1.pth").exists()
+                else Path("models/dav2s_gamus_ft_v1.pth")
+            )
+            base_ckpt = (
+                Path("models/depth_anything_v3_vits.pth")
+                if Path("models/depth_anything_v3_vits.pth").exists()
+                else Path("models/depth_anything_v2_vits.pth")
+            )
 
             if model_ver == "v1.1.0_tall" and v110_tall.exists():
                 ckpt_path = v110_tall
@@ -115,7 +123,11 @@ def run_pipeline(
                 ckpt_path = base_ckpt
                 model_ver = "base"
             else:
-                ckpt_path = Path("models/depth_anything_v2_vits.pth")
+                ckpt_path = (
+                    Path("models/depth_anything_v3_vits.pth")
+                    if Path("models/depth_anything_v3_vits.pth").exists()
+                    else Path("models/depth_anything_v2_vits.pth")
+                )
 
             engine = get_inference_engine(
                 checkpoint_path=str(ckpt_path),

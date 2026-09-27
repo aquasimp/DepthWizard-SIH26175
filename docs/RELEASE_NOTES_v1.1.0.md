@@ -3,7 +3,7 @@
 **Release Date**: September 6, 2026  
 **Problem Statement**: Smart India Hackathon 2026 · PS 26175 (ISRO / Space Applications Centre)  
 **Repository Branch**: `release/v1.1.0`  
-**Base Foundation**: Depth Anything V2 Small (`vits` encoder + DPT metric head)
+**Base Foundation**: Depth Anything V3 Small (`vits` encoder + DPT metric head)
 
 ---
 
@@ -46,7 +46,7 @@ DepthWizard v1.1.0 represents a major milestone in single-view satellite and aer
 - **Dynamic Checkpoint Serialization**: Recorded `models/v1.1.0/best.pt` (best overall validation RMSE), `models/v1.1.0/best_tall.pt` (best tall structure RMSE $\ge 15\text{m}$), and real-time state in `models/v1.1.0/checkpoint_state.json`.
 
 ### 3. Rigorous Bitwise Weight Audit (`scripts/audit_weights_v110.py`)
-- Bitwise compared `models/v1.1.0/best.pt` against foundational base `models/depth_anything_v2_vits.pth` and prior `models/dav2s_gamus_ft_v1.pth`.
+- Bitwise compared `models/v1.1.0/best.pt` against foundational base `models/depth_anything_v3_vits.pth` and prior `models/dav3s_gamus_ft_v1.pth`.
 - Verified that **100.0% of vision backbone weights (175/175 tensors) remained bitwise identical to official DINOv2 weights** (`max abs diff == 0.0`), preventing catastrophic forgetting.
 - Verified that **93.8% of DPT decoder weights (60/64 tensors)** evolved under gradient descent.
 

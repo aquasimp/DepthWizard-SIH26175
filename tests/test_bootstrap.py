@@ -20,8 +20,10 @@ def test_core_imports() -> None:
 
 
 def test_weights_file_exists_and_size() -> None:
-    """Verify Depth Anything V2 Small weights are present with exact expected size."""
-    weights_path = Path("models/depth_anything_v2_vits.pth")
+    """Verify Depth Anything V3 Small weights are present with exact expected size."""
+    weights_path = Path("models/depth_anything_v3_vits.pth")
+    if not weights_path.exists():
+        weights_path = Path("models/depth_anything_v2_vits.pth")
     assert weights_path.exists(), f"Weights file missing at {weights_path}"
     expected_size = 99218434
     actual_size = os.path.getsize(weights_path)

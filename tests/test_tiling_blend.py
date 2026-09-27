@@ -32,7 +32,8 @@ def test_tiling_seamless_continuity() -> None:
     cv2.rectangle(img_synth, (420, 200), (550, 320), (180, 180, 180), -1)
 
     # Initialize model on CPU for reproducible testing
-    engine = DepthInferenceEngine(checkpoint_path="models/depth_anything_v2_vits.pth", device="cpu")
+    ckpt = "models/depth_anything_v3_vits.pth" if Path("models/depth_anything_v3_vits.pth").exists() else "models/depth_anything_v2_vits.pth"
+    engine = DepthInferenceEngine(checkpoint_path=ckpt, device="cpu")
 
     def infer_fn(tile: np.ndarray) -> np.ndarray:
         return engine.infer_tile(tile, input_size=518)
@@ -99,8 +100,9 @@ def test_cli_runs_on_all_samples_cpu_and_cuda() -> None:
     samples_dir = Path("data/samples")
     assert samples_dir.exists()
 
+    ckpt = "models/depth_anything_v3_vits.pth" if Path("models/depth_anything_v3_vits.pth").exists() else "models/depth_anything_v2_vits.pth"
     engine_cpu = DepthInferenceEngine(
-        checkpoint_path="models/depth_anything_v2_vits.pth", device="cpu"
+        checkpoint_path=ckpt, device="cpu"
     )
 
     sample_files = list(samples_dir.glob("sample_*.*"))
@@ -118,7 +120,7 @@ def test_cli_runs_on_all_samples_cpu_and_cuda() -> None:
 
     if torch.cuda.is_available():
         engine_cuda = DepthInferenceEngine(
-            checkpoint_path="models/depth_anything_v2_vits.pth", device="cuda"
+            checkpoint_path=ckpt, device="cuda"
         )
         for p in sample_files:
             pil_img = Image.open(str(p)).convert("RGB")

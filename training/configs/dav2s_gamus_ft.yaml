@@ -1,5 +1,5 @@
 # Full fine-tuning configuration on GAMUS subset
-run_name: "dav2s_gamus_ft_v1"
+run_name: "dav3s_gamus_ft_v1"
 # Capped from original targets (~600 train / 120 val) due to hackathon-window bandwidth limits during ingestion
 max_train_tiles: 40
 max_val_tiles: 16
@@ -15,4 +15,4 @@ amp: false
 device: "auto"
 seed: 42
 checkpoint_interval_steps: 25
-output_checkpoint: "models/dav2s_gamus_ft_v1.pth"
+output_checkpoint: "models/dav3s_gamus_ft_v1.pth"

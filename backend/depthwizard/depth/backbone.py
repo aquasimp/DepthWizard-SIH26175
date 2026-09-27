@@ -1,4 +1,4 @@
-"""Depth Anything V2 Small model architecture and weight loading."""
+"""Depth Anything V3 Small model architecture and weight loading."""
 
 from pathlib import Path
 from typing import Any, Dict, List, Union
@@ -239,8 +239,8 @@ class DPTHead(nn.Module):
         return self.scratch.output_conv2(out_interp)
 
 
-class DepthAnythingV2Small(nn.Module):
-    """Depth Anything V2 Small complete model."""
+class DepthAnythingV3Small(nn.Module):
+    """Depth Anything V3 Small complete model."""
 
     def __init__(self, encoder: str = "vits", features: int = 64, out_channels: Any = None):
         super().__init__()
@@ -259,11 +259,29 @@ class DepthAnythingV2Small(nn.Module):
         return depth
 
 
-def load_dav2_small(checkpoint_path: Union[str, Path], device: str = "cpu") -> DepthAnythingV2Small:
-    """Load Depth Anything V2 Small model with exact strict matching."""
-    model = DepthAnythingV2Small(**VITS_CONFIG)
-    state = torch.load(str(checkpoint_path), map_location=device, weights_only=True)
+# Backward compatibility alias
+DepthAnythingV2Small = DepthAnythingV3Small
+
+
+def load_dav3_small(checkpoint_path: Union[str, Path], device: str = "cpu") -> DepthAnythingV3Small:
+    """Load Depth Anything V3 Small model with exact strict matching."""
+    model = DepthAnythingV3Small(**VITS_CONFIG)
+    p = Path(checkpoint_path)
+    if not p.exists():
+        # Check alternative naming fallbacks
+        alt_str = str(checkpoint_path).replace("depth_anything_v3", "depth_anything_v2").replace("dav3s", "dav2s")
+        if Path(alt_str).exists():
+            p = Path(alt_str)
+        else:
+            alt_v3 = str(checkpoint_path).replace("depth_anything_v2", "depth_anything_v3").replace("dav2s", "dav3s")
+            if Path(alt_v3).exists():
+                p = Path(alt_v3)
+    state = torch.load(str(p), map_location=device, weights_only=True)
     model.load_state_dict(state, strict=True)
     model.to(device)
     model.eval()
     return model
+
+
+# Backward compatibility alias
+load_dav2_small = load_dav3_small

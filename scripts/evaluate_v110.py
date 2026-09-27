@@ -1,8 +1,8 @@
 """Honest Held-Out Re-Evaluation on GAMUS Test Split for DepthWizard v1.1.0.
 
 Evaluates 1,071 held-out test crops across 3 cities (DC, NYC, PHL):
-1. Zero-shot Base model (Depth Anything V2 Small relative depth + least-squares metric alignment)
-2. v1.0.3 fine-tuned model (models/dav2s_gamus_ft_v1.pth)
+1. Zero-shot Base model (Depth Anything V3 Small relative depth + least-squares metric alignment)
+2. v1.0.3 fine-tuned model (models/dav3s_gamus_ft_v1.pth)
 3. v1.1.0 fine-tuned model (models/v1.1.0/best.pt)
 4. v1.1.0 best-tall model (models/v1.1.0/best_tall.pt)
 
@@ -35,7 +35,7 @@ if str(repo_root) not in sys.path:
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
-from depthwizard.depth.backbone import DepthAnythingV2Small, load_dav2_small
+from depthwizard.depth.backbone import DepthAnythingV3Small, load_dav3_small
 from depthwizard.io.writers import write_geotiff
 from torch.utils.data import DataLoader
 
@@ -123,7 +123,7 @@ def compute_comprehensive_metrics(
 
 
 def evaluate_model(
-    model: DepthAnythingV2Small,
+    model: DepthAnythingV3Small,
     loader: DataLoader,
     device: torch.device,
     is_base_model: bool = False,
@@ -367,7 +367,7 @@ def generate_evaluation_plots(results: Dict[str, Any], output_dir: Path) -> None
 
 
 def export_sample_geotiffs(
-    model: DepthAnythingV2Small,
+    model: DepthAnythingV3Small,
     dataset: GAMUSDataset,
     device: torch.device,
     output_dir: Path,
@@ -436,20 +436,28 @@ def run_evaluation(args: argparse.Namespace) -> Dict[str, Any]:
     device = torch.device(args.device)
 
     # 1. Base Model (Zero-Shot Relative + Affine Alignment)
-    base_path = repo_root / "models" / "depth_anything_v2_vits.pth"
-    base_model = load_dav2_small(base_path, device=str(device))
-    base_results = evaluate_model(base_model, test_loader, device, is_base_model=True, model_name="Zero-Shot Base (DAV2-S)")
+    base_path = (
+        repo_root / "models" / "depth_anything_v3_vits.pth"
+        if (repo_root / "models" / "depth_anything_v3_vits.pth").exists()
+        else repo_root / "models" / "depth_anything_v2_vits.pth"
+    )
+    base_model = load_dav3_small(base_path, device=str(device))
+    base_results = evaluate_model(base_model, test_loader, device, is_base_model=True, model_name="Zero-Shot Base (DAV3-S)")
 
     # 2. v1.0.3 Model
-    v103_path = repo_root / "models" / "dav2s_gamus_ft_v1.pth"
-    v103_model = load_dav2_small(v103_path, device=str(device))
+    v103_path = (
+        repo_root / "models" / "dav3s_gamus_ft_v1.pth"
+        if (repo_root / "models" / "dav3s_gamus_ft_v1.pth").exists()
+        else repo_root / "models" / "dav2s_gamus_ft_v1.pth"
+    )
+    v103_model = load_dav3_small(v103_path, device=str(device))
     v103_results = evaluate_model(v103_model, test_loader, device, is_base_model=False, model_name="v1.0.3 Checkpoint")
 
     # 3. v1.1.0 Model (best.pt)
     v110_path = repo_root / "models" / "v1.1.0" / "best.pt"
     if not v110_path.exists():
         v110_path = repo_root / "models" / "v1.1.0" / "last.pt"
-    v110_model = load_dav2_small(v110_path, device=str(device))
+    v110_model = load_dav3_small(v110_path, device=str(device))
     v110_results = evaluate_model(v110_model, test_loader, device, is_base_model=False, model_name="v1.1.0 Best Val Checkpoint")
 
     # 4. v1.1.0 Best Tall Model (if present)
@@ -461,7 +469,7 @@ def run_evaluation(args: argparse.Namespace) -> Dict[str, Any]:
     }
 
     if v110_tall_path.exists() and v110_tall_path.stat().st_size > 0:
-        v110_tall_model = load_dav2_small(v110_tall_path, device=str(device))
+        v110_tall_model = load_dav3_small(v110_tall_path, device=str(device))
         v110_tall_results = evaluate_model(v110_tall_model, test_loader, device, is_base_model=False, model_name="v1.1.0 Best Tall Checkpoint")
         results_dict["v1_1_0_best_tall"] = v110_tall_results
 

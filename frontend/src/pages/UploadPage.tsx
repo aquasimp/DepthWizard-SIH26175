@@ -481,7 +481,7 @@ export const UploadPage: React.FC<UploadPageProps> = ({
                       DepthWizard v1.1.0 Tall Specialist (Optimized for High-Rise Skylines &gt; 15m)
                     </option>
                     <option value="base">
-                      Zero-Shot Baseline (Depth Anything V2 Small Foundation)
+                      Zero-Shot Baseline (Depth Anything V3 Small Foundation)
                     </option>
                   </select>
                   <span className="text-[10px] text-slate-400">

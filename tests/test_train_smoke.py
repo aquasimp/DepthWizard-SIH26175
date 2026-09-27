@@ -49,9 +49,11 @@ def test_metric_losses_computation() -> None:
 def test_metric_checkpoint_loads_into_inference_engine() -> None:
     """Acceptance check 3: Exported checkpoint loads cleanly into DepthInferenceEngine(mode='metric')."""
     repo_root = Path(__file__).resolve().parent.parent
-    checkpoint = repo_root / "models" / "dav2s_gamus_ft_v1.pth"
+    checkpoint = repo_root / "models" / "dav3s_gamus_ft_v1.pth"
     if not checkpoint.exists():
-        pytest.skip("models/dav2s_gamus_ft_v1.pth training checkpoint not found (excluded from git)")
+        checkpoint = repo_root / "models" / "dav2s_gamus_ft_v1.pth"
+    if not checkpoint.exists():
+        pytest.skip("models/dav3s_gamus_ft_v1.pth training checkpoint not found (excluded from git)")
     assert checkpoint.exists(), f"Expected checkpoint at {checkpoint}"
 
     engine = DepthInferenceEngine(mode="metric")
@@ -69,13 +71,15 @@ def test_training_curves_asset_exists() -> None:
 
 def test_encoder_is_strictly_frozen_and_trainable_params_count() -> None:
     """Step 6 / Mutation E: Assert encoder parameters are strictly frozen and trainable count is bounded."""
-    from depthwizard.depth.backbone import load_dav2_small
+    from depthwizard.depth.backbone import load_dav3_small
 
     from training.train_head import configure_trainable_parameters
 
     repo_root = Path(__file__).resolve().parent.parent
-    checkpoint = repo_root / "models" / "depth_anything_v2_vits.pth"
-    model = load_dav2_small(checkpoint, device="cpu")
+    checkpoint = repo_root / "models" / "depth_anything_v3_vits.pth"
+    if not checkpoint.exists():
+        checkpoint = repo_root / "models" / "depth_anything_v2_vits.pth"
+    model = load_dav3_small(checkpoint, device="cpu")
 
     trainable_params, trainable_count, frozen_count = configure_trainable_parameters(model)
 

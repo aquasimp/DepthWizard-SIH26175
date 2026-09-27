@@ -4,10 +4,10 @@
 # 2. Height-stratified batch sampling (2.5x tall-pixel enrichment)
 # 3. Synchronized height-safe spatial and photometric augmentation
 
-run_name: "dav2s_gamus_v110"
+run_name: "dav3s_gamus_v110"
 
 model:
-  init_checkpoint: "models/depth_anything_v2_vits.pth"
+  init_checkpoint: "models/depth_anything_v3_vits.pth"
   frozen_encoder: true
 
 data:

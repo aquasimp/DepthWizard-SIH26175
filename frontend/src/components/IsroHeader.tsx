@@ -45,9 +45,9 @@ export const IsroHeader: React.FC<IsroHeaderProps> = ({
         {/* Left: Emblem & Institutional Titles */}
         <div className="flex items-center gap-3.5">
           <div 
-            onClick={() => onNavigate && onNavigate('upload')}
+            onClick={() => onNavigate && onNavigate('dashboard')}
             className="w-11 h-11 rounded-lg border border-[#00c2cb]/40 bg-[#09152b] p-1 flex items-center justify-center shadow-lg shadow-[#0055a5]/20 cursor-pointer hover:border-[#ff6600]/80 transition group"
-            title="Return to Mission Terminal"
+            title="Return to DepthWizard Dashboard"
           >
             <img 
               src="/isro_insignia.svg" 
@@ -123,6 +123,18 @@ export const IsroHeader: React.FC<IsroHeaderProps> = ({
         {/* Navigation Tabs */}
         {onNavigate && (
           <nav className="flex items-center gap-1 font-mono text-[11px]">
+            <button
+              type="button"
+              onClick={() => onNavigate('dashboard')}
+              className={`px-3 py-1 rounded transition cursor-pointer flex items-center gap-1.5 ${
+                currentPage === 'dashboard'
+                  ? 'bg-[#00c2cb] text-[#070e1d] font-bold shadow-sm'
+                  : 'text-slate-300 hover:text-white hover:bg-[#0f1d3a]'
+              }`}
+            >
+              <span>✦</span> DEPTHWIZARD HOME
+            </button>
+
             <button
               type="button"
               onClick={() => onNavigate('upload')}

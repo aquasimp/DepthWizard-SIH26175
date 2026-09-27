@@ -1,4 +1,4 @@
-# DepthWizard v1.1.0 — Model Card: Depth Anything V2 Small Fine-Tuning
+# DepthWizard v1.1.0 — Model Card: Depth Anything V3 Small Fine-Tuning
 
 ## 1. Executive Summary & ISRO / SAC Context
 - **Problem Statement**: Smart India Hackathon 2026 · PS 26175 (ISRO / Space Applications Centre)
@@ -14,11 +14,11 @@
 | :--- | :--- | :--- | :--- |
 | **Vision Backbone** | DINOv2 ViT-Small (`vits`, patch size 14, feature dim 64) | 22,056,576 (89.0%) | **100% Frozen** (`requires_grad=False`) |
 | **Decoder Head** | Dense Prediction Transformer (DPT) 4-stage feature fusion | 2,728,513 (11.0%) | **Trainable** (`requires_grad=True`) |
-| **Total Model** | Depth Anything V2 Small Metric DPT | **24,785,089** | 2.73M Active Parameters |
+| **Total Model** | Depth Anything V3 Small Metric DPT | **24,785,089** | 2.73M Active Parameters |
 
 ### Bitwise Weight Audit Verification
 Conducted via `scripts/audit_weights_v110.py` and logged in `artifacts/v1.1.0/weight_diff_v1.1.0.json`:
-- **Encoder Bitwise Identity**: **175 / 175 tensors (100.0%)** bitwise identical to official base weights (`models/depth_anything_v2_vits.pth`), with **Max Absolute Diff = 0.0**.
+- **Encoder Bitwise Identity**: **175 / 175 tensors (100.0%)** bitwise identical to official base weights (`models/depth_anything_v3_vits.pth`), with **Max Absolute Diff = 0.0**.
 - **Decoder Evolution vs Base**: **60 / 64 tensors (93.8%)** updated by gradient descent (exceeds $\ge 90\%$ requirement).
 - **Decoder Evolution vs v1.0.3**: **60 / 64 tensors (93.8%)** distinct from v1.0.3 checkpoint, with **Max Absolute Diff = 0.1109**.
 
@@ -64,7 +64,7 @@ Sourced from canonical Hugging Face repository `earthflow/GAMUS` (11.54 MB per t
 Evaluated across the full held-out test split (zero overlap with training or validation tiles):
 
 ### Overall Comparative Benchmark
-| Metric | Zero-Shot Base (DAV2-S) | v1.0.3 Baseline | v1.1.0 Best Val (`best.pt`) | v1.1.0 Best Tall (`best_tall.pt`) | Delta (v1.1.0 vs v1.0.3) |
+| Metric | Zero-Shot Base (DAV3-S) | v1.0.3 Baseline | v1.1.0 Best Val (`best.pt`) | v1.1.0 Best Tall (`best_tall.pt`) | Delta (v1.1.0 vs v1.0.3) |
 | :--- | :---: | :---: | :---: | :---: | :---: |
 | **Mean Bias** | `-5.1805m` | `-1.5609m` | **`-0.3007m`** | `-0.4204m` | **-1.2602m (Near zero)** |
 | **MAE** | `5.3994m` | `3.9340m` | **`2.3645m`** | `2.4110m` | **-39.9% error reduction** |

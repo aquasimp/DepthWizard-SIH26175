@@ -1,0 +1,94 @@
+{
+  "dataset": "GAMUS (Global Aerial Multi-View Urban Surface)",
+  "split": "val",
+  "sample_count": 2,
+  "baseline": {
+    "label": "Baseline \u2014 Pretrained Depth Anything 3",
+    "mean_rmse": 17.837,
+    "mean_mae": 15.5399,
+    "mean_correlation": -0.3789
+  },
+  "after": {
+    "label": "After \u2014 Calibrated DepthWizard",
+    "mean_rmse": 9.6544,
+    "mean_mae": 7.9374,
+    "mean_correlation": 0.3799
+  },
+  "improvement": {
+    "rmse_percent": 45.87,
+    "mae_percent": 48.92,
+    "correlation_change": 0.7588
+  },
+  "sample_results": [
+    {
+      "sample_name": "DC_02_26",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
+      "baseline": {
+        "label": "Baseline \u2014 Pretrained Depth Anything 3",
+        "method": "Pretrained DA3 relative depth mapped to reference elevation range",
+        "rmse": 18.3384,
+        "mae": 16.0325,
+        "correlation": -0.3765,
+        "valid_pixels": 1048576
+      },
+      "after": {
+        "label": "After \u2014 Calibrated DepthWizard",
+        "method": "Depth Anything 3 + Affine Scale Calibration (H = a\u00b7D + b)",
+        "rmse": 9.0591,
+        "mae": 7.2943,
+        "correlation": 0.3785,
+        "scale_factor_a": -54.939894,
+        "offset_b": 65.3389,
+        "valid_pixels": 1048576
+      },
+      "improvement": {
+        "rmse_percent": 50.6,
+        "mae_percent": 54.5,
+        "correlation_change": 0.755
+      },
+      "reference_statistics": {
+        "min_elevation_m": 0.0,
+        "max_elevation_m": 41.52,
+        "mean_elevation_m": 7.85
+      }
+    },
+    {
+      "sample_name": "DC_04_23",
+      "dimensions": {
+        "width": 1024,
+        "height": 1024
+      },
+      "baseline": {
+        "label": "Baseline \u2014 Pretrained Depth Anything 3",
+        "method": "Pretrained DA3 relative depth mapped to reference elevation range",
+        "rmse": 17.3357,
+        "mae": 15.0474,
+        "correlation": -0.3813,
+        "valid_pixels": 1048576
+      },
+      "after": {
+        "label": "After \u2014 Calibrated DepthWizard",
+        "method": "Depth Anything 3 + Affine Scale Calibration (H = a\u00b7D + b)",
+        "rmse": 10.2497,
+        "mae": 8.5805,
+        "correlation": 0.3813,
+        "scale_factor_a": -55.430642,
+        "offset_b": 75.9386,
+        "valid_pixels": 1048576
+      },
+      "improvement": {
+        "rmse_percent": 40.88,
+        "mae_percent": 42.98,
+        "correlation_change": 0.7626
+      },
+      "reference_statistics": {
+        "min_elevation_m": -5.0,
+        "max_elevation_m": 45.03,
+        "mean_elevation_m": 22.2
+      }
+    }
+  ]
+}

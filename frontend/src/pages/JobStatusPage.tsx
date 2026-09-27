@@ -145,7 +145,7 @@ export const JobStatusPage: React.FC<JobStatusPageProps> = ({
         currentPage="status"
         activeJobId={jobId}
         onNavigate={(page, id) => {
-          if (page === 'upload') onNavigateHome();
+          if (page === 'upload' || page === 'dashboard') onNavigateHome();
           else if (page === 'viewer' && id) onOpenViewer(id);
           else if (page === 'validate' && id && onNavigateValidate) onNavigateValidate(id);
         }}

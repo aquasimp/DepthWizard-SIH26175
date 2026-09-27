@@ -24,7 +24,7 @@ if str(repo_root) not in sys.path:
 
 import numpy as np
 import torch
-from depthwizard.depth.backbone import DepthAnythingV2Small, load_dav2_small
+from depthwizard.depth.backbone import DepthAnythingV3Small, load_dav3_small
 from torch.utils.data import DataLoader
 
 from training.dataset import GAMUSDataset
@@ -41,9 +41,13 @@ def run_probe():
     print(f"CUDA Device: {device_name} ({total_vram_mb:.1f} MB VRAM)")
 
     # 1. Model loading & freeze check
-    checkpoint_path = repo_root / "models" / "depth_anything_v2_vits.pth"
+    checkpoint_path = (
+        repo_root / "models" / "depth_anything_v3_vits.pth"
+        if (repo_root / "models" / "depth_anything_v3_vits.pth").exists()
+        else repo_root / "models" / "depth_anything_v2_vits.pth"
+    )
     print(f"Loading base model: {checkpoint_path}")
-    model = load_dav2_small(checkpoint_path, device=device)
+    model = load_dav3_small(checkpoint_path, device=device)
 
     # Scale output convolution weights if starting from raw base relative model
     model.depth_head.scratch.output_conv2[2].weight.data *= 58.0

@@ -1,0 +1,13 @@
+# Smoke test configuration: 20 tiles overfit test
+run_name: "smoke_20_tiles"
+max_tiles: 20
+epochs: 100
+batch_size: 4
+learning_rate: 0.0003
+warmup_ratio: 0.05
+weight_decay: 0.01
+grad_clip: 1.0
+device: "auto"
+seed: 42
+target_rmse: 1.0
+output_dir: "models/checkpoints/smoke"

@@ -23,7 +23,7 @@
                                           v                         v
                                     +-------------------------------------+
                                     | Seamless Tiling & Inference Engine  |
-                                    |  - Depth Anything V2 Small (ViT-S)  |
+                                    |  - Depth Anything V3 Small (ViT-S)  |
                                     |  - Overlap Cosine-Feathered Blend   |
                                     |  - Overlap Region Median Matching   |
                                     +-------------------------------------+

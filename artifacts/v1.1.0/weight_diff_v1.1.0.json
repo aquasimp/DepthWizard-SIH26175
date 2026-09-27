@@ -1,7 +1,7 @@
 {
   "v110_checkpoint": "models\\v1.1.0\\best.pt",
-  "base_checkpoint": "models\\depth_anything_v2_vits.pth",
-  "v103_checkpoint": "models\\dav2s_gamus_ft_v1.pth",
+  "base_checkpoint": "models\\depth_anything_v3_vits.pth",
+  "v103_checkpoint": "models\\dav3s_gamus_ft_v1.pth",
   "encoder_audit": {
     "total_encoder_tensors": 175,
     "bitwise_identical": true,

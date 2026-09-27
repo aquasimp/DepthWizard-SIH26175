@@ -1,8 +1,8 @@
 """Bitwise Weight Diff Audit for DepthWizard v1.1.0.
 
 Compares:
-1. Base weights (models/depth_anything_v2_vits.pth)
-2. v1.0.3 fine-tuned checkpoint (models/dav2s_gamus_ft_v1.pth)
+1. Base weights (models/depth_anything_v3_vits.pth)
+2. v1.0.3 fine-tuned checkpoint (models/dav3s_gamus_ft_v1.pth)
 3. v1.1.0 newly fine-tuned checkpoint (models/v1.1.0/best.pt or best_tall.pt)
 
 Asserts:
@@ -28,8 +28,16 @@ import torch
 
 
 def audit_weights(v110_ckpt_path: Path) -> Dict[str, Any]:
-    base_path = repo_root / "models" / "depth_anything_v2_vits.pth"
-    v103_path = repo_root / "models" / "dav2s_gamus_ft_v1.pth"
+    base_path = (
+        repo_root / "models" / "depth_anything_v3_vits.pth"
+        if (repo_root / "models" / "depth_anything_v3_vits.pth").exists()
+        else repo_root / "models" / "depth_anything_v2_vits.pth"
+    )
+    v103_path = (
+        repo_root / "models" / "dav3s_gamus_ft_v1.pth"
+        if (repo_root / "models" / "dav3s_gamus_ft_v1.pth").exists()
+        else repo_root / "models" / "dav2s_gamus_ft_v1.pth"
+    )
     artifact_path = repo_root / "artifacts" / "v1.1.0" / "weight_diff_v1.1.0.json"
 
     assert base_path.exists(), f"Base checkpoint not found at {base_path}. Run python models/download_weights.py."

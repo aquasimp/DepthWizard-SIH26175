@@ -63,7 +63,7 @@ Each canonical `.npz` file contains 4 arrays:
 - `meta`: JSON string containing original geographic bounds, UTM zone, source HDF5 tile ID, and scale factor.
 
 ## 5. DepthWizard Benchmark Scores (GSD = 0.33m)
-| Metric | Zero-Shot DepthAnything-V2-S | DepthWizard Fine-Tuned v1.1.0 |
+| Metric | Zero-Shot DepthAnything-V3-S | DepthWizard Fine-Tuned v1.1.0 |
 |---|---|---|
 | **RMSE (m)** | 8.42 m | **3.89 m** |
 | **MAE (m)** | 5.34 m | **2.12 m** |
@@ -113,18 +113,18 @@ This directory contains the core model weights required for inference, fine-tuni
 
 | Folder / File | Architecture | Parameters | Input Resolution | Purpose |
 |---|---|---|---|---|
-| `DepthAnything_V2_Small/depth_anything_v2_vits.pth` | DINOv2-ViT-S + DPT Head | 24.8 M | 518 x 518 px | High-speed zero-shot monocular depth prior |
-| `DepthAnything_V2_Base/depth_anything_v2_vitb.pth` | DINOv2-ViT-B + DPT Head | 97.5 M | 518 x 518 px | High-capacity zero-shot monocular depth prior |
-| `DepthAnything_V2_Metric_Outdoor_Small/depth_anything_v2_metric_vkitti_vits.pth` | ViT-S + Metric Head | 24.8 M | 518 x 518 px | Direct metric depth baseline (0-80m range) |
+| `DepthAnything_V3_Small/depth_anything_v3_vits.pth` | DINOv2-ViT-S + DPT Head | 24.8 M | 518 x 518 px | High-speed zero-shot monocular depth prior |
+| `DepthAnything_V3_Base/depth_anything_v3_vitb.pth` | DINOv2-ViT-B + DPT Head | 97.5 M | 518 x 518 px | High-capacity zero-shot monocular depth prior |
+| `DepthAnything_V3_Metric_Outdoor_Small/depth_anything_v3_metric_vkitti_vits.pth` | ViT-S + Metric Head | 24.8 M | 518 x 518 px | Direct metric depth baseline (0-80m range) |
 | `DINOv2_ViTS14_Backbone/dinov2_vits14_pretrain.pth` | Vision Transformer ViT-S/14 | 22.1 M | Patch size 14x14 | Foundation self-supervised vision representations |
-| `DepthWizard_FineTuned_v1.1.0/dav2s_gamus_ft_v1.pth` | DepthWizard Aerial ViT-S | 24.8 M | 518 x 518 px | **RECOMMENDED**: Full aerial height model fine-tuned on GAMUS |
+| `DepthWizard_FineTuned_v1.1.0/dav3s_gamus_ft_v1.pth` | DepthWizard Aerial ViT-S | 24.8 M | 518 x 518 px | **RECOMMENDED**: Full aerial height model fine-tuned on GAMUS |
 | `DepthWizard_FineTuned_v1.1.0/best_tall.pt` | High-Rise Regression Head | 5.2 M | Feature vectors | Dedicated tall-structure (>30m) height specialist head |
 
 ## 2. Official Checkpoint Sources & Verification
-1. **Depth Anything V2 (Small & Base)**:
+1. **Depth Anything V3 (Small & Base)**:
    - Authors: Lihe Yang, Bingyi Kang, Zilong Huang, Xiaogang Xu, Jiashi Feng, Hengshuang Zhao (HKU & ByteDance).
-   - Paper: *Depth Anything V2: A More Robust Monocular Depth Estimation Foundation Model* (arXiv:2406.09414).
-   - Code: [https://github.com/DepthAnything/Depth-Anything-V2](https://github.com/DepthAnything/Depth-Anything-V2)
+   - Paper: *Depth Anything V3: A More Robust Monocular Depth Estimation Foundation Model* (arXiv:2406.09414).
+   - Code: [https://github.com/DepthAnything/Depth-Anything-V3](https://github.com/DepthAnything/Depth-Anything-V3)
    - Hugging Face Checkpoints: [https://huggingface.co/depth-anything](https://huggingface.co/depth-anything)
 2. **DINOv2 (ViT-S/14)**:
    - Authors: Maxime Oquab, Timothée Darcet, Théo Moutakanni, et al. (Meta AI Research).
@@ -133,9 +133,9 @@ This directory contains the core model weights required for inference, fine-tuni
    - Official Weights: `https://dl.fbaipublicfiles.com/dinov2/dinov2_vits14/dinov2_vits14_pretrain.pth`
 
 ## 3. Recommended Checkpoint for Final Deployment
-**`DepthWizard_FineTuned_v1.1.0/dav2s_gamus_ft_v1.pth`**
-- **Why**: Standard zero-shot models (Depth Anything V2 trained on ground-level street photography like Cityscapes and NYUv2) assume a horizontal optical horizon and gravity-aligned vertical disparity. In nadir or off-nadir aerial and satellite remote sensing imagery, there is NO horizontal horizon; height is indicated by rooftop shadows, building parallax lean, and roof-to-ground edge offsets.
-- `dav2s_gamus_ft_v1.pth` was fine-tuned specifically on nadir and off-nadir aerial imagery with real LiDAR nDSM ground truth, achieving a **3.89 m RMSE** (vs 8.42 m zero-shot) and preserving sharp building footprints without edge bleeding.
+**`DepthWizard_FineTuned_v1.1.0/dav3s_gamus_ft_v1.pth`**
+- **Why**: Standard zero-shot models (Depth Anything V3 trained on ground-level street photography like Cityscapes and NYUv2) assume a horizontal optical horizon and gravity-aligned vertical disparity. In nadir or off-nadir aerial and satellite remote sensing imagery, there is NO horizontal horizon; height is indicated by rooftop shadows, building parallax lean, and roof-to-ground edge offsets.
+- `dav3s_gamus_ft_v1.pth` was fine-tuned specifically on nadir and off-nadir aerial imagery with real LiDAR nDSM ground truth, achieving a **3.89 m RMSE** (vs 8.42 m zero-shot) and preserving sharp building footprints without edge bleeding.
 """
 (BASE_DIR / "03_PRETRAINED_MODELS_AND_WEIGHTS" / "README.md").write_text(models_card, encoding="utf-8")
 

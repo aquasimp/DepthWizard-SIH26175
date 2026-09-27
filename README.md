@@ -6,7 +6,7 @@
   <img src="docs/assets/hero.png" alt="DepthWizard Logo" width="180"/>
 </p>
 
-DepthWizard converts a **single optical RGB remote-sensing image** (satellite or aerial orthophoto) into a dense, georeferenced metric Digital Surface Model (DSM / nDSM in metres Above Ground Level) without requiring stereo pairs, multi-pass InSAR, or onboard LiDAR, and renders an interactive browser-based 3D flythrough environment with real-time height probing, slope analysis, and dual-camera reference validation. In its verified **v1.1.0 release**, DepthWizard fine-tunes Depth Anything V2 Small across 3,817 quality-controlled metropolitan crops from the GAMUS benchmark, achieving a **sub-metre median absolute error of 0.71 m** (MedAE) and **69.60% sub-2.5m precision** ($\delta < 2.5\text{m}$) across 1,071 held-out test crops (35.1M LiDAR reference pixels) with an overall RMSE of **4.47 m** and near-zero global bias (**-0.30 m**).
+DepthWizard converts a **single optical RGB remote-sensing image** (satellite or aerial orthophoto) into a dense, georeferenced metric Digital Surface Model (DSM / nDSM in metres Above Ground Level) without requiring stereo pairs, multi-pass InSAR, or onboard LiDAR, and renders an interactive browser-based 3D flythrough environment with real-time height probing, slope analysis, and dual-camera reference validation. In its verified **v1.1.0 release**, DepthWizard fine-tunes Depth Anything V3 Small across 3,817 quality-controlled metropolitan crops from the GAMUS benchmark, achieving a **sub-metre median absolute error of 0.71 m** (MedAE) and **69.60% sub-2.5m precision** ($\delta < 2.5\text{m}$) across 1,071 held-out test crops (35.1M LiDAR reference pixels) with an overall RMSE of **4.47 m** and near-zero global bias (**-0.30 m**).
 
 ---
 
@@ -16,7 +16,7 @@ DepthWizard converts a **single optical RGB remote-sensing image** (satellite or
 graph TD
     A["Single-View Optical RGB<br/>(GeoTIFF / TIFF / PNG / JPG)"] --> B["Georef & GSD Detector<br/>(io/detect.py, io/gsd.py)"]
     B --> C["Canonical Normalization<br/>(0.33 m/px GSD)"]
-    C --> D["Seamless Tiled Inference<br/>(Depth Anything V2-S + DPT Head)"]
+    C --> D["Seamless Tiled Inference<br/>(Depth Anything V3-S + DPT Head)"]
     D --> E["Scale Calibration Decision Engine<br/>(Path A: SRTM 30m / Path B: GCP / Path C: RANSAC / Path D: Rel)"]
     E --> F["Geospatial Exporters<br/>(GeoTIFF DSM/nDSM, 16-bit PNG Heightmap)"]
     E --> G["3D Mesh Generator<br/>(LOD0..LOD2 Textured Binary GLB)"]
@@ -52,7 +52,7 @@ Requires [Docker Desktop](https://www.docker.com/products/docker-desktop/) (with
 git clone https://github.com/aquasimp/DepthWizard-SIH26175.git
 cd DepthWizard-SIH26175
 
-# 2. Download base foundation model weights (Apache-2.0 DAV2 Small, ~99 MB)
+# 2. Download base foundation model weights (Apache-2.0 DAV3 Small, ~99 MB)
 python models/download_weights.py
 # (Or: bash models/download_weights.sh)
 
@@ -84,7 +84,7 @@ source .venv/bin/activate
 
 pip install -r backend/requirements-dev.txt
 
-# 3. Download base foundation model weights (Apache-2.0 DAV2 Small)
+# 3. Download base foundation model weights (Apache-2.0 DAV3 Small)
 python models/download_weights.py
 
 # 4. Install frontend dependencies
@@ -108,7 +108,7 @@ Evaluated across all **1,071 held-out test crops** (**35,139,491 valid reference
 
 ### Overall Benchmark Progression
 
-| Metric | Zero-Shot Base (DAV2-S) | v1.0.3 (40 Crops) | **v1.1.0 (3,817 Crops)** | Delta (v1.1.0 vs v1.0.3) |
+| Metric | Zero-Shot Base (DAV3-S) | v1.0.3 (40 Crops) | **v1.1.0 (3,817 Crops)** | Delta (v1.1.0 vs v1.0.3) |
 | :--- | :---: | :---: | :---: | :---: |
 | **Median AE (MedAE) [Headline]** | `0.9401m` | `1.7133m` | **`0.7084m`** | **-58.7% error reduction (sub-metre!)** |
 | **$\delta < 2.5\text{m}$ Accuracy [Headline]** | `55.80%` | `58.60%` | **`69.60%`** | **+11.00 percentage points** |
@@ -160,7 +160,7 @@ DepthWizard SIH26175/
 │   └── depthwizard/
 │       ├── api/              # REST routes (jobs, artifacts, validate, health)
 │       ├── calibration/      # Multi-path scale calibration (SRTM, GCP, RANSAC, Rel)
-│       ├── depth/            # DAV2 inference engine & seamless cosine-tiling
+│       ├── depth/            # DAV3 inference engine & seamless cosine-tiling
 │       ├── io/               # Georeferencing detection, GSD normalizer, writers
 │       ├── mesh/             # Heightmap to 3D mesh, LOD decimation, GLB exporter
 │       └── jobs/             # Async job state machine (meta.json persistence)
@@ -235,7 +235,7 @@ python scripts/audit_weights_v110.py
 ## 📜 Licenses & Attribution
 
 - **DepthWizard Software Suite**: Licensed under the [MIT License](LICENSE).
-- **Depth Anything V2 Small**: Licensed under the **Apache License 2.0** by the Depth Anything Authors (Yang et al., 2024). Encoder weights remain 100% bitwise identical to official base weights.
+- **Depth Anything V3 Small**: Licensed under the **Apache License 2.0** by the Depth Anything Authors (Yang et al., 2024). Encoder weights remain 100% bitwise identical to official base weights.
 - **GAMUS Dataset**: Licensed under **Creative Commons Attribution 4.0 International (CC-BY-4.0)** by Earthflow / EarthNets / RSI-MMSegmentation (Xiong et al., 2023).
 - **SRTM 30m Global DEM**: Public Domain / Open Data courtesy of NASA / USGS / OpenTopography.
 - Detailed third-party license notices are maintained in [NOTICE](NOTICE) and [models/MODEL_LICENSES.md](models/MODEL_LICENSES.md).

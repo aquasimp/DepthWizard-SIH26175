@@ -1,6 +1,6 @@
 # Training Module: Metric nDSM Fine-Tuning on GAMUS
 
-This directory contains the pipeline for fine-tuning the DPT decoder head of Depth Anything V2 Small on the GAMUS dataset to predict metric nDSM (metres above ground level).
+This directory contains the pipeline for fine-tuning the DPT decoder head of Depth Anything V3 Small on the GAMUS dataset to predict metric nDSM (metres above ground level).
 
 ## Key Architecture & Setup
 - **Backbone**: Frozen DINOv2 ViT-S encoder (`requires_grad_(False)`).
@@ -10,6 +10,6 @@ This directory contains the pipeline for fine-tuning the DPT decoder head of Dep
 
 ## Workflows
 1. `prepare_gamus.py`: Download stratified subset from Hugging Face (`earthflow/GAMUS`).
-2. `train_head.py --config configs/dav2s_gamus_smoke.yaml`: Overfit test on 20 tiles (RMSE < 1.0 m).
-3. `train_head.py --config configs/dav2s_gamus_ft.yaml`: Full fine-tuning run.
+2. `train_head.py --config configs/dav3s_gamus_smoke.yaml`: Overfit test on 20 tiles (RMSE < 1.0 m).
+3. `train_head.py --config configs/dav3s_gamus_ft.yaml`: Full fine-tuning run.
 4. `eval_checkpoint.py`: Validation evaluation against baseline.

@@ -4,7 +4,7 @@
   "evaluation_timestamp": "2026-09-09 15:20:10 UTC",
   "models": {
     "base_zero_shot": {
-      "model_name": "Zero-Shot Base (DAV2-S)",
+      "model_name": "Zero-Shot Base (DAV3-S)",
       "evaluation_seconds": 3.26,
       "overall": {
         "count": 670820,

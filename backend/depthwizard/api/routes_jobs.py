@@ -121,6 +121,7 @@ async def create_job(
 
 
 @router.get("/{job_id}", response_model=JobStatusResponse)
+@router.get("/{job_id}/status", response_model=JobStatusResponse)
 def get_job_status(
     job_id: str,
     manager: JobManager = Depends(get_job_manager),

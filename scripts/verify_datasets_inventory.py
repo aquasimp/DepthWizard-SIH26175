@@ -55,16 +55,21 @@ def check_inventory():
     print("\n[3] Checking Pretrained Models & Weights...")
     models_dir = BASE_DIR / "03_PRETRAINED_MODELS_AND_WEIGHTS"
     expected_models = [
-        ("DepthAnything_V2_Small", "depth_anything_v2_vits.pth", 90_000_000),
-        ("DepthAnything_V2_Base", "depth_anything_v2_vitb.pth", 350_000_000),
-        ("DepthAnything_V2_Metric_Outdoor_Small", "depth_anything_v2_metric_vkitti_vits.pth", 90_000_000),
-        ("DINOv2_ViTS14_Backbone", "dinov2_vits14_pretrain.pth", 80_000_000),
-        ("DepthWizard_FineTuned_v1.1.0", "dav2s_gamus_ft_v1.pth", 90_000_000),
-        ("DepthWizard_FineTuned_v1.1.0", "best_tall.pt", 90_000_000),
+        ("DepthAnything_V3_Small", "depth_anything_v3_vits.pth", "DepthAnything_V2_Small", "depth_anything_v2_vits.pth", 90_000_000),
+        ("DepthAnything_V3_Base", "depth_anything_v3_vitb.pth", "DepthAnything_V2_Base", "depth_anything_v2_vitb.pth", 350_000_000),
+        ("DepthAnything_V3_Metric_Outdoor_Small", "depth_anything_v3_metric_vkitti_vits.pth", "DepthAnything_V2_Metric_Outdoor_Small", "depth_anything_v2_metric_vkitti_vits.pth", 90_000_000),
+        ("DINOv2_ViTS14_Backbone", "dinov2_vits14_pretrain.pth", "DINOv2_ViTS14_Backbone", "dinov2_vits14_pretrain.pth", 80_000_000),
+        ("DepthWizard_FineTuned_v1.1.0", "dav3s_gamus_ft_v1.pth", "DepthWizard_FineTuned_v1.1.0", "dav2s_gamus_ft_v1.pth", 90_000_000),
+        ("DepthWizard_FineTuned_v1.1.0", "best_tall.pt", "DepthWizard_FineTuned_v1.1.0", "best_tall.pt", 90_000_000),
     ]
 
-    for folder, fname, min_size in expected_models:
-        fpath = models_dir / folder / fname
+    for folder_v3, fname_v3, folder_v2, fname_v2, min_size in expected_models:
+        fpath = models_dir / folder_v3 / fname_v3
+        if not fpath.exists():
+            fpath = models_dir / folder_v2 / fname_v2
+            folder, fname = folder_v2, fname_v2
+        else:
+            folder, fname = folder_v3, fname_v3
         if fpath.exists() and fpath.stat().st_size > min_size:
             print(f"  PASS: {folder}/{fname} ({fpath.stat().st_size / (1024*1024):.2f} MB)")
         else:

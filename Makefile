@@ -9,7 +9,7 @@ endif
 setup:
 	uv venv .venv --python 3.11 || $(PYTHON) -m venv .venv
 	uv pip install -p .venv -r backend/requirements-dev.txt || $(VENV_PYTHON) -m pip install -r backend/requirements-dev.txt
-	bash models/download_weights.sh || powershell -Command "& $(VENV_PYTHON) -c \"import urllib.request; urllib.request.urlretrieve('https://huggingface.co/depth-anything/Depth-Anything-V2-Small/resolve/main/depth_anything_v2_vits.pth', 'models/depth_anything_v2_vits.pth')\""
+	bash models/download_weights.sh || $(VENV_PYTHON) models/download_weights.py
 	cd frontend && npm install
 
 dev:

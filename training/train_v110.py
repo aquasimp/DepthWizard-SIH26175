@@ -1,7 +1,7 @@
 """DepthWizard v1.1.0 Fine-Tuning Execution Script.
 
 Controlled Experiment:
-- Base: Depth Anything V2 Small relative depth base model (models/depth_anything_v2_vits.pth)
+- Base: Depth Anything V3 Small relative depth base model (models/depth_anything_v3_vits.pth)
 - Architecture: Frozen DINOv2 ViT-S encoder (requires_grad=False), DPT head fine-tuning
 - Loss: MetricNDSMLoss (SiLog lambda=0.85, eps=1e-4) - unchanged
 - Controlled Variables (3):
@@ -32,7 +32,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import torch
 import yaml
-from depthwizard.depth.backbone import DepthAnythingV2Small, load_dav2_small
+from depthwizard.depth.backbone import DepthAnythingV3Small, load_dav3_small
 from torch.utils.data import DataLoader
 
 from training.dataset import GAMUSDataset
@@ -144,14 +144,14 @@ def train_v110(args: argparse.Namespace) -> Dict[str, Any]:
 
     if args.resume and last_ckpt_path.exists():
         logger.info(f"Resuming model weights from existing checkpoint: {last_ckpt_path}")
-        model = load_dav2_small(last_ckpt_path, device=str(device))
+        model = load_dav3_small(last_ckpt_path, device=str(device))
     else:
-        init_ckpt = repo_root / config.get("model", {}).get("init_checkpoint", "models/depth_anything_v2_vits.pth")
+        init_ckpt = repo_root / config.get("model", {}).get("init_checkpoint", "models/depth_anything_v3_vits.pth")
         logger.info(f"Loading base weights from: {init_ckpt}")
-        model = load_dav2_small(init_ckpt, device=str(device))
+        model = load_dav3_small(init_ckpt, device=str(device))
 
         # Scale output convolution weights if starting from raw base relative model
-        if "depth_anything_v2_vits.pth" in str(init_ckpt):
+        if "depth_anything_v3_vits.pth" in str(init_ckpt) or "depth_anything_v2_vits.pth" in str(init_ckpt):
             logger.info("Initializing metric elevation head: scaling output_conv2[2] weights and bias by 58.0")
             model.depth_head.scratch.output_conv2[2].weight.data *= 58.0
             model.depth_head.scratch.output_conv2[2].bias.data *= 58.0

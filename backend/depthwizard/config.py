@@ -34,10 +34,18 @@ class Settings(BaseSettings):
     cache_dir: Path = Path("data/cache")
     samples_dir: Path = Path("data/samples")
 
-    default_model_checkpoint: str = "models/depth_anything_v2_vits.pth"
+    default_model_checkpoint: str = (
+        "models/depth_anything_v3_vits.pth"
+        if Path("models/depth_anything_v3_vits.pth").exists()
+        else "models/depth_anything_v2_vits.pth"
+    )
     ft_model_checkpoint: str = "models/v1.1.0/best.pt"
     ft_tall_model_checkpoint: str = "models/v1.1.0/best_tall.pt"
-    legacy_model_checkpoint: str = "models/dav2s_gamus_ft_v1.pth"
+    legacy_model_checkpoint: str = (
+        "models/dav3s_gamus_ft_v1.pth"
+        if Path("models/dav3s_gamus_ft_v1.pth").exists()
+        else "models/dav2s_gamus_ft_v1.pth"
+    )
     model_version: str = "1.1.0"
     assumed_gsd_m: float = 0.33
     canonical_gsd_m: float = 0.33

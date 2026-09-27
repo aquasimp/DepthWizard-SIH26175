@@ -1,4 +1,4 @@
-"""Fine-tuning script for Depth Anything V2 Small metric nDSM head on GAMUS dataset."""
+"""Fine-tuning script for Depth Anything V3 Small metric nDSM head on GAMUS dataset."""
 
 import argparse
 import csv
@@ -20,7 +20,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import torch
 import yaml
-from depthwizard.depth.backbone import DepthAnythingV2Small, load_dav2_small
+from depthwizard.depth.backbone import DepthAnythingV3Small, load_dav3_small
 from depthwizard.utils.logging import logger
 from torch.utils.data import DataLoader, Subset
 
@@ -33,7 +33,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--config",
         type=str,
-        default="configs/dav2s_gamus_smoke.yaml",
+        default="configs/dav3s_gamus_smoke.yaml",
         help="Path to YAML training configuration file.",
     )
     parser.add_argument("--epochs", type=int, default=None, help="Override number of epochs.")
@@ -101,7 +101,7 @@ def compute_metrics(
 
 
 def configure_trainable_parameters(
-    model: DepthAnythingV2Small,
+    model: DepthAnythingV3Small,
 ) -> Tuple[List[torch.nn.Parameter], int, int]:
     """Freeze encoder completely and enable gradients only on depth_head.
 
@@ -193,16 +193,21 @@ def train_head(
     )
     if not output_checkpoint_str:
         out_dir = config.get("output_dir", "models/checkpoints")
-        output_checkpoint_str = f"{out_dir}/dav2s_smoke.pth"
+        output_checkpoint_str = f"{out_dir}/dav3s_smoke.pth"
     output_checkpoint = Path(output_checkpoint_str)
     output_checkpoint.parent.mkdir(parents=True, exist_ok=True)
 
     # 1. Load model with strictly frozen encoder
-    init_checkpoint = resume_path or m_cfg.get("checkpoint") or config.get("checkpoint") or "models/depth_anything_v2_vits.pth"
-    model: DepthAnythingV2Small = load_dav2_small(init_checkpoint, device=device)
+    init_checkpoint = (
+        resume_path
+        or m_cfg.get("checkpoint")
+        or config.get("checkpoint")
+        or ("models/depth_anything_v3_vits.pth" if Path("models/depth_anything_v3_vits.pth").exists() else "models/depth_anything_v2_vits.pth")
+    )
+    model: DepthAnythingV3Small = load_dav3_small(init_checkpoint, device=device)
 
     # Scale output convolution weights if starting from raw base relative model
-    if "depth_anything_v2_vits.pth" in str(init_checkpoint):
+    if "depth_anything_v3_vits.pth" in str(init_checkpoint) or "depth_anything_v2_vits.pth" in str(init_checkpoint):
         model.depth_head.scratch.output_conv2[2].weight.data *= 58.0
         model.depth_head.scratch.output_conv2[2].bias.data *= 58.0
 

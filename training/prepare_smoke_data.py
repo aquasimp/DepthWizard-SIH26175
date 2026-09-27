@@ -13,7 +13,7 @@ if str(repo_root) not in sys.path:
 
 import numpy as np
 import torch
-from depthwizard.depth.backbone import load_dav2_small
+from depthwizard.depth.backbone import load_dav3_small
 
 from training.dataset import IMAGENET_MEAN, IMAGENET_STD
 
@@ -21,7 +21,12 @@ from training.dataset import IMAGENET_MEAN, IMAGENET_STD
 def prepare_smoke_subset() -> None:
     repo_root = Path(__file__).resolve().parent.parent
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    base_model = load_dav2_small("models/depth_anything_v2_vits.pth", device=device)
+    base_model = load_dav3_small(
+        "models/depth_anything_v3_vits.pth"
+        if (repo_root / "models/depth_anything_v3_vits.pth").exists()
+        else "models/depth_anything_v2_vits.pth",
+        device=device,
+    )
     base_model.eval()
 
     smoke_dir = repo_root / "data" / "gamus" / "smoke"

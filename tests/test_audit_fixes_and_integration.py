@@ -15,10 +15,11 @@ import torch
 def test_depth_backbone_and_head_components():
     """Verify backend/depthwizard/depth/backbone.py and head.py instantiate and function."""
     from depthwizard.depth.backbone import Block, DinoVisionTransformer, DPTHead, ResidualConvUnit
-    from depthwizard.depth.head import DepthAnythingV2MetricHead
+    from depthwizard.depth.head import DepthAnythingV2MetricHead, DepthAnythingV3MetricHead
 
     assert DinoVisionTransformer is not None
     assert DPTHead is not None
+    assert DepthAnythingV3MetricHead is not None
     assert DepthAnythingV2MetricHead is not None
 
     block = Block(dim=384, num_heads=6)

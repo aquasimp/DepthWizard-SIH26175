@@ -6,20 +6,20 @@ from typing import Optional, Union
 import torch
 import torch.nn as nn
 
-from depthwizard.depth.backbone import DepthAnythingV2Small
+from depthwizard.depth.backbone import DepthAnythingV3Small
 
 
-class DepthAnythingV2MetricHead(nn.Module):
-    """Fine-tuning wrapper for Depth Anything V2 Small.
+class DepthAnythingV3MetricHead(nn.Module):
+    """Fine-tuning wrapper for Depth Anything V3 Small.
 
     Freezes the DINOv2 ViT-S encoder and trains the DPT decoder head
     to directly regress metric above-ground height (nDSM in metres).
     """
 
-    def __init__(self, base_model: Optional[DepthAnythingV2Small] = None):
+    def __init__(self, base_model: Optional[DepthAnythingV3Small] = None):
         super().__init__()
         if base_model is None:
-            self.model = DepthAnythingV2Small()
+            self.model = DepthAnythingV3Small()
         else:
             self.model = base_model
 
@@ -50,3 +50,7 @@ class DepthAnythingV2MetricHead(nn.Module):
         self.model.load_state_dict(state, strict=True)
         self.model.to(device)
         self.model.eval()
+
+
+# Backward compatibility alias
+DepthAnythingV2MetricHead = DepthAnythingV3MetricHead

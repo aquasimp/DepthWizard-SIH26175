@@ -28,7 +28,7 @@ def test_png16_roundtrip_quantization(tmp_path):
         assumed_gsd_m=0.33,
         is_absolute=True,
         units="metres",
-        model_version="dav2s_v1",
+        model_version="dav3s_v1",
         calibration_status="path_a_srtm",
     )
 

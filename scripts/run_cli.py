@@ -53,7 +53,8 @@ def main() -> None:
     parser.add_argument("--output-dir", "-o", default="outputs", help="Output directory")
     parser.add_argument("--mode", choices=["relative", "metric"], default="metric", help="Inference mode")
     parser.add_argument("--device", default="auto", help="Compute device (auto, cuda, cpu)")
-    parser.add_argument("--checkpoint", default="models/depth_anything_v2_vits.pth", help="Model checkpoint path")
+    default_ckpt = "models/depth_anything_v3_vits.pth" if Path("models/depth_anything_v3_vits.pth").exists() else "models/depth_anything_v2_vits.pth"
+    parser.add_argument("--checkpoint", default=default_ckpt, help="Model checkpoint path")
     args = parser.parse_args()
 
     input_path = Path(args.input)

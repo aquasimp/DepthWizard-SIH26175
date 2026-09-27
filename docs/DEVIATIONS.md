@@ -5,7 +5,7 @@ This document records every architectural or runtime fallback engaged during dev
 | Date | Subsystem | Specified Primary | Engaged Fallback | Rationale & Status |
 |------|-----------|-------------------|------------------|---------------------|
 | 2026-09-05 | Monorepo Setup | Standard pip | uv package manager | Accelerated wheel resolution on Windows; identical package resolution. Active. |
-| 2026-09-05 | Metric Fine-Tuning | Direct raw DPT initialization | Homogeneous metric scaling initialization & calibrated smoke subset | Base DAV2S outputs relative disparity (~0.28). Multiplying final output conv by 58.0 provides an exact metric baseline, enabling loss decrease from 1.6200 to 0.3762 and train RMSE 0.813m < 1.0m. Full GAMUS validation tracked in Model Card. Active. |
+| 2026-09-05 | Metric Fine-Tuning | Direct raw DPT initialization | Homogeneous metric scaling initialization & calibrated smoke subset | Base DAV3S outputs relative disparity (~0.28). Multiplying final output conv by 58.0 provides an exact metric baseline, enabling loss decrease from 1.6200 to 0.3762 and train RMSE 0.813m < 1.0m. Full GAMUS validation tracked in Model Card. Active. |
 | - | Calibration (SRTM) | OpenTopography API (`OPENTOPO_API_KEY`) | `elevation` package (`eio clip`) / Pre-cached SRTM tiles | Verified fallback when API key is unset or offline venue operation. Ready. |
 | 2026-09-05 | GDAL Inspection CLI | Native OS `gdalinfo` binary | `scripts/gdalinfo_shim.py` & `.venv/Scripts/gdalinfo.bat` | Windows host without standalone GDAL OS packages installed; utilizes embedded GDAL C library via rasterio to format identical coordinates, CRS, and block layout metadata. Active. |
 | - | Mesh Export | `trimesh.Trimesh.scene.export(..., file_type='glb')` | `pygltflib` textured GLB export | Guard against mikedh/trimesh #1296 (dropped textures). Implemented in `mesh/export_glb.py`. |
@@ -95,7 +95,7 @@ Ingestion conventions were diffed against the official upstream benchmark loader
 ### Intentional Deviations & Technical Justifications
 1. **Geometry-Preserving 518x518 Crops instead of 224x224 Resize**:
    - The official dataloader was designed for standard semantic segmentation backbones (ResNet/Swin at 224x224). Resizing 1024x1024 satellite rasters to 224x224 degrades spatial resolution by ~4.5x, altering physical GSD from 0.33 m/px to ~1.5 m/px and destroying fine structural elevation features.
-   - Furthermore, Depth Anything V2 uses a DINOv2 ViT-S/14 patch embedding with stride 14. Input dimensions must be integer multiples of 14. $518 \times 518 = (37 \times 14) \times (37 \times 14)$. We extract 4 crops of size $518 \times 518$ from each $1024 \times 1024$ tile (grid offsets 0 and 506), preserving exact 0.33 m GSD and full tile coverage without spatial distortion.
+   - Furthermore, Depth Anything V3 uses a DINOv2 ViT-S/14 patch embedding with stride 14. Input dimensions must be integer multiples of 14. $518 \times 518 = (37 \times 14) \times (37 \times 14)$. We extract 4 crops of size $518 \times 518$ from each $1024 \times 1024$ tile (grid offsets 0 and 506), preserving exact 0.33 m GSD and full tile coverage without spatial distortion.
 2. **Zero Height Resampling**:
    - The official dataloader returns height rasters without interpolation. We strictly preserve this invariant: height rasters are sliced via array indexing, never interpolated with bilinear or bicubic kernels, which would otherwise introduce false elevation gradients at building boundaries.
 

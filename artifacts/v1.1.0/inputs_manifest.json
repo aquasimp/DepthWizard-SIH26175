@@ -1,14 +1,14 @@
 {
   "v1_0_3_checkpoint": {
-    "path": "models/dav2s_gamus_ft_v1.pth",
-    "absolute_path": "X:\\DepthWizard SIH26175\\models\\dav2s_gamus_ft_v1.pth",
+    "path": "models/dav3s_gamus_ft_v1.pth",
+    "absolute_path": "X:\\DepthWizard SIH26175\\models\\dav3s_gamus_ft_v1.pth",
     "exists": true,
     "sha256": "5eb8ed489738146469c930d4d8b5550e7a9aac0b83a3cc1cb81652d2e9839929",
     "size_bytes": 99232082
   },
   "pristine_base_checkpoint": {
-    "path": "models/depth_anything_v2_vits.pth",
-    "absolute_path": "X:\\DepthWizard SIH26175\\models\\depth_anything_v2_vits.pth",
+    "path": "models/depth_anything_v3_vits.pth",
+    "absolute_path": "X:\\DepthWizard SIH26175\\models\\depth_anything_v3_vits.pth",
     "exists": true,
     "sha256": "715fade13be8f229f8a70cc02066f656f2423a59effd0579197bbf57860e1378",
     "size_bytes": 99218434

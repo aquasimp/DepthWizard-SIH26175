@@ -74,4 +74,4 @@ python scripts/audit_weights_v110.py
 
 1. **Feature Branches**: Branch from `master` using descriptive names (e.g., `feat/`, `fix/`, `docs/`).
 2. **Honest Metrics**: Any PR modifying model training or calibration must include traceable, reproducible quantitative evaluations matching the standards in `docs/MODEL_CARD.md`.
-3. **Licensing**: All contributions must be compatible with DepthWizard's **MIT License** and preserve Apache-2.0 upstream attribution for Depth Anything V2.
+3. **Licensing**: All contributions must be compatible with DepthWizard's **MIT License** and preserve Apache-2.0 upstream attribution for Depth Anything V3.

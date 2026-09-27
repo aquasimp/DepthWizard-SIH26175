@@ -257,7 +257,7 @@ export const ViewerPage: React.FC<ViewerPageProps> = ({
         currentPage="viewer"
         activeJobId={jobId}
         onNavigate={(page, id) => {
-          if (page === 'upload') onNavigateBack();
+          if (page === 'upload' || page === 'dashboard') onNavigateBack();
           else if (page === 'validate' && id) onNavigateValidate(id);
         }}
       />

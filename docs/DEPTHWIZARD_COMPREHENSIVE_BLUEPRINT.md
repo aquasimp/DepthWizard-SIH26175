@@ -273,7 +273,7 @@ DepthWizard SIH26175/
 │   └── vite.config.ts
 │
 ├── models/
-│   ├── depth_anything_v2_vits.pth    # Zero-shot base foundation weights (24.8M params)
+│   ├── depth_anything_v3_vits.pth    # Zero-shot base foundation weights (24.8M params)
 │   └── v1.1.0/
 │       ├── best.pt                   # Multi-city fine-tuned checkpoint (Epoch 48, Val RMSE 3.73m)
 │       ├── best_tall.pt              # Tall-structure specialist head (Epoch 33, 46.2% error drop)
@@ -352,7 +352,7 @@ DepthWizard is engineered for zero-dependency execution across both high-perform
 
 ### 9.2 Offline Air-Gapped Operation
 During live hackathon judging and field deployments:
-- **No Internet Required**: All foundation and fine-tuned weights (`models/v1.1.0/best.pt`, `best_tall.pt`, `depth_anything_v2_vits.pth`) reside locally on disk.
+- **No Internet Required**: All foundation and fine-tuned weights (`models/v1.1.0/best.pt`, `best_tall.pt`, `depth_anything_v3_vits.pth`) reside locally on disk.
 - **Offline SRTM Cache**: Standard geographical tiles are pre-cached in `data/cache/srtm/`. If spaceborne DEMs for a remote bounding box are not pre-cached, the geodetic calibration engine automatically and gracefully engages **Path C (Huber RANSAC Disparity Fitting)** or **Path D (Self-Contained 16-Bit Relative Normalization)** without crashing or hanging.
 
 ---

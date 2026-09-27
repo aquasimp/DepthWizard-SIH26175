@@ -64,7 +64,7 @@ Once extracted, run the DepthWizard batch evaluation harness:
 python scripts/evaluate_us3d_benchmark.py \\
     --image-dir "X:/DatasetsSIH 26175/05_RECOMMENDED_AND_AUXILIARY_RESOURCES/IEEE_GRSS_DFC2019_US3D/track1_single_view_semantic_3d/RGB" \\
     --ndsm-dir "X:/DatasetsSIH 26175/05_RECOMMENDED_AND_AUXILIARY_RESOURCES/IEEE_GRSS_DFC2019_US3D/track1_single_view_semantic_3d/nDSM" \\
-    --model "X:/DatasetsSIH 26175/03_PRETRAINED_MODELS_AND_WEIGHTS/DepthWizard_FineTuned_v1.1.0/dav2s_gamus_ft_v1.pth"
+    --model "X:/DatasetsSIH 26175/03_PRETRAINED_MODELS_AND_WEIGHTS/DepthWizard_FineTuned_v1.1.0/dav3s_gamus_ft_v1.pth"
 ```
 """
 (dfc2019_dir / "ACCESS_AND_DOWNLOAD_GUIDE.md").write_text(dfc2019_guide, encoding="utf-8")
