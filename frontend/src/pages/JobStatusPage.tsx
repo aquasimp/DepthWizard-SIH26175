@@ -14,6 +14,7 @@ import {
   Scale,
 } from 'lucide-react';
 import { IsroHeader } from '../components/IsroHeader';
+import { getApiBase } from '../utils/apiConfig';
 
 interface JobStatus {
   job_id: string;
@@ -97,8 +98,23 @@ export const JobStatusPage: React.FC<JobStatusPageProps> = ({
     let pollInterval: any;
 
     const poll = async () => {
+      if (jobId.startsWith('client_') || jobId === 'demo') {
+        setJob({
+          job_id: jobId,
+          status: 'DONE',
+          stage: 'COMPLETE',
+          progress: 100,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        });
+        clearInterval(pollInterval);
+        clearInterval(timer);
+        return;
+      }
+
       try {
-        const resp = await fetch(`/api/jobs/${jobId}`);
+        const apiBase = getApiBase();
+        const resp = await fetch(apiBase ? `${apiBase}/api/jobs/${jobId}` : `/api/jobs/${jobId}`);
         if (resp.ok) {
           const data: JobStatus = await resp.json();
           setJob(data);

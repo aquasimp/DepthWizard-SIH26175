@@ -1,16 +1,19 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import sampleOpticalImg from '../assets/sample_gamus_optical.png';
 import defaultTerrainMesh from '../data/default_terrain_mesh.json';
 import { createTerrainGeometry, createElevationColorTexture, createSlopeColorTexture } from './TerrainMesh';
+import { getApiBase } from '../utils/apiConfig';
 
 /**
  * TerrainViewer - WebGL / Three.js 3D Terrain Viewer
- * Implements click-to-measure for HEIGHT, ELEVATION, and SLOPE from actual DSM mesh.
+ * High-performance, single-context 3D heightfield viewer.
+ * Updates vertex positions, materials, and textures in-place without context loss or camera resets.
  */
 export default function TerrainViewer({
   dsmData = null,
+  userTextureUrl = null,
   textureMode = 'rgb', // 'rgb', 'colormap', 'slope', 'wireframe'
   onTextureModeChange = null,
   cameraMode = 'orbit', // 'orbit' or 'fly'
@@ -27,19 +30,28 @@ export default function TerrainViewer({
   const cameraRef = useRef(null);
   const controlsRef = useRef(null);
   const terrainMeshRef = useRef(null);
+  const terrainMaterialRef = useRef(null);
   const markerGroupRef = useRef(null);
+  const ringMeshRef = useRef(null);
   const raycasterRef = useRef(new THREE.Raycaster());
   const mouseRef = useRef(new THREE.Vector2());
   const mouseDownPosRef = useRef({ x: 0, y: 0 });
 
-  // State (pre-populated with bundled defaultTerrainMesh for 100% instant render)
+  // Texture caches to allow instantaneous mode switching without network overhead
+  const colorTextureRef = useRef(null);
+  const slopeTextureRef = useRef(null);
+  const opticalTextureRef = useRef(null);
+
+  // Active mesh metadata
   const [internalCameraMode, setInternalCameraMode] = useState('orbit');
   const [internalTextureMode, setInternalTextureMode] = useState(textureMode);
   const [loadedMeshMeta, setLoadedMeshMeta] = useState(dsmData || defaultTerrainMesh);
-  const [isLoading, setIsLoading] = useState(!dsmData && !defaultTerrainMesh);
 
   const effectiveCameraMode = cameraMode || internalCameraMode;
   const effectiveTextureMode = textureMode || internalTextureMode;
+
+  const cameraModeRef = useRef(effectiveCameraMode);
+  cameraModeRef.current = effectiveCameraMode;
 
   // Fly controls movement state
   const flyStateRef = useRef({
@@ -52,52 +64,73 @@ export default function TerrainViewer({
     speed: 40.0,
   });
 
-
-  // Fetch real metric DSM from backend if not provided via props
+  // Keep internal mesh meta in sync with dsmData prop
   useEffect(() => {
     if (dsmData) {
       setLoadedMeshMeta(dsmData);
-      setIsLoading(false);
       return;
     }
 
-    const API_BASE = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://127.0.0.1:8000' : '');
-    fetch(`${API_BASE}/api/terrain/mesh?resolution=128`)
-      .then((res) => {
-        if (!res.ok) throw new Error('Live DSM mesh endpoint unavailable');
-        return res.json();
-      })
-      .then((data) => {
-        setLoadedMeshMeta(data);
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        console.info('[DepthWizard] Using bundled pre-computed GAMUS terrain mesh:', err.message);
-        setLoadedMeshMeta(defaultTerrainMesh);
-        setIsLoading(false);
-      });
+    const apiBase = getApiBase();
+    if (apiBase) {
+      fetch(`${apiBase}/api/terrain/mesh?resolution=128`)
+        .then((res) => {
+          if (!res.ok) throw new Error('Live DSM mesh endpoint unavailable');
+          return res.json();
+        })
+        .then((data) => {
+          if (data && data.heights) {
+            setLoadedMeshMeta(data);
+          }
+        })
+        .catch((err) => {
+          console.info('[DepthWizard] Using bundled pre-computed GAMUS terrain mesh:', err.message);
+          setLoadedMeshMeta(defaultTerrainMesh);
+        });
+    }
   }, [dsmData]);
 
-  // Main Three.js Scene Setup & Render Loop
+  // Resolve best available optical texture URL without making broken network calls
+  const resolveOpticalTextureUrl = useCallback((meta) => {
+    if (userTextureUrl) return userTextureUrl;
+    if (meta?.texture_url) {
+      // If it's a blob URL or base64 data URL, use directly
+      if (meta.texture_url.startsWith('blob:') || meta.texture_url.startsWith('data:')) {
+        return meta.texture_url;
+      }
+      // If it's a relative /api/ link and no remote backend is configured, avoid 404
+      if (meta.texture_url.startsWith('/api/') || meta.texture_url.includes('localhost:8000')) {
+        const apiBase = getApiBase();
+        if (apiBase && !meta.texture_url.includes('localhost:8000')) {
+          return `${apiBase}${meta.texture_url}`;
+        }
+        return sampleOpticalImg;
+      }
+      return meta.texture_url;
+    }
+    return sampleOpticalImg;
+  }, [userTextureUrl]);
+
+  // 1. Scene & WebGLRenderer Setup (MOUNT ONCE)
   useEffect(() => {
     const container = mountRef.current;
-    if (!container || !loadedMeshMeta) return;
+    if (!container) return;
 
     const width = container.clientWidth || 800;
     const height = container.clientHeight || 520;
 
-    // 1. Scene
+    // A. Scene
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x0a0e17);
     scene.fog = new THREE.FogExp2(0x0a0e17, 0.002);
     sceneRef.current = scene;
 
-    // 2. Camera
+    // B. Camera
     const camera = new THREE.PerspectiveCamera(45, width / height, 0.5, 3000);
     camera.position.set(0, 90, 160);
     cameraRef.current = camera;
 
-    // 3. Renderer
+    // C. Renderer (single WebGL context created once)
     const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -107,7 +140,7 @@ export default function TerrainViewer({
     container.innerHTML = '';
     container.appendChild(renderer.domElement);
 
-    // 4. OrbitControls
+    // D. OrbitControls
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.06;
@@ -116,7 +149,7 @@ export default function TerrainViewer({
     controls.maxDistance = 600;
     controlsRef.current = controls;
 
-    // 5. Lighting (bright, natural lighting for clear 3D visibility from all camera angles)
+    // E. Lighting
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.85);
     scene.add(ambientLight);
 
@@ -130,112 +163,16 @@ export default function TerrainViewer({
     const skyFill = new THREE.HemisphereLight(0x38bdf8, 0x0f172a, 0.55);
     scene.add(skyFill);
 
-    // 6. Build Real 3D Terrain Mesh from Metric DSM
+    // F. Base Reference Grid
     const planeSize = 200;
-    const {
-      geometry,
-      minElevation,
-      maxElevation,
-      baseOffset = 0,
-      planeWidth = 200,
-      planeHeight = 200,
-    } = createTerrainGeometry({
-      heights: loadedMeshMeta.heights,
-      rows: loadedMeshMeta.rows,
-      cols: loadedMeshMeta.cols,
-      planeSize: planeSize,
-      aspectRatio: loadedMeshMeta.aspect_ratio || 1.0,
-      verticalExaggeration: verticalExaggeration,
-    });
-
-    // 7. Textures (Elevation Colormap, Slope, & Optical Satellite)
-    const colorTexture = createElevationColorTexture(
-      loadedMeshMeta.heights,
-      loadedMeshMeta.rows,
-      loadedMeshMeta.cols,
-      minElevation,
-      maxElevation,
-      colorRamp
-    );
-
-    const slopeTexture = createSlopeColorTexture(
-      loadedMeshMeta.heights,
-      loadedMeshMeta.rows,
-      loadedMeshMeta.cols,
-      planeSize
-    );
-
-    // Default to color elevation ramp while optical texture loads to prevent any black render
-    let initialTexture = colorTexture;
-    if (effectiveTextureMode === 'slope') {
-      initialTexture = slopeTexture;
-    } else if (effectiveTextureMode === 'colormap') {
-      initialTexture = colorTexture;
-    }
-
-    const terrainMaterial = new THREE.MeshStandardMaterial({
-      map: effectiveTextureMode === 'wireframe' ? null : initialTexture,
-      wireframe: effectiveTextureMode === 'wireframe',
-      roughness: 0.75,
-      metalness: 0.05,
-      flatShading: false,
-    });
-
-    // Asynchronously load RGB optical texture with bundled fallback
-    const textureLoader = new THREE.TextureLoader();
-    const primaryTextureUrl = loadedMeshMeta.texture_url || sampleOpticalImg;
-
-    const loadTextureWithFallback = (url, isFallback = false) => {
-      textureLoader.load(
-        url,
-        (loadedTex) => {
-          loadedTex.wrapS = THREE.ClampToEdgeWrapping;
-          loadedTex.wrapT = THREE.ClampToEdgeWrapping;
-          loadedTex.needsUpdate = true;
-          if (effectiveTextureMode === 'rgb') {
-            terrainMaterial.map = loadedTex;
-            terrainMaterial.needsUpdate = true;
-            if (rendererRef.current && sceneRef.current && cameraRef.current) {
-              rendererRef.current.render(sceneRef.current, cameraRef.current);
-            }
-          }
-        },
-        undefined,
-        (err) => {
-          console.warn('[DepthWizard] Optical texture failed to load, falling back:', err);
-          if (!isFallback && url !== sampleOpticalImg) {
-            loadTextureWithFallback(sampleOpticalImg, true);
-          } else {
-            // Keep procedural elevation color texture active
-            if (effectiveTextureMode === 'rgb') {
-              terrainMaterial.map = colorTexture;
-              terrainMaterial.needsUpdate = true;
-            }
-          }
-        }
-      );
-    };
-
-    if (effectiveTextureMode === 'rgb') {
-      loadTextureWithFallback(primaryTextureUrl);
-    }
-
-    const terrainMesh = new THREE.Mesh(geometry, terrainMaterial);
-    terrainMesh.receiveShadow = true;
-    terrainMesh.castShadow = true;
-    scene.add(terrainMesh);
-    terrainMeshRef.current = terrainMesh;
-
-    // Base plate & Reference Grid
     const grid = new THREE.GridHelper(planeSize, 20, 0x0284c7, 0x1e293b);
     grid.position.y = -0.2;
     scene.add(grid);
 
-    // 8. 3D Measurement Marker Pin Group
+    // G. 3D Measurement Marker Pin Group
     const markerGroup = new THREE.Group();
     markerGroup.visible = false;
 
-    // Pin head sphere
     const sphereGeo = new THREE.SphereGeometry(1.6, 16, 16);
     const sphereMat = new THREE.MeshStandardMaterial({
       color: 0xef4444,
@@ -247,25 +184,24 @@ export default function TerrainViewer({
     sphereMesh.position.y = 4.0;
     markerGroup.add(sphereMesh);
 
-    // Pin stem cylinder
     const stemGeo = new THREE.CylinderGeometry(0.2, 0.2, 4.0, 8);
     const stemMat = new THREE.MeshStandardMaterial({ color: 0xffffff });
     const stemMesh = new THREE.Mesh(stemGeo, stemMat);
     stemMesh.position.y = 2.0;
     markerGroup.add(stemMesh);
 
-    // Ground target ring
     const ringGeo = new THREE.RingGeometry(1.2, 1.8, 24);
     ringGeo.rotateX(-Math.PI / 2);
     const ringMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, side: THREE.DoubleSide });
     const ringMesh = new THREE.Mesh(ringGeo, ringMat);
     ringMesh.position.y = 0.1;
     markerGroup.add(ringMesh);
+    ringMeshRef.current = ringMesh;
 
     scene.add(markerGroup);
     markerGroupRef.current = markerGroup;
 
-    // 9. Animation & Render Loop
+    // H. Continuous Animation Loop
     let animId;
     let lastTime = performance.now();
 
@@ -274,14 +210,12 @@ export default function TerrainViewer({
       const delta = (currentTime - lastTime) / 1000;
       lastTime = currentTime;
 
-      // Pulse ring marker animation
-      if (markerGroup.visible) {
+      if (markerGroup.visible && ringMeshRef.current) {
         const pulse = 1.0 + 0.15 * Math.sin(currentTime * 0.006);
-        ringMesh.scale.set(pulse, 1, pulse);
+        ringMeshRef.current.scale.set(pulse, 1, pulse);
       }
 
-      // Fly navigation mode
-      if (effectiveCameraMode === 'fly') {
+      if (cameraModeRef.current === 'fly') {
         const fly = flyStateRef.current;
         const moveDist = fly.speed * delta;
         const dir = new THREE.Vector3();
@@ -302,7 +236,7 @@ export default function TerrainViewer({
     };
     animate(performance.now());
 
-    // 10. Click Interaction for Terrain Measurement
+    // I. Click Interaction for Terrain Measurement
     const domElement = renderer.domElement;
 
     const handlePointerDown = (e) => {
@@ -312,41 +246,44 @@ export default function TerrainViewer({
     const handlePointerUp = (e) => {
       const dx = Math.abs(e.clientX - mouseDownPosRef.current.x);
       const dy = Math.abs(e.clientY - mouseDownPosRef.current.y);
-      // Ignore if user was dragging the orbit camera
-      if (dx > 4 || dy > 4) return;
+      if (dx > 5 || dy > 5) return;
 
       const rect = domElement.getBoundingClientRect();
       mouseRef.current.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
       mouseRef.current.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
 
       raycasterRef.current.setFromCamera(mouseRef.current, camera);
-      const intersects = raycasterRef.current.intersectObject(terrainMesh);
+      const terrainMesh = terrainMeshRef.current;
+      if (!terrainMesh) return;
 
+      const intersects = raycasterRef.current.intersectObject(terrainMesh);
       if (intersects.length > 0) {
         const hit = intersects[0];
         const hitX = hit.point.x;
         const hitZ = hit.point.z;
+        const meshUserData = terrainMesh.userData || {};
 
-        // 1. HEIGHT & ELEVATION:
-        // hit.point.y is scaled relative height above baseOffset
-        const heightM = Math.max(0.0, hit.point.y / Math.max(verticalExaggeration, 0.001));
+        const baseOffset = meshUserData.baseOffset || 0;
+        const currentExag = meshUserData.verticalExaggeration || 1.0;
+        const pWidth = meshUserData.planeWidth || 200;
+        const pHeight = meshUserData.planeHeight || 200;
+        const meta = meshUserData.meta || loadedMeshMeta;
+
+        const heightM = Math.max(0.0, hit.point.y / Math.max(currentExag, 0.001));
         const elevationM = baseOffset + heightM;
 
-        // 2. Local grid indices on the actual DSM grid (rows x cols)
-        const cols = loadedMeshMeta.cols;
-        const rows = loadedMeshMeta.rows;
-        const heights = loadedMeshMeta.heights;
+        const cols = meta.cols || 128;
+        const rows = meta.rows || 128;
+        const heights = meta.heights || [];
 
-        const colFloat = ((hitX / planeWidth) + 0.5) * (cols - 1);
-        const rowFloat = ((hitZ / planeHeight) + 0.5) * (rows - 1);
+        const colFloat = ((hitX / pWidth) + 0.5) * (cols - 1);
+        const rowFloat = ((hitZ / pHeight) + 0.5) * (rows - 1);
 
         const c = Math.max(0, Math.min(cols - 1, Math.round(colFloat)));
         const r = Math.max(0, Math.min(rows - 1, Math.round(rowFloat)));
 
-        // 3. SLOPE: Calculate local slope from surrounding elevation gradient
-        // Cell spacing in physical coordinates
-        const dxM = planeWidth / Math.max(1, cols - 1);
-        const dzM = planeHeight / Math.max(1, rows - 1);
+        const dxM = pWidth / Math.max(1, cols - 1);
+        const dzM = pHeight / Math.max(1, rows - 1);
 
         const cPrev = Math.max(0, c - 1);
         const cNext = Math.min(cols - 1, c + 1);
@@ -364,22 +301,19 @@ export default function TerrainViewer({
         const gradientMag = Math.sqrt(dz_dx * dz_dx + dz_dz * dz_dz);
         const slopeDeg = Math.atan(gradientMag) * (180.0 / Math.PI);
 
-        // Position 3D marker
         markerGroup.position.copy(hit.point);
         markerGroup.visible = true;
 
-        const measurementResult = {
-          height: heightM,
-          elevation: elevationM,
-          slope: slopeDeg,
-          x: hitX,
-          z: hitZ,
-          row: r,
-          col: c,
-        };
-
         if (onSelectPoint) {
-          onSelectPoint(measurementResult);
+          onSelectPoint({
+            height: heightM,
+            elevation: elevationM,
+            slope: slopeDeg,
+            x: hitX,
+            z: hitZ,
+            row: r,
+            col: c,
+          });
         }
       }
     };
@@ -417,6 +351,7 @@ export default function TerrainViewer({
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('keyup', handleKeyUp);
 
+    // Resize observer
     const handleResize = () => {
       if (!container) return;
       const w = container.clientWidth;
@@ -426,39 +361,187 @@ export default function TerrainViewer({
       camera.updateProjectionMatrix();
       renderer.setSize(w, h);
     };
-    window.addEventListener('resize', handleResize);
 
-    const resizeObserver = new ResizeObserver(() => {
-      handleResize();
-    });
+    const resizeObserver = new ResizeObserver(() => handleResize());
     resizeObserver.observe(container);
 
     return () => {
       cancelAnimationFrame(animId);
       resizeObserver.disconnect();
-      window.removeEventListener('resize', handleResize);
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
       domElement.removeEventListener('pointerdown', handlePointerDown);
       domElement.removeEventListener('pointerup', handlePointerUp);
       controls.dispose();
-      geometry.dispose();
-      terrainMaterial.dispose();
       renderer.dispose();
       if (container.contains(renderer.domElement)) {
         container.removeChild(renderer.domElement);
       }
     };
-  }, [loadedMeshMeta, effectiveTextureMode, verticalExaggeration, colorRamp, effectiveCameraMode]);
+  }, []); // Run ONCE on mount
 
-  // Synchronize marker visibility if selectedPoint cleared
+  // 2. Build or Rebuild Mesh Geometry when loadedMeshMeta changes
+  useEffect(() => {
+    const scene = sceneRef.current;
+    if (!scene || !loadedMeshMeta || !loadedMeshMeta.heights) return;
+
+    const planeSize = 200;
+    const {
+      geometry,
+      minElevation,
+      maxElevation,
+      baseOffset = 0,
+      planeWidth = 200,
+      planeHeight = 200,
+    } = createTerrainGeometry({
+      heights: loadedMeshMeta.heights,
+      rows: loadedMeshMeta.rows,
+      cols: loadedMeshMeta.cols,
+      planeSize,
+      aspectRatio: loadedMeshMeta.aspect_ratio || 1.0,
+      verticalExaggeration,
+    });
+
+    // Procedural Colormap & Slope Textures
+    const colorTexture = createElevationColorTexture(
+      loadedMeshMeta.heights,
+      loadedMeshMeta.rows,
+      loadedMeshMeta.cols,
+      minElevation,
+      maxElevation,
+      colorRamp
+    );
+    colorTextureRef.current = colorTexture;
+
+    const slopeTexture = createSlopeColorTexture(
+      loadedMeshMeta.heights,
+      loadedMeshMeta.rows,
+      loadedMeshMeta.cols,
+      planeSize
+    );
+    slopeTextureRef.current = slopeTexture;
+
+    // Optical RGB Texture Loader
+    const textureLoader = new THREE.TextureLoader();
+    const opticalUrl = resolveOpticalTextureUrl(loadedMeshMeta);
+
+    let activeMap = colorTexture;
+    if (effectiveTextureMode === 'slope') activeMap = slopeTexture;
+    else if (effectiveTextureMode === 'colormap') activeMap = colorTexture;
+
+    let terrainMaterial = terrainMaterialRef.current;
+    if (!terrainMaterial) {
+      terrainMaterial = new THREE.MeshStandardMaterial({
+        map: effectiveTextureMode === 'wireframe' ? null : activeMap,
+        wireframe: effectiveTextureMode === 'wireframe',
+        roughness: 0.75,
+        metalness: 0.05,
+      });
+      terrainMaterialRef.current = terrainMaterial;
+    } else {
+      terrainMaterial.map = effectiveTextureMode === 'wireframe' ? null : activeMap;
+      terrainMaterial.wireframe = effectiveTextureMode === 'wireframe';
+      terrainMaterial.needsUpdate = true;
+    }
+
+    // Load optical texture asynchronously
+    textureLoader.load(
+      opticalUrl,
+      (loadedTex) => {
+        loadedTex.wrapS = THREE.ClampToEdgeWrapping;
+        loadedTex.wrapT = THREE.ClampToEdgeWrapping;
+        loadedTex.needsUpdate = true;
+        opticalTextureRef.current = loadedTex;
+        if (effectiveTextureMode === 'rgb' && terrainMaterialRef.current) {
+          terrainMaterialRef.current.map = loadedTex;
+          terrainMaterialRef.current.needsUpdate = true;
+        }
+      },
+      undefined,
+      () => {
+        // Fallback silently without throwing broken errors
+        if (opticalUrl !== sampleOpticalImg) {
+          textureLoader.load(sampleOpticalImg, (fbTex) => {
+            opticalTextureRef.current = fbTex;
+            if (effectiveTextureMode === 'rgb' && terrainMaterialRef.current) {
+              terrainMaterialRef.current.map = fbTex;
+              terrainMaterialRef.current.needsUpdate = true;
+            }
+          });
+        }
+      }
+    );
+
+    // Existing mesh update vs new creation
+    let mesh = terrainMeshRef.current;
+    if (mesh) {
+      mesh.geometry.dispose();
+      mesh.geometry = geometry;
+    } else {
+      mesh = new THREE.Mesh(geometry, terrainMaterial);
+      mesh.receiveShadow = true;
+      mesh.castShadow = true;
+      scene.add(mesh);
+      terrainMeshRef.current = mesh;
+    }
+
+    mesh.userData = {
+      baseOffset,
+      verticalExaggeration,
+      planeWidth,
+      planeHeight,
+      meta: loadedMeshMeta,
+    };
+  }, [loadedMeshMeta, colorRamp, resolveOpticalTextureUrl]);
+
+  // 3. Ultra-fast IN-PLACE Vertical Exaggeration update (Zero scene recreation!)
+  useEffect(() => {
+    const mesh = terrainMeshRef.current;
+    if (!mesh || !mesh.geometry || !loadedMeshMeta?.heights) return;
+
+    mesh.userData.verticalExaggeration = verticalExaggeration;
+    const posAttr = mesh.geometry.attributes.position;
+    const heights = loadedMeshMeta.heights;
+    const baseOffset = mesh.userData.baseOffset || 0;
+
+    for (let i = 0; i < posAttr.count; i++) {
+      const h = heights[i] !== undefined ? heights[i] : 0;
+      const relH = Math.max(0, h - baseOffset);
+      posAttr.setY(i, relH * verticalExaggeration);
+    }
+    posAttr.needsUpdate = true;
+    mesh.geometry.computeVertexNormals();
+  }, [verticalExaggeration, loadedMeshMeta]);
+
+  // 4. IN-PLACE Texture Mode Switching (RGB, Colormap, Slope, Wireframe)
+  useEffect(() => {
+    const mat = terrainMaterialRef.current;
+    if (!mat) return;
+
+    if (effectiveTextureMode === 'wireframe') {
+      mat.wireframe = true;
+      mat.map = null;
+    } else if (effectiveTextureMode === 'colormap') {
+      mat.wireframe = false;
+      mat.map = colorTextureRef.current;
+    } else if (effectiveTextureMode === 'slope') {
+      mat.wireframe = false;
+      mat.map = slopeTextureRef.current;
+    } else if (effectiveTextureMode === 'rgb') {
+      mat.wireframe = false;
+      mat.map = opticalTextureRef.current || colorTextureRef.current;
+    }
+    mat.needsUpdate = true;
+  }, [effectiveTextureMode]);
+
+  // 5. Hide 3D marker when measurement cleared
   useEffect(() => {
     if (markerGroupRef.current && !selectedPoint) {
       markerGroupRef.current.visible = false;
     }
   }, [selectedPoint]);
 
-  // Handle camera reset trigger
+  // 6. Camera reset trigger
   useEffect(() => {
     if (cameraRef.current && controlsRef.current && resetViewTrigger > 0) {
       cameraRef.current.position.set(0, 90, 160);
@@ -479,76 +562,53 @@ export default function TerrainViewer({
   };
 
   return (
-    <div className="terrain-viewer-wrapper">
-      <div className="terrain-canvas-box" ref={mountRef}>
-        {isLoading && (
-          <div className="terrain-loader-overlay">
-            <div className="loading-orbit" />
-            <p>Constructing 3D Metric Terrain Mesh from DSM...</p>
-            <span>Connecting DSM vertices and mapping RGB texture</span>
-          </div>
-        )}
+    <div className="terrain-viewer-container" style={{ width: '100%', height: '100%', position: 'relative' }}>
+      <div ref={mountRef} className="terrain-webgl-canvas" style={{ width: '100%', height: '100%', overflow: 'hidden' }} />
 
-        {/* Floating Overlay Measurement HUD Cards */}
-        <div className="terrain-overlay-hud">
-          <div className="hud-metric-pill">
-            <span className="hud-metric-title">HEIGHT</span>
-            <span className="hud-metric-number">
-              {selectedPoint ? `${selectedPoint.height.toFixed(1)} m` : (loadedMeshMeta ? `${(loadedMeshMeta.max_height - loadedMeshMeta.min_height).toFixed(1)} m` : '--')}
+      {/* Floating Viewport Quick Controls */}
+      <div className="terrain-viewport-overlay">
+        {/* Navigation Info Pill */}
+        <div className="viewport-info-pill">
+          <span className="dot-live" />
+          <span className="pill-text font-mono">
+            {effectiveCameraMode === 'fly' ? 'Flythrough (WASD+QE)' : 'Orbit (Click-Measure Active)'}
+          </span>
+          {loadedMeshMeta?.is_client_side && (
+            <span className="ml-2 px-1.5 py-0.5 text-[10px] bg-cyan-900/60 text-cyan-300 border border-cyan-700 rounded font-semibold">
+              Client Engine
             </span>
-          </div>
-          <div className="hud-metric-pill">
-            <span className="hud-metric-title">ELEVATION</span>
-            <span className="hud-metric-number">
-              {selectedPoint ? `${selectedPoint.elevation.toFixed(1)} m` : (loadedMeshMeta ? `${loadedMeshMeta.mean_height?.toFixed(1)} m` : '--')}
-            </span>
-          </div>
-          <div className="hud-metric-pill">
-            <span className="hud-metric-title">SLOPE</span>
-            <span className="hud-metric-number">
-              {selectedPoint ? `${selectedPoint.slope.toFixed(1)}°` : '--'}
-            </span>
-          </div>
+          )}
         </div>
 
-        <div className="terrain-quick-controls">
-          <div className="view-mode-pills">
-            <button
-              className={`pill-btn ${effectiveTextureMode === 'rgb' ? 'active' : ''}`}
-              onClick={() => handleTextureChange('rgb')}
-              title="Drape original high-res optical satellite image"
-            >
-              🛰️ Optical RGB
-            </button>
-            <button
-              className={`pill-btn ${effectiveTextureMode === 'colormap' ? 'active' : ''}`}
-              onClick={() => handleTextureChange('colormap')}
-              title="Color-code terrain by metric elevation in meters"
-            >
-              🏔️ Elevation Color
-            </button>
-            <button
-              className={`pill-btn ${effectiveTextureMode === 'slope' ? 'active' : ''}`}
-              onClick={() => handleTextureChange('slope')}
-              title="Color-code terrain by surface slope gradient in degrees"
-            >
-              📐 Slope Map
-            </button>
-            <button
-              className={`pill-btn ${effectiveTextureMode === 'wireframe' ? 'active' : ''}`}
-              onClick={() => handleTextureChange('wireframe')}
-              title="Show topographic triangulated wireframe mesh"
-            >
-              🕸️ Wireframe
-            </button>
-          </div>
-
+        {/* Texture Mode Selector Buttons */}
+        <div className="viewport-mode-pills">
           <button
-            className={`btn-camera-toggle ${effectiveCameraMode === 'fly' ? 'active' : ''}`}
-            onClick={toggleCameraMode}
-            title="Toggle between orbital camera and flythrough mode (WASD + QE)"
+            className={`pill-btn ${effectiveTextureMode === 'rgb' ? 'active' : ''}`}
+            onClick={() => handleTextureChange('rgb')}
+            title="Draped True-Color Satellite / Aerial Optical Texture"
           >
-            {effectiveCameraMode === 'fly' ? '✈️ Fly Mode (WASD)' : '🛰️ Orbit Camera'}
+            RGB Optical
+          </button>
+          <button
+            className={`pill-btn ${effectiveTextureMode === 'colormap' ? 'active' : ''}`}
+            onClick={() => handleTextureChange('colormap')}
+            title="Procedural Elevation Hypsometric Tint"
+          >
+            Colormap
+          </button>
+          <button
+            className={`pill-btn ${effectiveTextureMode === 'slope' ? 'active' : ''}`}
+            onClick={() => handleTextureChange('slope')}
+            title="Topographic Slope Angle Analysis (<5° Green, 5-15° Cyan, 15-30° Yellow, >30° Red)"
+          >
+            Slope
+          </button>
+          <button
+            className={`pill-btn ${effectiveTextureMode === 'wireframe' ? 'active' : ''}`}
+            onClick={() => handleTextureChange('wireframe')}
+            title="Structural Geometric Elevation Grid Triangulation"
+          >
+            Wireframe
           </button>
         </div>
       </div>

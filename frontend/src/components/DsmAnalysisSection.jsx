@@ -41,11 +41,11 @@ export default function DsmAnalysisSection(props) {
   const rasterRes = dsmStage?.raster_dimensions?.width && dsmStage?.raster_dimensions?.height
     ? `${dsmStage.raster_dimensions.width} × ${dsmStage.raster_dimensions.height} px`
     : dsmMesh
-    ? '1024 × 1024 px'
+    ? `${dsmMesh.cols || 128} × ${dsmMesh.rows || 128} px`
     : '--';
 
-  const crs = dsmStage?.crs || (dsmMesh ? 'EPSG:3857 (Local Metric)' : '--');
-  const dsmFile = dsmStage?.dsm_file || '/api/jobs/demo/artifacts/dsm.tif';
+  const crs = dsmStage?.crs || (dsmMesh ? 'EPSG:3857 (Metric Grid · WGS84 UTM 18N)' : '--');
+  const dsmFile = dsmStage?.dsm_file || 'calibrated_dsm.tif';
 
   // Real Validation metrics
   const rmse = calibStage?.rmse_meters !== undefined ? `${calibStage.rmse_meters.toFixed(2)} m` : '--';

@@ -17,6 +17,7 @@ import {
   Upload,
 } from 'lucide-react';
 import { IsroHeader } from '../components/IsroHeader';
+import { getApiBase } from '../utils/apiConfig';
 
 interface JobSummary {
   job_id: string;
@@ -108,7 +109,12 @@ export const UploadPage: React.FC<UploadPageProps> = ({
   } | null>(null);
 
   const checkHealth = () => {
-    fetch('/api/health')
+    const apiBase = getApiBase();
+    if (!apiBase) {
+      setBackendHealth({ online: false, device: 'In-Browser Client Engine (Standalone)' });
+      return;
+    }
+    fetch(`${apiBase}/api/health`)
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
         if (data && data.status === 'healthy') {
@@ -118,14 +124,16 @@ export const UploadPage: React.FC<UploadPageProps> = ({
             cudaAvailable: data.cuda_available,
           });
         } else {
-          setBackendHealth({ online: false });
+          setBackendHealth({ online: false, device: 'In-Browser Client Engine (Standalone)' });
         }
       })
-      .catch(() => setBackendHealth({ online: false }));
+      .catch(() => setBackendHealth({ online: false, device: 'In-Browser Client Engine (Standalone)' }));
   };
 
   const loadRecentJobs = () => {
-    fetch('/api/jobs')
+    const apiBase = getApiBase();
+    if (!apiBase) return;
+    fetch(`${apiBase}/api/jobs`)
       .then((r) => (r.ok ? r.json() : []))
       .then((data) => {
         if (Array.isArray(data)) {
@@ -216,7 +224,11 @@ export const UploadPage: React.FC<UploadPageProps> = ({
     }
 
     try {
-      const resp = await fetch('/api/jobs', {
+      const apiBase = getApiBase();
+      if (!apiBase) {
+        throw new Error('A live PyTorch GPU backend is required for deep-queue batch jobs. Use the main Dashboard for instant In-Browser 3D reconstruction, or configure your backend endpoint in Settings.');
+      }
+      const resp = await fetch(`${apiBase}/api/jobs`, {
         method: 'POST',
         body: formData,
       });

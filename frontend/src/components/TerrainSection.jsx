@@ -15,6 +15,7 @@ import TerrainViewer from './TerrainViewer';
 export default function TerrainSection(props) {
   const {
     dsmMesh,
+    userTextureUrl = null,
     textureMode = 'rgb',
     onTextureModeChange,
     cameraMode = 'orbit',
@@ -131,6 +132,7 @@ export default function TerrainSection(props) {
       <div className="terrain-canvas-wrapper">
         <TerrainViewer
           dsmData={dsmMesh}
+          userTextureUrl={userTextureUrl}
           textureMode={textureMode}
           onTextureModeChange={onTextureModeChange}
           cameraMode={cameraMode}
