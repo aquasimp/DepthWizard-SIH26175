@@ -37,6 +37,7 @@ class DepthInferenceEngine:
         # Determine primary checkpoint
         if checkpoint_path is None:
             if mode == "metric":
+                v120_urban = Path("models/v1.2.0/best_urban.pt")
                 v110_best = Path("models/v1.1.0/best.pt")
                 v110_tall = Path("models/v1.1.0/best_tall.pt")
                 v103_legacy = (
@@ -50,10 +51,14 @@ class DepthInferenceEngine:
                     else Path("models/depth_anything_v2_vits.pth")
                 )
 
-                if model_version == "v1.1.0_tall" and v110_tall.exists():
+                if model_version in ["v1.2.0_urban", "v1.2.0_best", "urban"] and v120_urban.exists():
+                    checkpoint_path = v120_urban
+                elif model_version == "v1.1.0_tall" and v110_tall.exists():
                     checkpoint_path = v110_tall
                 elif model_version == "legacy" and v103_legacy.exists():
                     checkpoint_path = v103_legacy
+                elif v120_urban.exists():
+                    checkpoint_path = v120_urban
                 elif v110_best.exists():
                     checkpoint_path = v110_best
                 elif v103_legacy.exists():

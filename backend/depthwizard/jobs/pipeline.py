@@ -88,6 +88,7 @@ def run_pipeline(
             device = str(opts.get("device", "auto"))
             model_ver = str(opts.get("model_version", "v1.1.0_best"))
 
+            v120_urban = Path("models/v1.2.0/best_urban.pt")
             v110_best = Path("models/v1.1.0/best.pt")
             v110_tall = Path("models/v1.1.0/best_tall.pt")
             v103_legacy = (
@@ -101,7 +102,10 @@ def run_pipeline(
                 else Path("models/depth_anything_v2_vits.pth")
             )
 
-            if model_ver == "v1.1.0_tall" and v110_tall.exists():
+            if model_ver in ["v1.2.0_urban", "v1.2.0_best", "urban"] and v120_urban.exists():
+                ckpt_path = v120_urban
+                model_ver = "v1.2.0_urban"
+            elif model_ver == "v1.1.0_tall" and v110_tall.exists():
                 ckpt_path = v110_tall
             elif model_ver == "ensemble" and v110_best.exists():
                 ckpt_path = v110_best
@@ -109,6 +113,9 @@ def run_pipeline(
                 ckpt_path = base_ckpt
             elif model_ver == "legacy" and v103_legacy.exists():
                 ckpt_path = v103_legacy
+            elif v120_urban.exists():
+                ckpt_path = v120_urban
+                model_ver = "v1.2.0_urban"
             elif v110_best.exists():
                 ckpt_path = v110_best
                 model_ver = "v1.1.0_best"

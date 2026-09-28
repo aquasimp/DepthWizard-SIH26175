@@ -411,6 +411,7 @@ export const UploadPage: React.FC<UploadPageProps> = ({
                     onChange={(e) => setModelVersion(e.target.value)}
                     className="param-select font-mono"
                   >
+                    <option value="v1.2.0_urban">DA3 ViT-S Urban Specialist (Surface Normal Flatness Trained)</option>
                     <option value="v1.1.0_best">DA3 ViT-S Multi-City Fine-Tuned (Recommended)</option>
                     <option value="v1.0.0_base">DA3 ViT-B Zero-Shot Base</option>
                   </select>
