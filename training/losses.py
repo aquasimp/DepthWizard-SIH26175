@@ -105,16 +105,68 @@ class MultiScaleGradientLoss(nn.Module):
         return total_grad_loss / self.scales
 
 
-class MetricNDSMLoss(nn.Module):
-    """Composite loss for metric nDSM head training:
-    L_total = L_silog + 0.5 * L_l1 + 0.5 * L_grad
+class SurfaceNormalLoss(nn.Module):
+    """Surface normal consistency loss.
+
+    Computes 3D surface normals from heightfield gradients and penalizes angular
+    deviation: L_normal = 1 - cos(n_pred, n_target).
+    Ensures flat rooftops remain flat and vertical walls stay vertical.
     """
 
-    def __init__(self, lambd: float = 0.85, eps: float = 1e-4):
+    def __init__(self, eps: float = 1e-6):
+        super().__init__()
+        self.eps = eps
+
+    def _compute_normals(self, height_map: torch.Tensor) -> torch.Tensor:
+        # height_map: (B, 1, H, W)
+        dz_dx = (height_map[:, :, :, 2:] - height_map[:, :, :, :-2]) * 0.5
+        dz_dy = (height_map[:, :, 2:, :] - height_map[:, :, :-2, :]) * 0.5
+
+        # Trim to match size (H-2, W-2)
+        dz_dx = dz_dx[:, :, 1:-1, :]
+        dz_dy = dz_dy[:, :, :, 1:-1]
+
+        # Normal vector: [-dz/dx, -dz/dy, 1.0]
+        ones = torch.ones_like(dz_dx)
+        normal = torch.cat([-dz_dx, -dz_dy, ones], dim=1)
+        norm = torch.norm(normal, p=2, dim=1, keepdim=True) + self.eps
+        return normal / norm
+
+    def forward(self, pred: torch.Tensor, target: torch.Tensor, mask: torch.Tensor) -> torch.Tensor:
+        if pred.dim() == 3:
+            pred = pred.unsqueeze(1)
+        if target.dim() == 3:
+            target = target.unsqueeze(1)
+        if mask.dim() == 3:
+            mask = mask.unsqueeze(1)
+
+        norm_pred = self._compute_normals(pred)
+        norm_tgt = self._compute_normals(target)
+
+        # Valid mask trimmed by 1px boundary
+        valid_m = mask[:, :, 1:-1, 1:-1]
+        valid_mask = valid_m & torch.isfinite(norm_pred).all(dim=1, keepdim=True) & torch.isfinite(norm_tgt).all(dim=1, keepdim=True)
+
+        if not valid_mask.any():
+            return torch.tensor(0.0, device=pred.device, requires_grad=True)
+
+        cos_sim = torch.sum(norm_pred * norm_tgt, dim=1, keepdim=True)
+        normal_loss = 1.0 - cos_sim
+        return torch.mean(normal_loss[valid_mask])
+
+
+class MetricNDSMLoss(nn.Module):
+    """Composite loss for metric nDSM head training:
+    L_total = L_silog + 0.5 * L_l1 + 0.5 * L_grad + 0.3 * L_normal
+    """
+
+    def __init__(self, lambd: float = 0.85, eps: float = 1e-4, normal_weight: float = 0.3):
         super().__init__()
         self.silog = MaskedSILogLoss(lambd=lambd, eps=eps)
         self.l1 = MaskedL1Loss()
         self.grad = MultiScaleGradientLoss(scales=4)
+        self.normal = SurfaceNormalLoss()
+        self.normal_weight = normal_weight
 
     def forward(
         self,
@@ -125,8 +177,10 @@ class MetricNDSMLoss(nn.Module):
         l_silog = self.silog(pred, target, mask)
         l_l1 = self.l1(pred, target, mask)
         l_grad = self.grad(pred, target, mask)
-        return l_silog + 0.5 * l_l1 + 0.5 * l_grad
+        l_norm = self.normal(pred, target, mask)
+        return l_silog + 0.5 * l_l1 + 0.5 * l_grad + self.normal_weight * l_norm
 
 
 # Alias for architectural naming convention
 CompositeLoss = MetricNDSMLoss
+

@@ -150,6 +150,12 @@ class DepthInferenceEngine:
             return self.infer_tile(tile, input_size=518)
 
         depth = infer_tiled(tile_fn, image_rgb, tile_size=tile_size, overlap=overlap)
+
+        # Edge-preserving bilateral filter: removes foliage/gravel high-frequency spikes (stalagmites)
+        # while keeping vertical building boundaries and planar rooftops razor-sharp
+        if np.all(np.isfinite(depth)):
+            depth = cv2.bilateralFilter(depth, d=5, sigmaColor=1.5, sigmaSpace=4.0)
+
         wall_time = time.perf_counter() - start_time
 
         logger.info(

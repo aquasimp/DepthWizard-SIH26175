@@ -532,10 +532,29 @@ export default function TerrainViewer({
     const baseOffset = mesh.userData.baseOffset || 0;
     const reliefMultiplier = mesh.userData.reliefMultiplier || 1.0;
 
-    for (let i = 0; i < posAttr.count; i++) {
-      const h = heights[i] !== undefined ? heights[i] : 0;
-      const relH = Math.max(0, (h - baseOffset) * reliefMultiplier);
-      posAttr.setY(i, relH * verticalExaggeration);
+    const rows = loadedMeshMeta.rows || 128;
+    const cols = loadedMeshMeta.cols || 128;
+
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const i = r * cols + c;
+        const val = heights[i] !== undefined ? heights[i] : baseOffset;
+        let effectiveH = val;
+
+        if (r > 0 && r < rows - 1 && c > 0 && c < cols - 1) {
+          const nUp = heights[(r - 1) * cols + c] ?? val;
+          const nDown = heights[(r + 1) * cols + c] ?? val;
+          const nLeft = heights[r * cols + (c - 1)] ?? val;
+          const nRight = heights[r * cols + (c + 1)] ?? val;
+          const neighborMean = (nUp + nDown + nLeft + nRight) * 0.25;
+          if (val - neighborMean > 5.0) {
+            effectiveH = neighborMean + 1.5;
+          }
+        }
+
+        const relH = Math.max(0, (effectiveH - baseOffset) * reliefMultiplier);
+        posAttr.setY(i, relH * verticalExaggeration);
+      }
     }
     posAttr.needsUpdate = true;
     mesh.geometry.computeVertexNormals();

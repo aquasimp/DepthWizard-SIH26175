@@ -31,7 +31,9 @@ data/cache/huggingface/
 
 # Models
 models/*.pth
+models/**/*.pt
 models/v1.1.0/*.pt
+models/v1.2.0/*.pt
 !models/.gitkeep
 !models/v1.1.0/checkpoint_state.json
 
@@ -56,5 +58,8 @@ judge-clone-test/
 # Logs
 logs/**/*.log
 logs/*.log
+logs/v1.2.0/
 *.log
+
+models/v1.2.0/
 

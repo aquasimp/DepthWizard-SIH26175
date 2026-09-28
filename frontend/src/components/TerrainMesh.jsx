@@ -47,12 +47,42 @@ export function createTerrainGeometry({
   const baseOffset = minElev;
   const elevSpan = maxElev - minElev;
 
-  // If the heightfield is unitless normalized [0, 1] relative depths (span <= 1.05m),
-  // boost the relief scale by 35.0 so it produces visible, realistic 3D buildings & terrain features!
-  const reliefMultiplier = (elevSpan <= 1.05 && elevSpan > 0.001) ? 35.0 : 1.0;
+  // Realistic metric scaling:
+  // If heightfield is unitless normalized [0, 1] relative depths (span <= 1.05m),
+  // scale it to a natural urban relief span of ~14m (eliminates 35x stalagmite explosion).
+  // If already metric meters (span > 1.05m), maintain physically accurate 1:1 scale (1 unit in 3D = 1 meter).
+  const isUnitlessRelative = (elevSpan <= 1.05 && elevSpan > 0.001);
+  const reliefMultiplier = isUnitlessRelative ? 14.0 : 1.0;
+
+  // 3x3 local outlier clamp to suppress high-frequency single-pixel needle spikes (stalagmites)
+  const smoothedHeights = new Float32Array(numVertices);
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const idx = r * cols + c;
+      const val = (heights && idx < heights.length) ? heights[idx] : baseOffset;
+
+      if (r === 0 || r === rows - 1 || c === 0 || c === cols - 1) {
+        smoothedHeights[idx] = val;
+        continue;
+      }
+
+      const nUp = heights[(r - 1) * cols + c] ?? val;
+      const nDown = heights[(r + 1) * cols + c] ?? val;
+      const nLeft = heights[r * cols + (c - 1)] ?? val;
+      const nRight = heights[r * cols + (c + 1)] ?? val;
+      const neighborMean = (nUp + nDown + nLeft + nRight) * 0.25;
+
+      // If vertex is an isolated spike deviating excessively from surrounding neighborhood, smooth it
+      if (val - neighborMean > 5.0) {
+        smoothedHeights[idx] = neighborMean + 1.5;
+      } else {
+        smoothedHeights[idx] = val;
+      }
+    }
+  }
 
   for (let i = 0; i < numVertices; i++) {
-    const h = (heights && i < heights.length) ? heights[i] : 0;
+    const h = smoothedHeights[i];
     const relH = Math.max(0, (h - baseOffset) * reliefMultiplier);
     posAttr.setY(i, relH * verticalExaggeration);
   }

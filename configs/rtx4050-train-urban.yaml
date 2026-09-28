@@ -1,0 +1,45 @@
+# DepthWizard Urban 3D Photogrammetry Fine-Tuning for NVIDIA RTX 4050 (6GB VRAM)
+# Focused on crisp planar rooftops, vertical walls, and natural canopy volume.
+
+run_name: "dav3s_rtx4050_urban"
+
+model:
+  init_checkpoint: "models/v1.1.0/best.pt"
+  frozen_encoder: true
+
+data:
+  manifest: "data/gamus/manifest.csv"
+  crop_size: 518
+  batch_size: 4
+  augment: true
+  sampler: "HeightStratifiedBatchSampler"
+  num_workers: 0
+
+training:
+  epochs: 15
+  learning_rate: 0.00005
+  min_lr: 0.000005
+  warmup_ratio: 0.05
+  weight_decay: 0.01
+  grad_clip: 1.0
+  amp: true
+  gradient_accumulation_steps: 4
+  device: "cuda"
+  seed: 42
+  loss:
+    silog_lambda: 0.85
+    silog_eps: 0.0001
+    normal_weight: 0.3
+    grad_weight: 0.5
+    l1_weight: 0.5
+
+checkpoints:
+  dir: "models/v1.2.0"
+  last: "models/v1.2.0/last.pt"
+  best: "models/v1.2.0/best_urban.pt"
+  best_tall: "models/v1.2.0/best_tall.pt"
+
+logging:
+  dir: "logs/v1.2.0"
+  csv: "logs/v1.2.0/train_metrics.csv"
+  jsonl: "logs/v1.2.0/train_metrics.jsonl"
