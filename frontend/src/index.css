@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
 @font-face {
   font-family: 'Trade Gothic';
@@ -47,9 +47,10 @@
   --shadow-glow-dark: 0 14px 32px rgba(10, 16, 28, 0.4), 0 4px 10px rgba(10, 16, 28, 0.2);
   --shadow-pill: 0 10px 30px rgba(15, 23, 42, 0.06), 0 1px 3px rgba(15, 23, 42, 0.04);
 
-  --font-trade-gothic: 'Trade Gothic', 'Trade Gothic LT Std', 'TradeGothic', 'Trade Gothic Next', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-sans: var(--font-trade-gothic);
-  --font-serif: 'Instrument Serif', 'Playfair Display', Georgia, serif;
+  --font-display-bold: 'Plus Jakarta Sans', 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-tech: 'Space Grotesk', 'Plus Jakarta Sans', sans-serif;
+  --font-trade-gothic: var(--font-display-bold);
   --font-mono: 'JetBrains Mono', monospace;
 }
 
@@ -61,7 +62,9 @@ select,
 .brand-name,
 .nav-link-btn,
 .nav-demo-pill-btn,
+.hero-bold-title,
 .hero-editorial-title,
+.hero-subheading-text,
 .hero-editorial-subtitle,
 .hero-pill-badge,
 .hero-btn-dark-glow,
@@ -90,7 +93,7 @@ select,
 .metric-box-title,
 .metric-num-lg,
 .tool-btn {
-  font-family: var(--font-trade-gothic);
+  font-family: var(--font-display-bold);
 }
 
 * {
@@ -445,13 +448,15 @@ code, .font-mono {
 .luminous-hero-container {
   position: relative;
   width: 100%;
-  min-height: 560px;
-  /* Celestial sky-blue mesh gradient matching screenshot */
-  background: radial-gradient(ellipse 95% 75% at 50% 28%, #72bbf8 0%, #90caf9 28%, #bae0fd 58%, #e1f0fe 82%, #f4f8fd 100%);
+  min-height: 570px;
+  /* Rich, vibrant celestial aerospace gradient with depth and high contrast */
+  background: 
+    radial-gradient(circle at 50% 8%, rgba(255, 255, 255, 0.45) 0%, transparent 40%),
+    radial-gradient(ellipse 95% 78% at 50% 22%, #1d4ed8 0%, #0284c7 20%, #38bdf8 46%, #7dd3fc 68%, #bae6fd 85%, #f0f8ff 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 120px 24px 70px 24px;
+  padding: 125px 24px 75px 24px;
   overflow: hidden;
 }
 
@@ -473,7 +478,7 @@ code, .font-mono {
 .hero-inner-content {
   position: relative;
   z-index: 2;
-  max-width: 960px;
+  max-width: 1140px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -481,66 +486,145 @@ code, .font-mono {
   text-align: center;
 }
 
-/* Floating Badge Pill */
+/* Floating Badge Pill with Font Awesome Icon */
 .hero-pill-badge {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  background: rgba(255, 255, 255, 0.28);
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.22);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.75);
   border-radius: var(--radius-pill);
-  padding: 7px 20px;
+  padding: 7px 22px;
   margin-bottom: 24px;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
 }
 
-.badge-sparkle {
+.badge-fa-icon {
   color: #ffffff;
-  font-size: 11px;
+  font-size: 12px;
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.6));
 }
 
 .badge-text {
+  font-family: var(--font-display-bold);
   font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
+  font-weight: 800;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: #ffffff;
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+  text-shadow: 0 1px 4px rgba(15, 23, 42, 0.25);
 }
 
-/* Editorial Serif Headline (matching screenshot) */
-.hero-editorial-title {
-  font-family: var(--font-serif);
-  font-size: clamp(2.4rem, 5vw, 4.2rem);
-  font-weight: 400;
-  line-height: 1.12;
-  letter-spacing: -0.015em;
+/* Bold Display Headline (Not thin AI serif) */
+.hero-bold-title {
+  font-family: var(--font-display-bold);
+  font-size: clamp(2.2rem, 4.1vw, 3.6rem);
+  font-weight: 800;
+  line-height: 1.16;
+  letter-spacing: -0.035em;
   color: #ffffff;
-  text-shadow: 0 2px 24px rgba(255, 255, 255, 0.35), 0 2px 6px rgba(15, 23, 42, 0.1);
-  margin-bottom: 18px;
-  max-width: 880px;
+  text-shadow: 0 4px 24px rgba(15, 23, 42, 0.28), 0 1px 4px rgba(15, 23, 42, 0.2);
+  margin-bottom: 22px;
+  max-width: 1120px;
 }
 
-.title-serif-italic {
-  font-style: italic;
-  font-family: var(--font-serif);
-  font-weight: 400;
+.hero-title-highlight {
+  color: #ffffff;
+  font-weight: 900;
+  text-shadow: 0 0 28px rgba(255, 255, 255, 0.85), 0 0 45px rgba(56, 189, 248, 0.65), 0 2px 8px rgba(15, 23, 42, 0.3);
+  position: relative;
 }
 
-/* Subtitle */
-.hero-editorial-subtitle {
-  font-size: 16px;
-  font-weight: 400;
-  color: rgba(255, 255, 255, 0.94);
-  line-height: 1.6;
-  max-width: 640px;
+.hero-title-br {
+  display: block;
+}
+
+@media (max-width: 640px) {
+  .hero-title-br {
+    display: none;
+  }
+}
+
+/* Fallback for previous class */
+.hero-editorial-title {
+  font-family: var(--font-display-bold);
+  font-size: clamp(2.4rem, 5.2vw, 4.2rem);
+  font-weight: 800;
+  line-height: 1.14;
+  letter-spacing: -0.035em;
+  color: #ffffff;
+}
+
+/* Subheading Card with Font Awesome Icon and Illuminated Card Background */
+.hero-subheading-card {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.98);
+  border-radius: var(--radius-pill);
+  padding: 8px 22px 8px 10px;
+  max-width: 820px;
   margin: 0 auto 34px auto;
-  text-shadow: 0 1px 4px rgba(15, 23, 42, 0.08);
+  box-shadow: 0 14px 35px rgba(2, 132, 199, 0.16), 0 3px 10px rgba(15, 23, 42, 0.05);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Dual CTA Action Buttons (matching screenshot) */
+.hero-subheading-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 40px rgba(2, 132, 199, 0.24), 0 4px 12px rgba(15, 23, 42, 0.08);
+}
+
+.subheading-icon-badge {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 15px;
+  flex-shrink: 0;
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4);
+}
+
+.hero-subheading-text {
+  font-family: var(--font-sans);
+  font-size: 14.5px;
+  font-weight: 600;
+  color: #0f172a;
+  line-height: 1.5;
+  text-align: left;
+  margin: 0;
+}
+
+.hero-subheading-text strong {
+  color: #0284c7;
+  font-weight: 800;
+}
+
+.subheading-badge-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #e0f2fe;
+  color: #0369a1;
+  font-family: var(--font-display-bold);
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  border: 1px solid rgba(2, 132, 199, 0.2);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Dual CTA Action Buttons */
 .hero-cta-buttons-row {
   display: flex;
   align-items: center;
@@ -554,23 +638,23 @@ code, .font-mono {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 10px;
   background: #090d16;
   color: #ffffff;
-  font-family: var(--font-sans);
+  font-family: var(--font-display-bold);
   font-size: 14.5px;
-  font-weight: 600;
+  font-weight: 700;
   padding: 13px 32px;
   border-radius: var(--radius-pill);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: var(--shadow-glow-dark);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 14px 32px rgba(10, 16, 28, 0.4), 0 0 20px rgba(56, 189, 248, 0.2);
   cursor: pointer;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .hero-btn-dark-glow:hover {
   transform: translateY(-2px);
-  box-shadow: 0 18px 36px rgba(10, 16, 28, 0.45);
+  box-shadow: 0 18px 38px rgba(10, 16, 28, 0.5), 0 0 26px rgba(56, 189, 248, 0.35);
   background: #000000;
 }
 
@@ -578,16 +662,16 @@ code, .font-mono {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 10px;
   background: #ffffff;
-  color: #1e293b;
-  font-family: var(--font-sans);
+  color: #0f172a;
+  font-family: var(--font-display-bold);
   font-size: 14.5px;
-  font-weight: 600;
+  font-weight: 700;
   padding: 13px 32px;
   border-radius: var(--radius-pill);
   border: 1px solid rgba(255, 255, 255, 0.95);
-  box-shadow: 0 8px 24px rgba(148, 163, 184, 0.14);
+  box-shadow: 0 8px 24px rgba(148, 163, 184, 0.16);
   cursor: pointer;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -595,7 +679,7 @@ code, .font-mono {
 .hero-btn-white-pill:hover {
   transform: translateY(-2px);
   background: #f8fafc;
-  box-shadow: 0 12px 28px rgba(148, 163, 184, 0.22);
+  box-shadow: 0 12px 28px rgba(148, 163, 184, 0.24);
 }
 
 .btn-spinner {
@@ -2865,6 +2949,7 @@ code, .font-mono {
     padding: 110px 20px 60px 20px;
     min-height: 500px;
   }
+  .hero-bold-title,
   .hero-editorial-title {
     font-size: clamp(2.2rem, 5.5vw, 3.4rem);
   }
@@ -2922,9 +3007,16 @@ code, .font-mono {
     font-size: 9.5px;
     letter-spacing: 0.06em;
   }
+  .hero-bold-title,
   .hero-editorial-title {
     font-size: clamp(2rem, 6vw, 2.8rem);
     margin-bottom: 14px;
+  }
+  .hero-subheading-card {
+    max-width: 90vw;
+    padding: 8px 16px;
+    gap: 10px;
+    margin-bottom: 26px;
   }
   .hero-editorial-subtitle {
     font-size: 14px;
@@ -3019,10 +3111,28 @@ code, .font-mono {
     white-space: normal;
     text-align: center;
   }
+  .hero-bold-title,
   .hero-editorial-title {
     font-size: clamp(1.8rem, 7.5vw, 2.35rem);
     line-height: 1.16;
     margin-bottom: 12px;
+  }
+  .hero-subheading-card {
+    border-radius: var(--radius-md);
+    flex-direction: column;
+    text-align: center;
+    padding: 12px 14px;
+    gap: 8px;
+    margin-bottom: 22px;
+    width: 100%;
+    max-width: 94vw;
+  }
+  .hero-subheading-text {
+    text-align: center;
+    font-size: 13px;
+  }
+  .subheading-badge-tag {
+    display: none;
   }
   .hero-editorial-subtitle {
     font-size: 13.5px;

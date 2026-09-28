@@ -1,5 +1,4 @@
 import React from 'react';
-import { Sparkles, ArrowRight, Play, UploadCloud, Globe, Compass, Box, FileText, Mountain, Activity, Layers } from 'lucide-react';
 
 export default function HeroOverview({
   onUploadClick,
@@ -9,16 +8,16 @@ export default function HeroOverview({
   isRunning = false,
 }) {
   const dockFeatures = [
-    { id: 'upload', icon: Box, label: 'Single-View Optical' },
-    { id: 'da3', icon: Activity, label: 'Relative Depth (DA3)' },
-    { id: 'dsm-analysis', icon: Mountain, label: 'Metric DSM & GeoTIFF' },
-    { id: 'terrain', icon: Compass, label: '3D WebGL Flythrough' },
-    { id: 'measurements', icon: Layers, label: 'Slope & Height Profile' },
+    { id: 'upload', icon: 'fa-solid fa-satellite', label: 'Single-View Optical' },
+    { id: 'da3', icon: 'fa-solid fa-chart-line', label: 'Relative Depth (DA3)' },
+    { id: 'dsm-analysis', icon: 'fa-solid fa-mountain-sun', label: 'Metric DSM & GeoTIFF' },
+    { id: 'terrain', icon: 'fa-solid fa-cube', label: '3D WebGL Flythrough' },
+    { id: 'measurements', icon: 'fa-solid fa-layer-group', label: 'Slope & Height Profile' },
   ];
 
   return (
     <section className="luminous-hero-container">
-      {/* Background Architectural Circuit/Hairline SVGs (matching screenshot) */}
+      {/* Background Architectural Circuit/Hairline SVGs */}
       <div className="hero-circuit-bg" aria-hidden="true">
         <svg className="circuit-lines-svg" width="100%" height="100%" viewBox="0 0 1440 600" fill="none" preserveAspectRatio="none">
           {/* Left Circuit Lines */}
@@ -40,23 +39,32 @@ export default function HeroOverview({
       </div>
 
       <div className="hero-inner-content">
-        {/* Top Floating Badge Pill (matching screenshot) */}
+        {/* Top Floating Badge Pill with Font Awesome Icon */}
         <div className="hero-pill-badge">
-          <span className="badge-sparkle">✦</span>
-          <span className="badge-text">THE AGENTIC 3D TERRAIN &amp; ELEVATION PLATFORM</span>
+          <i className="fa-solid fa-satellite-dish badge-fa-icon"></i>
+          <span className="badge-text">ISRO / SAC · BHOOMI-3D ELEVATION PLATFORM</span>
         </div>
 
-        {/* Editorial Serif Hero Headline (matching screenshot) */}
-        <h1 className="hero-editorial-title">
-          Reconstruct 3D elevation models that <span className="title-serif-italic">convert</span> with AI intelligence
+        {/* High-Impact Bold Aerospace Hero Headline (Not thin AI serif) */}
+        <h1 className="hero-bold-title">
+          Reconstruct <span className="hero-title-highlight">3D Elevation Models</span> <br className="hero-title-br" /> from Single Optical Satellites
         </h1>
 
-        {/* Subtitle (matching screenshot) */}
-        <p className="hero-editorial-subtitle">
-          A fast, consistent, and high-precision monocular depth &amp; DSM terrain elevation AI platform powered by Depth Anything 3.
-        </p>
+        {/* Subheading Card with Font Awesome Icon and Illuminated Card Background */}
+        <div className="hero-subheading-card">
+          <div className="subheading-icon-badge">
+            <i className="fa-solid fa-mountain-sun"></i>
+          </div>
+          <p className="hero-subheading-text">
+            A fast, high-precision monocular depth &amp; DSM terrain elevation platform powered by <strong>Depth Anything 3</strong>
+          </p>
+          <div className="subheading-badge-tag">
+            <i className="fa-solid fa-bolt"></i>
+            <span>Real-Time DA3</span>
+          </div>
+        </div>
 
-        {/* Dual Action Buttons (matching screenshot) */}
+        {/* Dual Action CTA Buttons with Font Awesome Icons */}
         <div className="hero-cta-buttons-row">
           {/* Primary Dark Button with Intense Soft Ambient Glow */}
           <button
@@ -71,8 +79,9 @@ export default function HeroOverview({
               </>
             ) : (
               <>
+                <i className="fa-solid fa-bolt text-sky-400"></i>
                 <span>Start Depth Estimation</span>
-                <ArrowRight size={16} />
+                <i className="fa-solid fa-arrow-right"></i>
               </>
             )}
           </button>
@@ -82,16 +91,16 @@ export default function HeroOverview({
             className="hero-btn-white-pill"
             onClick={onUploadClick}
           >
+            <i className="fa-solid fa-cloud-arrow-up text-sky-600"></i>
             <span>Upload Optical Imagery</span>
           </button>
         </div>
 
-        {/* Floating Bottom Pill Dock (matching screenshot) */}
+        {/* Floating Bottom Pill Dock with Font Awesome Icons */}
         <div className="hero-bottom-dock-wrapper">
           <div className="dock-connector-line" aria-hidden="true" />
           <div className="hero-bottom-dock">
             {dockFeatures.map((feat) => {
-              const Icon = feat.icon;
               const isSelected = activeFeature === feat.id;
               return (
                 <button
@@ -99,7 +108,7 @@ export default function HeroOverview({
                   className={`dock-pill-chip ${isSelected ? 'active' : ''}`}
                   onClick={() => onSelectFeature?.(feat.id)}
                 >
-                  <Icon size={14} className="dock-chip-icon" />
+                  <i className={`${feat.icon} dock-chip-icon`}></i>
                   <span>{feat.label}</span>
                 </button>
               );
