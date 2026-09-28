@@ -26,7 +26,7 @@ export default function FloatingNavbar({
     { id: 'dashboard', label: 'Home' },
     { id: 'upload', label: 'Mission Portal' },
     { id: 'terrain', label: '3D Flythrough' },
-    { id: 'accuracy', label: '📊 Accuracy & Graphs' },
+    { id: 'accuracy', label: 'Accuracy & Graphs' },
     { id: 'dsm-analysis', label: 'DSM & GeoTIFF' },
     { id: 'measurements', label: 'Terrain Analysis' },
     { id: 'gamus', label: 'GAMUS Data' },

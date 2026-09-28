@@ -416,7 +416,7 @@ export const ValidatePage: React.FC<ValidatePageProps> = ({
               className="px-4 py-2 rounded-lg bg-[#09152b] hover:bg-[#11244a] text-[#00c2cb] hover:text-white border border-[#00c2cb]/40 font-mono text-xs font-bold transition cursor-pointer flex items-center gap-1.5 shrink-0"
               title="1-click benchmark using bundled GAMUS/USGS 0.33m LiDAR Ground Truth reference (EPSG:32618)"
             >
-              <span>🎯 1-CLICK TEST BENCHMARK (GAMUS LiDAR GT)</span>
+              <span>1-CLICK TEST BENCHMARK (GAMUS LiDAR GT)</span>
             </button>
           </div>
 

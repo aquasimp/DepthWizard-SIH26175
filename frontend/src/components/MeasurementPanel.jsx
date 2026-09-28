@@ -69,9 +69,9 @@ export default function MeasurementPanel({
         <h2 className="analysis-title">Terrain Analysis</h2>
         <p className="panel-hint">
           {hasMeasurement ? (
-            <span className="active-hit-indicator">🟢 Sampled at ({coordX}m, {coordZ}m)</span>
+            <span className="active-hit-indicator">Sampled at ({coordX}m, {coordZ}m)</span>
           ) : (
-            <span>🖱️ Click anywhere on 3D terrain to measure</span>
+            <span>Click anywhere on 3D terrain to measure</span>
           )}
         </p>
       </div>
@@ -151,14 +151,14 @@ export default function MeasurementPanel({
               onClick={() => onCameraModeChange && onCameraModeChange('orbit')}
               title="Orbital inspection camera (Left click rotate, right click pan, scroll zoom)"
             >
-              🛰️ Orbit
+              Orbit
             </button>
             <button
               className={`ctrl-btn ${cameraMode === 'fly' ? 'active' : ''}`}
               onClick={() => onCameraModeChange && onCameraModeChange('fly')}
               title="First-person flythrough mode (W/A/S/D to move, Q/E for altitude)"
             >
-              ✈️ Fly
+              Fly
             </button>
             <button
               className="ctrl-btn-action"
@@ -240,21 +240,21 @@ export default function MeasurementPanel({
               onClick={() => onTextureModeChange && onTextureModeChange('rgb')}
               title="Drape original satellite optical image"
             >
-              🛰️ Optical
+              Optical
             </button>
             <button
               className={`ctrl-btn ${textureMode === 'colormap' ? 'active' : ''}`}
               onClick={() => onTextureModeChange && onTextureModeChange('colormap')}
               title="Color-code by metric elevation height"
             >
-              🏔️ Color
+              Color
             </button>
             <button
               className={`ctrl-btn ${textureMode === 'wireframe' ? 'active' : ''}`}
               onClick={() => onTextureModeChange && onTextureModeChange('wireframe')}
               title="Show topographic triangulated wireframe mesh"
             >
-              🕸️ Wire
+              Wire
             </button>
           </div>
           {textureMode === 'colormap' && onColorRampChange && (
@@ -280,7 +280,7 @@ export default function MeasurementPanel({
               onClick={() => onTextureModeChange && onTextureModeChange(textureMode === 'slope' ? 'rgb' : 'slope')}
               title="Toggle topographic slope gradient colormap"
             >
-              📐 {textureMode === 'slope' ? 'Hide Slope Map' : 'Show Slope Map'}
+              {textureMode === 'slope' ? 'Hide Slope Map' : 'Show Slope Map'}
             </button>
           </div>
           <div className="slope-legend-row">
@@ -304,7 +304,7 @@ export default function MeasurementPanel({
           onClick={onExportDSM}
           title="Download the georeferenced metric DSM GeoTIFF (outputs/dsm/dsm.tif)"
         >
-          📥 Export Metric DSM GeoTIFF
+          Export Metric DSM GeoTIFF
         </button>
       </div>
     </aside>

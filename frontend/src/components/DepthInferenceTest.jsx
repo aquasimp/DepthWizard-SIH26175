@@ -72,7 +72,7 @@ export default function DepthInferenceTest() {
       <div className="test-control-bar">
         <div className="upload-input-group">
           <label className="btn-file-select" htmlFor="rgb-file-input">
-            📂 Choose RGB Image
+            Choose RGB Image
           </label>
           <input
             id="rgb-file-input"
@@ -112,7 +112,7 @@ export default function DepthInferenceTest() {
               <span className="spinner-dot" /> Inferring Depth...
             </span>
           ) : (
-            '⚡ Estimate Relative Depth'
+            'Estimate Relative Depth'
           )}
         </button>
       </div>
@@ -120,7 +120,7 @@ export default function DepthInferenceTest() {
       {/* Error Banner */}
       {errorMsg && (
         <div className="test-error-banner">
-          ⚠️ <strong>Error:</strong> {errorMsg}
+          <strong>Error:</strong> {errorMsg}
         </div>
       )}
 
@@ -137,7 +137,6 @@ export default function DepthInferenceTest() {
               <img src={previewUrl} alt="Original Optical RGB" className="view-img" />
             ) : (
               <div className="placeholder-box">
-                <span className="placeholder-icon">🖼️</span>
                 <p>Upload an RGB image to preview</p>
               </div>
             )}
@@ -171,7 +170,6 @@ export default function DepthInferenceTest() {
               />
             ) : (
               <div className="placeholder-box">
-                <span className="placeholder-icon">🌐</span>
                 <p>Run inference to generate the relative depth map</p>
               </div>
             )}
@@ -183,21 +181,21 @@ export default function DepthInferenceTest() {
       {inferenceResult && (
         <div className="stats-results-panel card">
           <div className="stats-header">
-            <h4>📊 Inference Verification & Depth Statistics</h4>
+            <h4>Inference Verification & Depth Statistics</h4>
             <div className="stats-actions">
               <a
                 href={inferenceResult.depth_image_base64}
                 download={`${selectedFile?.name?.replace(/\.[^/.]+$/, '')}_depth_${colormap}.png`}
                 className="btn-download"
               >
-                💾 Save Depth PNG
+                Save Depth PNG
               </a>
               <a
                 href={`http://localhost:8000${inferenceResult.depth_array_url}`}
                 download
                 className="btn-download btn-secondary"
               >
-                🔢 Download .npy Matrix
+                Download .npy Matrix
               </a>
             </div>
           </div>
@@ -245,7 +243,6 @@ export default function DepthInferenceTest() {
           </div>
 
           <div className="notice-banner">
-            <span className="notice-icon">ℹ️</span>
             <div>
               <strong>Relative Depth Notice:</strong> The values above represent monocular affine-invariant inverse depth.
               They indicate relative proximity/topography and are <strong>NOT metric height/elevation in metres</strong>.

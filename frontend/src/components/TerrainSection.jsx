@@ -203,7 +203,7 @@ export default function TerrainSection(props) {
 
         {/* Click-to-measure hint bar */}
         <div className="terrain-interaction-hint">
-          <span>🖱️ Click anywhere on the 3D surface to sample precise point elevation &amp; slope gradient</span>
+          <span>Click anywhere on the 3D surface to sample precise point elevation &amp; slope gradient</span>
         </div>
       </div>
     </section>

@@ -67,9 +67,9 @@ export default function TerrainAnalysisPanel(props) {
         <h3 className="panel-main-heading">Point Measurements</h3>
         <p className="panel-instruction-hint">
           {hasMeasurement ? (
-            <span className="text-emerald">🟢 Active Pin at ({coordX}m, {coordZ}m)</span>
+            <span className="text-emerald">Active Pin at ({coordX}m, {coordZ}m)</span>
           ) : (
-            <span>🖱️ Click terrain to measure</span>
+            <span>Click terrain to measure</span>
           )}
         </p>
       </div>
@@ -207,25 +207,25 @@ export default function TerrainAnalysisPanel(props) {
             className={`texture-pill-btn ${textureMode === 'rgb' ? 'active' : ''}`}
             onClick={() => onTextureModeChange && onTextureModeChange('rgb')}
           >
-            🛰️ RGB
+            RGB
           </button>
           <button
             className={`texture-pill-btn ${textureMode === 'colormap' ? 'active' : ''}`}
             onClick={() => onTextureModeChange && onTextureModeChange('colormap')}
           >
-            🏔️ Color
+            Color
           </button>
           <button
             className={`texture-pill-btn ${textureMode === 'slope' ? 'active' : ''}`}
             onClick={() => onTextureModeChange && onTextureModeChange('slope')}
           >
-            📐 Slope
+            Slope
           </button>
           <button
             className={`texture-pill-btn ${textureMode === 'wireframe' ? 'active' : ''}`}
             onClick={() => onTextureModeChange && onTextureModeChange('wireframe')}
           >
-            🕸️ Wire
+            Wire
           </button>
         </div>
       </div>

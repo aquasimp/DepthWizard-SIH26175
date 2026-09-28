@@ -781,7 +781,7 @@ export default function AccuracyEvaluationSection({ API_BASE = '' }) {
             </div>
 
             <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-mono text-slate-400 bg-slate-900/60 p-2.5 rounded-lg border border-slate-800">
-              <span>🎯 <strong>Milestones:</strong> Epoch 8 (Surface Normal Engaged) → Epoch 15 (Best Checkpoint: models/v1.2.0/best_urban.pt)</span>
+              <span><strong>Milestones:</strong> Epoch 8 (Surface Normal Engaged) → Epoch 15 (Best Checkpoint: models/v1.2.0/best_urban.pt)</span>
               <span className="text-cyan-400">85% Peak RTX 4050 Utilization</span>
             </div>
           </div>
