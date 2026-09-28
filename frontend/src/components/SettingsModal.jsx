@@ -15,8 +15,8 @@ export default function SettingsModal(props) {
   } = props || {};
 
   const [apiUrl, setApiUrl] = useState(() => getApiBase());
-  const [testingStatus, setTestingStatus] = useState<'idle' | 'testing' | 'success' | 'error'>('idle');
-  const [testMessage, setTestMessage] = useState<string | null>(null);
+  const [testingStatus, setTestingStatus] = useState('idle');
+  const [testMessage, setTestMessage] = useState(null);
 
   if (!isOpen) return null;
 
