@@ -45,13 +45,19 @@ export function createTerrainGeometry({
 
   // Offset base by minElev so that terrain datum sits cleanly on ground grid (Y >= 0)
   const baseOffset = minElev;
+  const elevSpan = maxElev - minElev;
+
+  // If the heightfield is unitless normalized [0, 1] relative depths (span <= 1.05m),
+  // boost the relief scale by 35.0 so it produces visible, realistic 3D buildings & terrain features!
+  const reliefMultiplier = (elevSpan <= 1.05 && elevSpan > 0.001) ? 35.0 : 1.0;
 
   for (let i = 0; i < numVertices; i++) {
     const h = (heights && i < heights.length) ? heights[i] : 0;
-    const relH = Math.max(0, h - baseOffset);
+    const relH = Math.max(0, (h - baseOffset) * reliefMultiplier);
     posAttr.setY(i, relH * verticalExaggeration);
   }
 
+  posAttr.needsUpdate = true;
   geometry.computeVertexNormals();
 
   // Create UV texture coordinates matching satellite image mapping
@@ -69,6 +75,7 @@ export function createTerrainGeometry({
     minElevation: minElev,
     maxElevation: maxElev,
     baseOffset,
+    reliefMultiplier,
     planeWidth,
     planeHeight,
   };

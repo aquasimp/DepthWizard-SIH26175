@@ -46,6 +46,8 @@ export default function TerrainViewer({
   const [internalCameraMode, setInternalCameraMode] = useState('orbit');
   const [internalTextureMode, setInternalTextureMode] = useState(textureMode);
   const [loadedMeshMeta, setLoadedMeshMeta] = useState(dsmData || defaultTerrainMesh);
+  const loadedMeshMetaRef = useRef(loadedMeshMeta);
+  loadedMeshMetaRef.current = loadedMeshMeta;
 
   const effectiveCameraMode = cameraMode || internalCameraMode;
   const effectiveTextureMode = textureMode || internalTextureMode;
@@ -98,18 +100,137 @@ export default function TerrainViewer({
       if (meta.texture_url.startsWith('blob:') || meta.texture_url.startsWith('data:')) {
         return meta.texture_url;
       }
-      // If it's a relative /api/ link and no remote backend is configured, avoid 404
+      // If it's a relative /api/ link
       if (meta.texture_url.startsWith('/api/') || meta.texture_url.includes('localhost:8000')) {
-        const apiBase = getApiBase();
-        if (apiBase && !meta.texture_url.includes('localhost:8000')) {
-          return `${apiBase}${meta.texture_url}`;
-        }
-        return sampleOpticalImg;
+        const apiBase = getApiBase() || 'http://127.0.0.1:8000';
+        const cleanPath = meta.texture_url.replace(/^.*localhost:\d+/, '');
+        return `${apiBase}${cleanPath}`;
       }
       return meta.texture_url;
     }
     return sampleOpticalImg;
   }, [userTextureUrl]);
+
+  // Helper to build or update terrain mesh geometry and textures
+  const buildOrUpdateMesh = useCallback((scene, meta) => {
+    if (!scene || !meta || !meta.heights || !meta.heights.length) return;
+
+    const planeSize = 200;
+    const {
+      geometry,
+      minElevation,
+      maxElevation,
+      baseOffset = 0,
+      reliefMultiplier = 1.0,
+      planeWidth = 200,
+      planeHeight = 200,
+    } = createTerrainGeometry({
+      heights: meta.heights,
+      rows: meta.rows,
+      cols: meta.cols,
+      planeSize,
+      aspectRatio: meta.aspect_ratio || 1.0,
+      verticalExaggeration,
+    });
+
+    // Procedural Colormap & Slope Textures
+    const colorTexture = createElevationColorTexture(
+      meta.heights,
+      meta.rows,
+      meta.cols,
+      minElevation,
+      maxElevation,
+      colorRamp
+    );
+    colorTextureRef.current = colorTexture;
+
+    const slopeTexture = createSlopeColorTexture(
+      meta.heights,
+      meta.rows,
+      meta.cols,
+      planeSize
+    );
+    slopeTextureRef.current = slopeTexture;
+
+    // Optical RGB Texture Loader
+    const textureLoader = new THREE.TextureLoader();
+    const opticalUrl = resolveOpticalTextureUrl(meta);
+
+    let activeMap = colorTexture;
+    if (effectiveTextureMode === 'slope') activeMap = slopeTexture;
+    else if (effectiveTextureMode === 'colormap') activeMap = colorTexture;
+
+    let terrainMaterial = terrainMaterialRef.current;
+    if (!terrainMaterial) {
+      terrainMaterial = new THREE.MeshStandardMaterial({
+        map: effectiveTextureMode === 'wireframe' ? null : activeMap,
+        wireframe: effectiveTextureMode === 'wireframe',
+        roughness: 0.75,
+        metalness: 0.05,
+        side: THREE.DoubleSide,
+      });
+      terrainMaterialRef.current = terrainMaterial;
+    } else {
+      terrainMaterial.map = effectiveTextureMode === 'wireframe' ? null : activeMap;
+      terrainMaterial.wireframe = effectiveTextureMode === 'wireframe';
+      terrainMaterial.side = THREE.DoubleSide;
+      terrainMaterial.needsUpdate = true;
+    }
+
+    // Load optical texture asynchronously
+    textureLoader.load(
+      opticalUrl,
+      (loadedTex) => {
+        loadedTex.wrapS = THREE.ClampToEdgeWrapping;
+        loadedTex.wrapT = THREE.ClampToEdgeWrapping;
+        loadedTex.needsUpdate = true;
+        opticalTextureRef.current = loadedTex;
+        if (effectiveTextureMode === 'rgb' && terrainMaterialRef.current) {
+          terrainMaterialRef.current.map = loadedTex;
+          terrainMaterialRef.current.needsUpdate = true;
+        }
+      },
+      undefined,
+      () => {
+        if (opticalUrl !== sampleOpticalImg) {
+          textureLoader.load(sampleOpticalImg, (fbTex) => {
+            opticalTextureRef.current = fbTex;
+            if (effectiveTextureMode === 'rgb' && terrainMaterialRef.current) {
+              terrainMaterialRef.current.map = fbTex;
+              terrainMaterialRef.current.needsUpdate = true;
+            }
+          });
+        }
+      }
+    );
+
+    // Existing mesh update vs new creation
+    let mesh = terrainMeshRef.current;
+    if (mesh) {
+      if (mesh.geometry) mesh.geometry.dispose();
+      mesh.geometry = geometry;
+      mesh.material = terrainMaterial;
+      if (!scene.children.includes(mesh)) {
+        scene.add(mesh);
+      }
+    } else {
+      mesh = new THREE.Mesh(geometry, terrainMaterial);
+      mesh.receiveShadow = true;
+      mesh.castShadow = true;
+      scene.add(mesh);
+      terrainMeshRef.current = mesh;
+    }
+
+    mesh.visible = true;
+    mesh.userData = {
+      baseOffset,
+      reliefMultiplier,
+      verticalExaggeration,
+      planeWidth,
+      planeHeight,
+      meta,
+    };
+  }, [colorRamp, effectiveTextureMode, resolveOpticalTextureUrl, verticalExaggeration]);
 
   // 1. Scene & WebGLRenderer Setup (MOUNT ONCE)
   useEffect(() => {
@@ -200,6 +321,11 @@ export default function TerrainViewer({
 
     scene.add(markerGroup);
     markerGroupRef.current = markerGroup;
+
+    // G. Build initial mesh immediately so scene is never empty
+    if (loadedMeshMetaRef.current && loadedMeshMetaRef.current.heights) {
+      buildOrUpdateMesh(scene, loadedMeshMetaRef.current);
+    }
 
     // H. Continuous Animation Loop
     let animId;
@@ -374,6 +500,13 @@ export default function TerrainViewer({
       domElement.removeEventListener('pointerup', handlePointerUp);
       controls.dispose();
       renderer.dispose();
+      if (terrainMeshRef.current && sceneRef.current) {
+        sceneRef.current.remove(terrainMeshRef.current);
+        if (terrainMeshRef.current.geometry) terrainMeshRef.current.geometry.dispose();
+      }
+      terrainMeshRef.current = null;
+      terrainMaterialRef.current = null;
+      sceneRef.current = null;
       if (container.contains(renderer.domElement)) {
         container.removeChild(renderer.domElement);
       }
@@ -383,116 +516,10 @@ export default function TerrainViewer({
   // 2. Build or Rebuild Mesh Geometry when loadedMeshMeta changes
   useEffect(() => {
     const scene = sceneRef.current;
-    if (!scene || !loadedMeshMeta || !loadedMeshMeta.heights) return;
-
-    const planeSize = 200;
-    const {
-      geometry,
-      minElevation,
-      maxElevation,
-      baseOffset = 0,
-      planeWidth = 200,
-      planeHeight = 200,
-    } = createTerrainGeometry({
-      heights: loadedMeshMeta.heights,
-      rows: loadedMeshMeta.rows,
-      cols: loadedMeshMeta.cols,
-      planeSize,
-      aspectRatio: loadedMeshMeta.aspect_ratio || 1.0,
-      verticalExaggeration,
-    });
-
-    // Procedural Colormap & Slope Textures
-    const colorTexture = createElevationColorTexture(
-      loadedMeshMeta.heights,
-      loadedMeshMeta.rows,
-      loadedMeshMeta.cols,
-      minElevation,
-      maxElevation,
-      colorRamp
-    );
-    colorTextureRef.current = colorTexture;
-
-    const slopeTexture = createSlopeColorTexture(
-      loadedMeshMeta.heights,
-      loadedMeshMeta.rows,
-      loadedMeshMeta.cols,
-      planeSize
-    );
-    slopeTextureRef.current = slopeTexture;
-
-    // Optical RGB Texture Loader
-    const textureLoader = new THREE.TextureLoader();
-    const opticalUrl = resolveOpticalTextureUrl(loadedMeshMeta);
-
-    let activeMap = colorTexture;
-    if (effectiveTextureMode === 'slope') activeMap = slopeTexture;
-    else if (effectiveTextureMode === 'colormap') activeMap = colorTexture;
-
-    let terrainMaterial = terrainMaterialRef.current;
-    if (!terrainMaterial) {
-      terrainMaterial = new THREE.MeshStandardMaterial({
-        map: effectiveTextureMode === 'wireframe' ? null : activeMap,
-        wireframe: effectiveTextureMode === 'wireframe',
-        roughness: 0.75,
-        metalness: 0.05,
-      });
-      terrainMaterialRef.current = terrainMaterial;
-    } else {
-      terrainMaterial.map = effectiveTextureMode === 'wireframe' ? null : activeMap;
-      terrainMaterial.wireframe = effectiveTextureMode === 'wireframe';
-      terrainMaterial.needsUpdate = true;
+    if (scene && loadedMeshMeta?.heights) {
+      buildOrUpdateMesh(scene, loadedMeshMeta);
     }
-
-    // Load optical texture asynchronously
-    textureLoader.load(
-      opticalUrl,
-      (loadedTex) => {
-        loadedTex.wrapS = THREE.ClampToEdgeWrapping;
-        loadedTex.wrapT = THREE.ClampToEdgeWrapping;
-        loadedTex.needsUpdate = true;
-        opticalTextureRef.current = loadedTex;
-        if (effectiveTextureMode === 'rgb' && terrainMaterialRef.current) {
-          terrainMaterialRef.current.map = loadedTex;
-          terrainMaterialRef.current.needsUpdate = true;
-        }
-      },
-      undefined,
-      () => {
-        // Fallback silently without throwing broken errors
-        if (opticalUrl !== sampleOpticalImg) {
-          textureLoader.load(sampleOpticalImg, (fbTex) => {
-            opticalTextureRef.current = fbTex;
-            if (effectiveTextureMode === 'rgb' && terrainMaterialRef.current) {
-              terrainMaterialRef.current.map = fbTex;
-              terrainMaterialRef.current.needsUpdate = true;
-            }
-          });
-        }
-      }
-    );
-
-    // Existing mesh update vs new creation
-    let mesh = terrainMeshRef.current;
-    if (mesh) {
-      mesh.geometry.dispose();
-      mesh.geometry = geometry;
-    } else {
-      mesh = new THREE.Mesh(geometry, terrainMaterial);
-      mesh.receiveShadow = true;
-      mesh.castShadow = true;
-      scene.add(mesh);
-      terrainMeshRef.current = mesh;
-    }
-
-    mesh.userData = {
-      baseOffset,
-      verticalExaggeration,
-      planeWidth,
-      planeHeight,
-      meta: loadedMeshMeta,
-    };
-  }, [loadedMeshMeta, colorRamp, resolveOpticalTextureUrl]);
+  }, [loadedMeshMeta, buildOrUpdateMesh]);
 
   // 3. Ultra-fast IN-PLACE Vertical Exaggeration update (Zero scene recreation!)
   useEffect(() => {
@@ -503,10 +530,11 @@ export default function TerrainViewer({
     const posAttr = mesh.geometry.attributes.position;
     const heights = loadedMeshMeta.heights;
     const baseOffset = mesh.userData.baseOffset || 0;
+    const reliefMultiplier = mesh.userData.reliefMultiplier || 1.0;
 
     for (let i = 0; i < posAttr.count; i++) {
       const h = heights[i] !== undefined ? heights[i] : 0;
-      const relH = Math.max(0, h - baseOffset);
+      const relH = Math.max(0, (h - baseOffset) * reliefMultiplier);
       posAttr.setY(i, relH * verticalExaggeration);
     }
     posAttr.needsUpdate = true;

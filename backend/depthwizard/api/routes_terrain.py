@@ -42,8 +42,11 @@ def extract_mesh_dict(job_dir: Path, job_id: str, resolution: int = 128) -> Dict
     if h_range < 1e-6:
         h_range = 1.0
 
+    # If unanchored relative normalized [0, 1] range, scale to 35.0m structural relief
+    scale_boost = 35.0 if (h_range <= 1.05 and h_min >= -0.01 and not meta.get("is_absolute", False)) else 1.0
+
     # True metric or relative elevations
-    h_real = h_min + (png.astype(np.float32) / 65535.0) * h_range
+    h_real = h_min + (png.astype(np.float32) / 65535.0) * (h_range * scale_boost)
     is_abs = bool(meta.get("is_absolute", False))
 
     # Downsample to grid resolution (e.g. 128x128) using INTER_AREA to preserve structure
