@@ -12,6 +12,7 @@ import DsmAnalysisSection from './components/DsmAnalysisSection';
 import AccuracyEvaluationSection from './components/AccuracyEvaluationSection';
 import GamusProvenanceSection from './components/GamusProvenanceSection';
 import SettingsModal from './components/SettingsModal';
+import ErrorBoundary from './components/ErrorBoundary';
 import { UploadPage } from './pages/UploadPage';
 import { JobStatusPage } from './pages/JobStatusPage';
 import { ValidatePage } from './pages/ValidatePage';
@@ -747,16 +748,18 @@ export function App() {
       </main>
 
       {/* SETTINGS & DIAGNOSTICS MODAL */}
-      <SettingsModal
-        isOpen={isSettingsOpen}
-        onClose={() => setIsSettingsOpen(false)}
-        systemStatus={systemStatus}
-        onSystemStatusChange={setSystemStatus}
-        colorRamp={colorRamp}
-        onColorRampChange={setColorRamp}
-        verticalExaggeration={verticalExaggeration}
-        onVerticalExaggerationChange={setVerticalExaggeration}
-      />
+      <ErrorBoundary>
+        <SettingsModal
+          isOpen={isSettingsOpen}
+          onClose={() => setIsSettingsOpen(false)}
+          systemStatus={systemStatus}
+          onSystemStatusChange={setSystemStatus}
+          colorRamp={colorRamp}
+          onColorRampChange={setColorRamp}
+          verticalExaggeration={verticalExaggeration}
+          onVerticalExaggerationChange={setVerticalExaggeration}
+        />
+      </ErrorBoundary>
     </div>
   );
 }
