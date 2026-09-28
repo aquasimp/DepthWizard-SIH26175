@@ -392,16 +392,25 @@ export const UploadPage: React.FC<UploadPageProps> = ({
                 </div>
 
                 <div className="mission-param-field">
-                  <label className="param-label">Vertical Exaggeration ({zExag}x)</label>
+                  <label className="param-label">
+                    Vertical Exaggeration ({Number(zExag) <= 0.02 ? '0.0x (Flat)' : `${Number(zExag).toFixed(1)}x`})
+                  </label>
                   <input
                     type="range"
-                    min="0.5"
+                    min="0.0"
                     max="3.0"
-                    step="0.1"
+                    step="0.05"
                     value={zExag}
                     onChange={(e) => setZExag(e.target.value)}
                     className="param-range-slider"
                   />
+                  <div className="flex justify-between text-[10px] text-slate-400 font-mono mt-1">
+                    <span className={Number(zExag) <= 0.02 ? 'text-cyan-400 font-bold' : ''}>0.0x (Flat)</span>
+                    <span>0.5x</span>
+                    <span className={Math.abs(Number(zExag) - 1.0) <= 0.04 ? 'text-cyan-400 font-bold' : ''}>1.0x (True)</span>
+                    <span>2.0x</span>
+                    <span>3.0x</span>
+                  </div>
                 </div>
 
                 <div className="mission-param-field">

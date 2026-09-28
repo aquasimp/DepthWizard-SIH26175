@@ -208,18 +208,25 @@ export const ControlHud: React.FC<ControlHudProps> = ({
               <div className="flex justify-between items-center text-[11px] font-mono">
                 <span className="text-slate-300">Vertical Relief Exaggeration:</span>
                 <span className="font-bold text-[#ff9944] bg-[#1a1408] px-1.5 py-0.5 rounded border border-[#ff6600]/40">
-                  {zExag.toFixed(1)}×
+                  {zExag <= 0.02 ? '0.0× (Flat)' : `${zExag.toFixed(1)}×`}
                 </span>
               </div>
               <input
                 type="range"
-                min="1.0"
-                max="5.0"
-                step="0.1"
+                min="0.0"
+                max="3.0"
+                step="0.05"
                 value={zExag}
                 onChange={(e) => onZExagChange(parseFloat(e.target.value))}
                 className="accent-[#ff6600] cursor-pointer h-1.5 bg-[#070e1d] rounded-lg mt-1"
               />
+              <div className="flex justify-between text-[9px] text-slate-400 font-mono">
+                <span className={zExag <= 0.02 ? 'text-[#ff9944] font-bold' : ''}>0.0× (Flat)</span>
+                <span>0.5×</span>
+                <span className={Math.abs(zExag - 1.0) <= 0.04 ? 'text-[#ff9944] font-bold' : ''}>1.0× (True)</span>
+                <span>2.0×</span>
+                <span>3.0×</span>
+              </div>
             </div>
 
             {/* Analytical Shader Overlays */}

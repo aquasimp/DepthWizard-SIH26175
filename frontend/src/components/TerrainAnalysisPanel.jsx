@@ -148,22 +148,55 @@ export default function TerrainAnalysisPanel(props) {
         <div className="exaggeration-control-item">
           <div className="slider-label-row">
             <span>Vertical Exaggeration:</span>
-            <span className="font-mono text-cyan">{verticalExaggeration.toFixed(1)}x</span>
+            <span className="font-mono text-cyan font-semibold">
+              {verticalExaggeration <= 0.02 ? '0.0x (Flat)' : `${verticalExaggeration.toFixed(1)}x`}
+            </span>
           </div>
           <input
             type="range"
-            min="0.5"
-            max="4.0"
-            step="0.1"
+            min="0.0"
+            max="3.0"
+            step="0.05"
             value={verticalExaggeration}
             onChange={(e) => onVerticalExaggerationChange && onVerticalExaggerationChange(parseFloat(e.target.value))}
             className="custom-range-slider"
           />
           <div className="slider-markers">
+            <span className={verticalExaggeration <= 0.02 ? 'text-cyan font-bold' : ''}>0.0x (Flat)</span>
             <span>0.5x</span>
-            <span>1.0x (True)</span>
-            <span>2.5x</span>
-            <span>4.0x</span>
+            <span className={Math.abs(verticalExaggeration - 1.0) <= 0.04 ? 'text-cyan font-bold' : ''}>1.0x (True)</span>
+            <span>2.0x</span>
+            <span>3.0x</span>
+          </div>
+          <div className="exaggeration-preset-row">
+            <button
+              type="button"
+              className={`exag-preset-chip ${verticalExaggeration <= 0.02 ? 'active' : ''}`}
+              onClick={() => onVerticalExaggerationChange && onVerticalExaggerationChange(0.0)}
+            >
+              Flat (0x)
+            </button>
+            <button
+              type="button"
+              className={`exag-preset-chip ${Math.abs(verticalExaggeration - 0.5) <= 0.04 ? 'active' : ''}`}
+              onClick={() => onVerticalExaggerationChange && onVerticalExaggerationChange(0.5)}
+            >
+              0.5x
+            </button>
+            <button
+              type="button"
+              className={`exag-preset-chip ${Math.abs(verticalExaggeration - 1.0) <= 0.04 ? 'active' : ''}`}
+              onClick={() => onVerticalExaggerationChange && onVerticalExaggerationChange(1.0)}
+            >
+              1.0x (True)
+            </button>
+            <button
+              type="button"
+              className={`exag-preset-chip ${Math.abs(verticalExaggeration - 2.0) <= 0.04 ? 'active' : ''}`}
+              onClick={() => onVerticalExaggerationChange && onVerticalExaggerationChange(2.0)}
+            >
+              2.0x
+            </button>
           </div>
         </div>
 

@@ -765,18 +765,60 @@ export function App() {
           <GamusProvenanceSection />
         </div>
 
-        {/* 10. FOOTER */}
+        {/* 10. AEROSPACE COMMAND FOOTER */}
         <footer className="luminous-footer">
-          <div className="footer-content-inner">
-            <div className="footer-brand-title">DepthWizard</div>
-            <p className="footer-desc">
-              Single-View Metric Height Estimation and 3D Flythrough for ISRO SIH 2026 Problem Statement 26175.
-              Powered by Depth Anything 3 foundation geometry model fine-tuned on multi-city airborne LiDAR.
-            </p>
+          <div className="footer-top-grid">
+            <div className="footer-col-brand">
+              <div className="footer-brand-title-row">
+                <span className="footer-logo-badge">DW</span>
+                <span className="footer-brand-title">DepthWizard</span>
+                <span className="footer-version-pill">v1.2.0 Urban Specialist</span>
+              </div>
+              <p className="footer-desc">
+                Single-View Metric Height Estimation and 3D Flythrough for ISRO SIH 2026 Problem Statement 26175.
+                Fine-tuned with Surface Normal Flatness Loss against 35.1M airborne LiDAR ground-truth pixels.
+              </p>
+              <div className="footer-isro-tag">
+                <span className="isro-pill">ISRO Smart India Hackathon 2026</span>
+                <span className="problem-pill">Problem Statement 26175</span>
+              </div>
+            </div>
+
+            <div className="footer-col-links">
+              <span className="footer-col-heading">System Modules</span>
+              <ul className="footer-link-list">
+                <li><button type="button" onClick={() => setActiveNav('portal')} className="footer-nav-link">Mission Portal &amp; Upload</button></li>
+                <li><button type="button" onClick={() => setActiveNav('pipeline')} className="footer-nav-link">Live 3D Flythrough Viewer</button></li>
+                <li><a href="#accuracy-section" className="footer-nav-link">Model Accuracy &amp; Benchmark</a></li>
+                <li><a href="#gamus-section" className="footer-nav-link">GAMUS 35.1M Dataset Provenance</a></li>
+              </ul>
+            </div>
+
+            <div className="footer-col-tech">
+              <span className="footer-col-heading">Runtime &amp; Architecture</span>
+              <div className="footer-tech-badges">
+                <span className="tech-badge">Depth Anything 3</span>
+                <span className="tech-badge">DINOv2-S Backbone</span>
+                <span className="tech-badge">RTX 4050 CUDA 12.4</span>
+                <span className="tech-badge">Surface Normal Flatness</span>
+                <span className="tech-badge">WebGL 3D Heightfield</span>
+                <span className="tech-badge">FastAPI + PyTorch</span>
+              </div>
+            </div>
           </div>
+
           <div className="footer-bottom-line">
-            <span>&copy; 2026 DepthWizard Research Team. All rights reserved.</span>
-            <span>ISRO Smart India Hackathon 2026 | Problem Statement 26175</span>
+            <div className="footer-bottom-left">
+              <span>&copy; 2026 DepthWizard Research Team. All rights reserved.</span>
+              <span className="footer-divider">•</span>
+              <span>Open-Source ISRO Geo-Spatial Defense &amp; Urban Intelligence</span>
+            </div>
+            <div className="footer-bottom-right">
+              <span className="footer-status-indicator">
+                <span className="status-dot-pulse" />
+                <span>NVIDIA RTX 4050 CUDA Online</span>
+              </span>
+            </div>
           </div>
         </footer>
       </main>

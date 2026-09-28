@@ -49,6 +49,9 @@ export default function TerrainViewer({
   const loadedMeshMetaRef = useRef(loadedMeshMeta);
   loadedMeshMetaRef.current = loadedMeshMeta;
 
+  const verticalExaggerationRef = useRef(verticalExaggeration);
+  verticalExaggerationRef.current = verticalExaggeration;
+
   const effectiveCameraMode = cameraMode || internalCameraMode;
   const effectiveTextureMode = textureMode || internalTextureMode;
 
@@ -130,7 +133,7 @@ export default function TerrainViewer({
       cols: meta.cols,
       planeSize,
       aspectRatio: meta.aspect_ratio || 1.0,
-      verticalExaggeration,
+      verticalExaggeration: verticalExaggerationRef.current,
     });
 
     // Procedural Colormap & Slope Textures
@@ -225,12 +228,12 @@ export default function TerrainViewer({
     mesh.userData = {
       baseOffset,
       reliefMultiplier,
-      verticalExaggeration,
+      verticalExaggeration: verticalExaggerationRef.current,
       planeWidth,
       planeHeight,
       meta,
     };
-  }, [colorRamp, effectiveTextureMode, resolveOpticalTextureUrl, verticalExaggeration]);
+  }, [colorRamp, effectiveTextureMode, resolveOpticalTextureUrl]);
 
   // 1. Scene & WebGLRenderer Setup (MOUNT ONCE)
   useEffect(() => {
@@ -395,9 +398,6 @@ export default function TerrainViewer({
         const pHeight = meshUserData.planeHeight || 200;
         const meta = meshUserData.meta || loadedMeshMeta;
 
-        const heightM = Math.max(0.0, hit.point.y / Math.max(currentExag, 0.001));
-        const elevationM = baseOffset + heightM;
-
         const cols = meta.cols || 128;
         const rows = meta.rows || 128;
         const heights = meta.heights || [];
@@ -407,6 +407,16 @@ export default function TerrainViewer({
 
         const c = Math.max(0, Math.min(cols - 1, Math.round(colFloat)));
         const r = Math.max(0, Math.min(rows - 1, Math.round(rowFloat)));
+
+        // Retrieve real physical metric elevation from heightfield raster
+        const rawRasterH = (heights && heights[r * cols + c] !== undefined)
+          ? heights[r * cols + c]
+          : null;
+
+        const elevationM = rawRasterH !== null
+          ? rawRasterH
+          : (currentExag > 0.01 ? baseOffset + (hit.point.y / currentExag) : baseOffset);
+        const heightM = Math.max(0.0, elevationM - baseOffset);
 
         const dxM = pWidth / Math.max(1, cols - 1);
         const dzM = pHeight / Math.max(1, rows - 1);
@@ -428,6 +438,14 @@ export default function TerrainViewer({
         const slopeDeg = Math.atan(gradientMag) * (180.0 / Math.PI);
 
         markerGroup.position.copy(hit.point);
+        const reliefMultiplier = meshUserData.reliefMultiplier || 1.0;
+        markerGroup.userData = {
+          relH: heightM * reliefMultiplier,
+          hitX,
+          hitZ,
+          row: r,
+          col: c,
+        };
         markerGroup.visible = true;
 
         if (onSelectPoint) {
@@ -558,6 +576,12 @@ export default function TerrainViewer({
     }
     posAttr.needsUpdate = true;
     mesh.geometry.computeVertexNormals();
+
+    // Dynamically update pin marker elevation so it rises/flattens smoothly with the surface!
+    const marker = markerGroupRef.current;
+    if (marker && marker.visible && marker.userData?.relH !== undefined) {
+      marker.position.y = marker.userData.relH * verticalExaggeration;
+    }
   }, [verticalExaggeration, loadedMeshMeta]);
 
   // 4. IN-PLACE Texture Mode Switching (RGB, Colormap, Slope, Wireframe)

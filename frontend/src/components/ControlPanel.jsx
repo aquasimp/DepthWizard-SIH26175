@@ -74,13 +74,15 @@ export default function ControlPanel({
       <div className="control-group">
         <div className="slider-header">
           <label>Vertical Exaggeration</label>
-          <span className="value-label">{verticalExaggeration.toFixed(1)}x</span>
+          <span className="value-label font-mono">
+            {verticalExaggeration <= 0.02 ? '0.0x (Flat)' : `${verticalExaggeration.toFixed(1)}x`}
+          </span>
         </div>
         <input
           type="range"
-          min="0.5"
-          max="5.0"
-          step="0.1"
+          min="0.0"
+          max="3.0"
+          step="0.05"
           value={verticalExaggeration}
           onChange={(e) => setVerticalExaggeration(parseFloat(e.target.value))}
         />

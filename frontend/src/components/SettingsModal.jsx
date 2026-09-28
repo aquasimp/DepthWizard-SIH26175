@@ -168,7 +168,9 @@ export default function SettingsModal(props) {
               </div>
               <div className="setting-row">
                 <span className="setting-key">Default Vertical Exaggeration</span>
-                <span className="setting-val font-mono">{verticalExaggeration.toFixed(1)}x</span>
+                <span className="setting-val font-mono">
+                  {verticalExaggeration <= 0.02 ? '0.0x (Flat)' : `${verticalExaggeration.toFixed(1)}x`}
+                </span>
               </div>
             </div>
           </div>
