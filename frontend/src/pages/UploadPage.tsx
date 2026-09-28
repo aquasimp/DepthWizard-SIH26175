@@ -1,22 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import {
   AlertTriangle,
+  ArrowLeft,
   ArrowRight,
   Clock,
-  Cpu,
   Database,
   Eye,
   FileCheck,
-  Layers,
   Play,
-  Radar,
+  RotateCcw,
   Satellite,
   Scale,
-  Settings,
   ShieldCheck,
   Upload,
 } from 'lucide-react';
-import { IsroHeader } from '../components/IsroHeader';
 import { getApiBase } from '../utils/apiConfig';
 
 interface JobSummary {
@@ -31,6 +28,7 @@ interface UploadPageProps {
   onJobSelect: (jobId: string) => void;
   onJobCreated: (jobId: string) => void;
   onNavigateValidate?: (jobId: string) => void;
+  onNavigateHome?: () => void;
 }
 
 interface SampleTile {
@@ -86,6 +84,7 @@ export const UploadPage: React.FC<UploadPageProps> = ({
   onJobSelect,
   onJobCreated,
   onNavigateValidate,
+  onNavigateHome,
 }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [fileDetails, setFileDetails] = useState<{
@@ -175,7 +174,6 @@ export const UploadPage: React.FC<UploadPageProps> = ({
     }
   };
 
-  // 1-Click Load Pre-Bundled Benchmark Sample
   const handleLoadSample = async (sample: SampleTile) => {
     setIsLoadingSample(true);
     setError(null);
@@ -204,13 +202,6 @@ export const UploadPage: React.FC<UploadPageProps> = ({
       return;
     }
 
-    if (backendHealth?.online === false) {
-      setError(
-        'FastAPI Core Engine is offline on port 8000. Start backend with `uvicorn depthwizard.main:app --app-dir backend --port 8000`.'
-      );
-      return;
-    }
-
     setIsSubmitting(true);
     setError(null);
 
@@ -226,7 +217,7 @@ export const UploadPage: React.FC<UploadPageProps> = ({
     try {
       const apiBase = getApiBase();
       if (!apiBase) {
-        throw new Error('A live PyTorch GPU backend is required for deep-queue batch jobs. Use the main Dashboard for instant In-Browser 3D reconstruction, or configure your backend endpoint in Settings.');
+        throw new Error('A live backend endpoint is required for queued jobs. Use the main Dashboard for instant In-Browser 3D reconstruction, or configure your backend in Settings.');
       }
       const resp = await fetch(`${apiBase}/api/jobs`, {
         method: 'POST',
@@ -249,187 +240,146 @@ export const UploadPage: React.FC<UploadPageProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-[#050811] text-slate-100 flex flex-col font-sans relative">
-      {/* Background Aerospace Technical Grid */}
-      <div className="absolute inset-0 bg-aerospace-grid opacity-75 pointer-events-none z-0" />
+    <div className="mission-portal-page">
+      {/* Top Breadcrumb & Status Action Bar */}
+      <div className="mission-portal-top-bar">
+        <div className="mission-top-bar-left">
+          {onNavigateHome && (
+            <button
+              type="button"
+              onClick={onNavigateHome}
+              className="mission-btn-back"
+              title="Return to 3D Dashboard"
+            >
+              <ArrowLeft size={14} />
+              <span>Dashboard Home</span>
+            </button>
+          )}
+          <div className="mission-institutional-tag">
+            <i className="fa-solid fa-satellite-dish text-sky-400" />
+            <span>ISRO / SAC · BHOOMI-3D RECONNAISSANCE CONSOLE</span>
+          </div>
+        </div>
 
-      {/* ISRO / SAC Mission Header */}
-      <IsroHeader
-        currentPage="upload"
-        backendOnline={backendHealth?.online ?? false}
-        computeDevice={backendHealth?.device || 'CUDA (GPU)'}
-      />
-
-      {/* Offline Alert Bar */}
-      {backendHealth?.online === false && (
-        <div className="bg-[#2a0e0e] border-b border-rose-800/80 px-6 py-2 text-xs font-mono text-rose-200 flex items-center justify-between z-30 shadow-lg">
-          <div className="flex items-center gap-2">
-            <AlertTriangle className="w-4 h-4 text-rose-400 animate-pulse" />
-            <span>
-              <strong>GROUND SYSTEM TELEMETRY ALERT:</strong> Backend service unreachable at{' '}
-              <code className="bg-black/50 px-1 py-0.5 rounded text-rose-300">/api/health</code>. Please verify FastAPI daemon on port 8000.
+        <div className="mission-top-bar-right">
+          <div className="mission-telemetry-badge">
+            <span className={`telemetry-dot ${backendHealth?.online ? 'online' : 'standalone'}`} />
+            <span className="font-mono text-xs">
+              {backendHealth?.online ? `ENGINE: ${backendHealth.device}` : 'STANDALONE IN-BROWSER ENGINE'}
             </span>
           </div>
-          <button
-            onClick={checkHealth}
-            className="px-3 py-0.5 rounded bg-rose-900 hover:bg-rose-800 text-rose-100 text-xs font-mono transition cursor-pointer border border-rose-700"
-          >
-            RETRY LINK
-          </button>
         </div>
-      )}
+      </div>
 
-      {/* Main Mission Control Layout */}
-      <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start relative z-10">
-        {/* Left Column (Cols 1-7): Ingestion & Telemetry Parameters */}
-        <div className="lg:col-span-7 flex flex-col gap-5">
-          {/* Mission Ingestion Card Header */}
-          <div className="mission-panel rounded-xl p-5 border border-[#1e315b] relative overflow-hidden">
-            {/* Top Accent Strip */}
-            <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-[#ff6600] via-[#0055a5] to-[#00c2cb]" />
+      {/* Main Grid: Left Column Ingestion / Right Column Telemetry Queue */}
+      <div className="mission-portal-layout-grid">
+        {/* Left Column: Console Header, Presets & Ingestion Dropzone */}
+        <div className="mission-portal-col-main">
+          {/* Mission Ingestion Card */}
+          <div className="mission-console-card">
+            <div className="mission-console-accent-strip" />
 
-            <div className="flex items-center justify-between gap-2 mb-2">
-              <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-[#ff6600] animate-pulse" />
-                <span className="text-[11px] font-mono font-bold uppercase tracking-widest text-[#ff9944]">
-                  RECONNAISSANCE INGESTION CONSOLE
+            <div className="mission-card-header">
+              <div className="mission-badge-row">
+                <span className="mission-pulsing-badge">
+                  <span className="pulse-dot-orange" />
+                  <span>RECONNAISSANCE INGESTION CONSOLE</span>
                 </span>
+                <span className="mission-step-tag">STAGE 01 / 05</span>
               </div>
-              <span className="text-[10px] font-mono text-slate-400 border border-[#1e315b] bg-[#091224] px-2 py-0.5 rounded">
-                STAGE 01 / 05
-              </span>
+              <h2 className="mission-console-title">
+                Single-View 3D Digital Surface Model (DSM) Reconstruction
+              </h2>
+              <p className="mission-console-desc">
+                Ingest monocular optical satellite or aerial orthophoto imagery (GeoTIFF, standard TIFF, PNG, JPEG). The photogrammetric engine predicts dense metric relative heights, fits geodetic datum scale (EGM96 orthometric / SRTM / GCP), and generates 3D terrain meshes.
+              </p>
             </div>
 
-            <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight font-display">
-              Single-View 3D Digital Surface Model (DSM) Reconstruction
-            </h2>
-            <p className="text-xs text-slate-300 mt-1.5 leading-relaxed font-sans">
-              Ingest monocular optical satellite or aerial orthophoto imagery (GeoTIFF, standard TIFF, PNG, JPEG). The photogrammetric engine predicts dense metric relative heights, fits geodetic datum scale (EGM96 orthometric / SRTM / GCP), and generates 3D terrain meshes.
-            </p>
-
             {/* Quick Benchmark Preset Tiles */}
-            <div className="mt-4 pt-3 border-t border-[#1e315b]/80">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-                  <Database className="w-3 h-3 text-[#00c2cb]" /> 1-Click Test Benchmarks (GAMUS Ground Truth)
+            <div className="mission-presets-section">
+              <div className="mission-presets-header">
+                <span className="presets-label">
+                  <Database size={13} className="text-cyan-400" />
+                  <span>1-Click Test Benchmarks (GAMUS Ground Truth)</span>
                 </span>
-                <span className="text-[9px] font-mono text-[#00c2cb]">INSTANT LOAD</span>
+                <span className="presets-tag">Instant Load</span>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              <div className="mission-presets-grid">
                 {SAMPLE_TILES.map((sample) => (
                   <button
                     key={sample.filename}
                     type="button"
                     onClick={() => handleLoadSample(sample)}
                     disabled={isLoadingSample || isSubmitting}
-                    className="text-left p-2.5 rounded-lg bg-[#091224] hover:bg-[#11203f] border border-[#1e315b] hover:border-[#00c2cb]/60 transition cursor-pointer group flex flex-col justify-between"
+                    className="mission-preset-btn"
                   >
-                    <div>
-                      <div className="text-[11px] font-bold text-white group-hover:text-[#00c2cb] transition line-clamp-1">
-                        {sample.name}
-                      </div>
-                      <div className="text-[10px] font-mono text-slate-400 mt-0.5">
-                        GSD: {sample.gsd}m · {sample.type.split(' ')[0]}
-                      </div>
+                    <div className="preset-btn-top">
+                      <span className="preset-name">{sample.name}</span>
+                      <span className="preset-specs">GSD: {sample.gsd}m · {sample.type.split(' ')[0]}</span>
                     </div>
-                    <div className="text-[9px] text-slate-500 font-mono mt-2 flex items-center justify-between">
-                      <span>{sample.location}</span>
-                      <span className="text-[#ff6600] group-hover:translate-x-0.5 transition font-bold">LOAD →</span>
+                    <div className="preset-btn-bottom">
+                      <span className="preset-loc">{sample.location}</span>
+                      <span className="preset-action">Load →</span>
                     </div>
                   </button>
                 ))}
               </div>
             </div>
-          </div>
 
-          {/* Ingestion Dropzone & Parameters Form */}
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            {/* Tactical Optical Ingestion Dropzone */}
-            <div
-              onDragOver={(e) => e.preventDefault()}
-              onDrop={handleDrop}
-              className={`tactical-frame mission-panel rounded-xl p-6 sm:p-8 flex flex-col items-center justify-center text-center transition cursor-pointer border relative overflow-hidden group ${
-                selectedFile
-                  ? 'border-[#00c2cb] bg-[#07162e]/90 shadow-lg shadow-[#0055a5]/20'
-                  : 'border-[#1e315b] hover:border-[#00c2cb]/70 bg-[#091224]/80'
-              }`}
-            >
-              <input
-                type="file"
-                accept=".tif,.tiff,.png,.jpg,.jpeg"
-                onChange={handleFileChange}
-                className="absolute inset-0 opacity-0 cursor-pointer z-20"
-              />
+            {/* Ingestion Dropzone Form */}
+            <form onSubmit={handleSubmit} className="mission-form-container">
+              <div
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={handleDrop}
+                className={`mission-dropzone-box ${selectedFile ? 'has-file' : ''}`}
+              >
+                <input
+                  type="file"
+                  accept=".tif,.tiff,.png,.jpg,.jpeg"
+                  onChange={handleFileChange}
+                  className="mission-hidden-file-input"
+                />
 
-              {/* Optical Viewfinder Target Reticle */}
-              <div className="w-16 h-16 rounded-full border border-[#00c2cb]/40 flex items-center justify-center text-[#00c2cb] mb-3 bg-[#061022] group-hover:scale-105 group-hover:border-[#ff6600] group-hover:text-[#ff6600] transition relative">
-                <div className="absolute inset-0 rounded-full border border-dashed border-[#00c2cb]/30 animate-spin" style={{ animationDuration: '20s' }} />
-                {selectedFile ? (
-                  <FileCheck className="w-8 h-8 text-[#00c2cb]" />
+                <div className="mission-viewfinder-reticle">
+                  {selectedFile ? (
+                    <FileCheck size={28} className="text-cyan-400" />
+                  ) : (
+                    <Upload size={28} className="text-slate-400" />
+                  )}
+                </div>
+
+                {selectedFile && fileDetails ? (
+                  <div className="mission-file-meta-block">
+                    <div className="mission-filename-badge">
+                      <Satellite size={13} className="text-amber-400" />
+                      <strong>{fileDetails.name}</strong>
+                    </div>
+                    <div className="mission-file-stats">
+                      <span>SIZE: <strong>{fileDetails.sizeMb} MB</strong></span>
+                      <span>·</span>
+                      <span>FORMAT: <strong className="text-cyan-400">{fileDetails.isGeotiff ? 'GeoTIFF' : 'Raster PNG/JPG'}</strong></span>
+                      <span>·</span>
+                      <span className="text-emerald-400 font-bold">READY FOR INFERENCE</span>
+                    </div>
+                  </div>
                 ) : (
-                  <Upload className="w-7 h-7" />
+                  <div className="mission-dropzone-prompt">
+                    <p className="dropzone-main-text">SELECT OPTICAL SATELLITE OR AERIAL ORTHOPHOTO</p>
+                    <p className="dropzone-sub-text">Drag &amp; drop or click to browse GeoTIFF (WGS84 / UTM), standard TIFF, PNG, or JPEG</p>
+                    <div className="dropzone-meta-chips">
+                      <span>MAX RESOLUTION: 8000×8000 px</span>
+                      <span>·</span>
+                      <span>TILED SLIDING WINDOW</span>
+                    </div>
+                  </div>
                 )}
               </div>
 
-              {selectedFile && fileDetails ? (
-                <div className="flex flex-col items-center">
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[#091834] border border-[#00c2cb]/50 text-xs font-mono text-white mb-1">
-                    <Satellite className="w-3.5 h-3.5 text-[#ff6600]" />
-                    <span className="font-bold">{fileDetails.name}</span>
-                  </div>
-                  <div className="flex items-center gap-3 text-[11px] font-mono text-slate-400 mt-1">
-                    <span>SIZE: <strong className="text-white">{fileDetails.sizeMb} MB</strong></span>
-                    <span>•</span>
-                    <span>FORMAT: <strong className="text-[#00c2cb]">{fileDetails.isGeotiff ? 'GeoTIFF' : 'Plain Raster'}</strong></span>
-                    <span>•</span>
-                    <span className="text-emerald-400 font-bold">READY FOR INFERENCE</span>
-                  </div>
-                </div>
-              ) : (
-                <div>
-                  <p className="font-bold text-sm text-slate-100 font-display tracking-wide">
-                    SELECT OPTICAL SATELLITE OR AERIAL ORTHOPHOTO
-                  </p>
-                  <p className="text-xs text-slate-400 mt-1">
-                    Drag & drop or click to browse GeoTIFF (WGS84 / UTM), standard TIFF, PNG, or JPEG
-                  </p>
-                  <div className="flex items-center justify-center gap-3 text-[10px] font-mono text-slate-500 mt-3">
-                    <span>MAX DIMENSIONS: 8000×8000 px</span>
-                    <span>|</span>
-                    <span>TILED SLIDING WINDOW INFERENCE</span>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Error Message */}
-            {error && (
-              <div className="p-3.5 rounded-lg border border-rose-600/80 bg-rose-950/60 text-xs font-mono text-rose-200 flex items-center gap-2 shadow-lg">
-                <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0" />
-                <span>{error}</span>
-              </div>
-            )}
-
-            {/* Photogrammetric & Model Parameters Grid */}
-            <div className="mission-panel rounded-xl border border-[#1e315b] p-5 flex flex-col gap-4">
-              <div className="flex items-center justify-between border-b border-[#1e315b]/60 pb-2.5">
-                <div className="flex items-center gap-2">
-                  <Settings className="w-4 h-4 text-[#ff6600]" />
-                  <span className="text-xs font-bold uppercase tracking-wider text-slate-200 font-mono">
-                    PHOTOGRAMMETRIC &amp; INFERENCE PARAMETERS
-                  </span>
-                </div>
-                <span className="text-[10px] font-mono text-slate-400">ISRO SAC SPECIFICATION</span>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* 1. Assumed GSD */}
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-xs font-semibold text-slate-200 flex items-center justify-between">
-                    <span>Ground Sampling Distance (GSD)</span>
-                    <span className="font-mono text-[#00c2cb] text-[11px] font-bold">{assumedGsd} m/px</span>
-                  </label>
+              {/* Ingestion Parameters Grid */}
+              <div className="mission-params-grid">
+                <div className="mission-param-field">
+                  <label className="param-label">Assumed GSD (m/px)</label>
                   <input
                     type="number"
                     step="0.01"
@@ -437,218 +387,157 @@ export const UploadPage: React.FC<UploadPageProps> = ({
                     max="10.0"
                     value={assumedGsd}
                     onChange={(e) => setAssumedGsd(e.target.value)}
-                    className="w-full rounded-lg border border-[#1e315b] bg-[#070e1d] px-3 py-2 text-xs text-white font-mono focus:border-[#00c2cb] focus:outline-none transition"
-                    placeholder="0.33"
+                    className="param-input font-mono"
                   />
-                  <span className="text-[10px] text-slate-400">
-                    Auto-parsed for GeoTIFF metadata; default 0.33m for sub-meter high-res aerial imagery
-                  </span>
                 </div>
 
-                {/* 2. Geodetic Vertical Datum Hierarchy */}
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-xs font-semibold text-slate-200 flex items-center justify-between">
-                    <span>Calibration Scale Hierarchy</span>
-                    <span className="text-[10px] font-mono text-[#ff9944]">EGM96 GEOID</span>
-                  </label>
-                  <select
-                    value={calibrationPath}
-                    onChange={(e) => setCalibrationPath(e.target.value)}
-                    className="w-full rounded-lg border border-[#1e315b] bg-[#070e1d] px-3 py-2 text-xs text-white font-mono focus:border-[#00c2cb] focus:outline-none transition"
-                  >
-                    <option value="">Auto Selector (Hierarchy B → A → C → D)</option>
-                    <option value="PATH_A">Path A: SRTM Bare-Earth DTM (EGM96)</option>
-                    <option value="PATH_B">Path B: Ground Control Points (GCP RANSAC)</option>
-                    <option value="PATH_C">Path C: RANSAC Affine Disparity Alignment</option>
-                    <option value="PATH_D">Path D: Normalized Metric Stretch [0, 1]</option>
-                  </select>
-                  <span className="text-[10px] text-slate-400">
-                    Determines vertical scale factor $s$ and translation $t$ to ground truth elevation
-                  </span>
-                </div>
-
-                {/* 3. Model Architecture & Weights */}
-                <div className="flex flex-col gap-1.5 sm:col-span-2">
-                  <div className="flex justify-between items-center text-xs font-semibold text-slate-200">
-                    <label className="flex items-center gap-1.5">
-                      <Cpu className="w-3.5 h-3.5 text-[#00c2cb]" />
-                      Deep Learning Model Weights
-                    </label>
-                    <span className="text-[10px] font-mono text-[#00c2cb] bg-[#091834] px-2 py-0.5 rounded border border-[#00c2cb]/30">
-                      GAMUS 3-CITY TRAINED (35.1M LiDAR Px)
-                    </span>
-                  </div>
-                  <select
-                    value={modelVersion}
-                    onChange={(e) => setModelVersion(e.target.value)}
-                    className="w-full rounded-lg border border-[#1e315b] bg-[#070e1d] px-3 py-2 text-xs text-white font-mono focus:border-[#00c2cb] focus:outline-none transition"
-                  >
-                    <option value="v1.1.0_best">
-                      DepthWizard v1.1.0 Multi-City (Recommended — 3,817 Crops, MedAE 0.71m, LiDAR Calibrated)
-                    </option>
-                    <option value="ensemble">
-                      Adaptive Dual-Head Ensemble (Terrain + Tall Structure Specialist Fusion)
-                    </option>
-                    <option value="v1.1.0_tall">
-                      DepthWizard v1.1.0 Tall Specialist (Optimized for High-Rise Skylines &gt; 15m)
-                    </option>
-                    <option value="base">
-                      Zero-Shot Baseline (Depth Anything V3 Small Foundation)
-                    </option>
-                  </select>
-                  <span className="text-[10px] text-slate-400">
-                    Trained across 35.1M LiDAR ground truth pixels over Washington D.C., New York City, and Philadelphia (Xiong et al. 2023)
-                  </span>
-                </div>
-
-                {/* 4. Vertical Exaggeration Slider */}
-                <div className="flex flex-col gap-1.5 sm:col-span-2 pt-1 border-t border-[#1e315b]/40">
-                  <div className="flex justify-between items-center text-xs font-semibold text-slate-200">
-                    <span className="flex items-center gap-1">
-                      <Layers className="w-3.5 h-3.5 text-[#ff6600]" /> 3D Cartographic Vertical Exaggeration
-                    </span>
-                    <span className="font-mono text-[#ff9944] font-bold bg-[#1b1509] px-2 py-0.5 rounded border border-[#ff6600]/30">
-                      {zExag}× RELIEF
-                    </span>
-                  </div>
+                <div className="mission-param-field">
+                  <label className="param-label">Vertical Exaggeration ({zExag}x)</label>
                   <input
                     type="range"
-                    min="1.0"
-                    max="5.0"
+                    min="0.5"
+                    max="3.0"
                     step="0.1"
                     value={zExag}
                     onChange={(e) => setZExag(e.target.value)}
-                    className="accent-[#ff6600] cursor-pointer h-1.5 bg-[#091224] rounded-lg mt-1"
+                    className="param-range-slider"
                   />
-                  <div className="flex justify-between text-[10px] font-mono text-slate-500">
-                    <span>1.0× (True Metric 1:1)</span>
-                    <span>2.5× (Enhanced Urban Relief)</span>
-                    <span>5.0× (Maximum Topographic Contrast)</span>
-                  </div>
+                </div>
+
+                <div className="mission-param-field">
+                  <label className="param-label">Depth Anything 3 Backbone</label>
+                  <select
+                    value={modelVersion}
+                    onChange={(e) => setModelVersion(e.target.value)}
+                    className="param-select font-mono"
+                  >
+                    <option value="v1.1.0_best">DA3 ViT-S Multi-City Fine-Tuned (Recommended)</option>
+                    <option value="v1.0.0_base">DA3 ViT-B Zero-Shot Base</option>
+                  </select>
+                </div>
+
+                <div className="mission-param-field">
+                  <label className="param-label">LiDAR Ground Truth Path (Optional Calibration)</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. data/ground_truth/dsm_lidar.tif"
+                    value={calibrationPath}
+                    onChange={(e) => setCalibrationPath(e.target.value)}
+                    className="param-input font-mono"
+                  />
                 </div>
               </div>
-            </div>
 
-            {/* Launch Ingestion Pipeline Button */}
-            <button
-              type="submit"
-              disabled={isSubmitting || !selectedFile}
-              className="w-full py-4 px-6 rounded-xl bg-gradient-to-r from-[#0055a5] via-[#0077d4] to-[#00c2cb] hover:from-[#004488] hover:to-[#00a2ab] disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold text-sm flex items-center justify-center gap-2.5 shadow-xl shadow-[#0055a5]/30 transition cursor-pointer border border-[#00c2cb]/40 font-display tracking-wider uppercase"
-            >
-              {isSubmitting ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  <span>INITIALIZING RECONNAISSANCE PIPELINE...</span>
-                </>
-              ) : (
-                <>
-                  <Play className="w-4 h-4 fill-current text-[#ff9944]" />
-                  <span>INITIALIZE 3D SURFACE RECONSTRUCTION PIPELINE</span>
-                  <ArrowRight className="w-4 h-4 text-white" />
-                </>
+              {error && (
+                <div className="mission-error-banner">
+                  <AlertTriangle size={15} />
+                  <span>{error}</span>
+                </div>
               )}
-            </button>
-          </form>
+
+              {/* Submit Action Row */}
+              <div className="mission-submit-row">
+                <button
+                  type="submit"
+                  disabled={isSubmitting || !selectedFile}
+                  className="mission-btn-submit"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <span className="btn-spinner" />
+                      <span>INITIALIZING RECONSTRUCTION PIPELINE...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Play size={14} />
+                      <span>START 3D SURFACE MODEL RECONSTRUCTION</span>
+                      <ArrowRight size={14} />
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
 
-        {/* Right Column (Cols 8-12): Recent Mission Reconstructions Log */}
-        <div className="lg:col-span-5 flex flex-col gap-4">
-          <div className="mission-panel rounded-xl p-4 border border-[#1e315b] flex flex-col gap-3">
-            <div className="flex items-center justify-between border-b border-[#1e315b]/60 pb-2">
-              <div className="flex items-center gap-2">
-                <Radar className="w-4 h-4 text-[#00c2cb] animate-pulse" />
-                <h3 className="text-xs font-bold text-slate-200 font-mono uppercase tracking-wider">
-                  MISSION RECONSTRUCTION LOG / अभिलेख
-                </h3>
+        {/* Right Column: Mission Telemetry Queue & Standards */}
+        <div className="mission-portal-col-sidebar">
+          {/* Telemetry Queue Card */}
+          <div className="mission-sidebar-card">
+            <div className="mission-sidebar-header">
+              <div className="sidebar-title-group">
+                <Clock size={16} className="text-cyan-400" />
+                <h3 className="sidebar-title">Reconstruction Job Telemetry</h3>
               </div>
-              <span className="text-[10px] font-mono text-[#00c2cb] bg-[#091834] px-2 py-0.5 rounded border border-[#00c2cb]/30">
-                {recentJobs.length} MISSIONS
-              </span>
+              <button
+                type="button"
+                onClick={loadRecentJobs}
+                className="btn-refresh-jobs"
+                title="Refresh Recent Jobs"
+              >
+                <RotateCcw size={12} />
+              </button>
             </div>
 
-            {/* Mission Log Stream */}
-            <div className="flex flex-col gap-2.5 max-h-[640px] overflow-y-auto pr-1">
+            <div className="mission-jobs-list">
               {recentJobs.length === 0 ? (
-                <div className="rounded-lg border border-[#1e315b] bg-[#091224] p-8 text-center text-slate-400 text-xs font-mono">
-                  No mission records logged yet. Ingest imagery to begin surface reconstruction.
+                <div className="mission-jobs-empty">
+                  <Satellite size={24} className="text-slate-500 mb-2" />
+                  <p className="empty-title">No Active Server Jobs Found</p>
+                  <p className="empty-desc">
+                    Jobs submitted via FastAPI appear here. Or launch sample photogrammetry directly on the 3D Dashboard.
+                  </p>
+                  {onNavigateHome && (
+                    <button
+                      type="button"
+                      onClick={onNavigateHome}
+                      className="btn-empty-dashboard"
+                    >
+                      Open 3D Dashboard
+                    </button>
+                  )}
                 </div>
               ) : (
                 recentJobs.map((j) => (
-                  <div
-                    key={j.job_id}
-                    className="rounded-lg border border-[#1e315b] hover:border-[#00c2cb]/70 bg-[#091224] hover:bg-[#0d1b38] p-3.5 transition flex flex-col gap-2.5 group"
-                  >
-                    {/* Header: ID + Status badge */}
-                    <div className="flex items-center justify-between">
-                      <span className="font-mono text-xs font-bold text-slate-200 group-hover:text-[#00c2cb] transition">
-                        #{j.job_id}
-                      </span>
-                      <span
-                        className={`px-2 py-0.5 rounded text-[10px] font-bold font-mono tracking-wider ${
-                          j.status === 'DONE'
-                            ? 'bg-emerald-950/80 text-emerald-400 border border-emerald-700/60'
-                            : j.status === 'FAILED'
-                            ? 'bg-rose-950/80 text-rose-400 border border-rose-700/60'
-                            : 'bg-[#091834] text-[#00c2cb] border border-[#00c2cb]/40 animate-pulse'
-                        }`}
-                      >
+                  <div key={j.job_id} className="mission-job-card">
+                    <div className="job-card-top">
+                      <span className="job-id-text font-mono">#{j.job_id.slice(0, 16)}</span>
+                      <span className={`job-status-pill ${j.status.toLowerCase()}`}>
                         {j.status === 'DONE' ? 'REGISTERED' : j.status}
                       </span>
                     </div>
 
-                    {/* Progress Bar & Stage */}
-                    <div className="flex flex-col gap-1">
-                      <div className="flex justify-between items-center text-[10px] text-slate-400 font-mono">
-                        <span>STAGE: <strong className="text-white">{j.stage}</strong></span>
-                        <span className="text-[#ff9944]">{j.progress}%</span>
-                      </div>
-                      <div className="w-full h-1 bg-[#050811] rounded-full overflow-hidden">
-                        <div
-                          className={`h-full transition-all duration-300 ${
-                            j.status === 'DONE'
-                              ? 'bg-emerald-400'
-                              : j.status === 'FAILED'
-                              ? 'bg-rose-500'
-                              : 'bg-gradient-to-r from-[#ff6600] to-[#00c2cb]'
-                          }`}
-                          style={{ width: `${Math.max(j.progress, 5)}%` }}
-                        />
-                      </div>
+                    <div className="job-stage-row">
+                      <span className="job-stage-label">STAGE: <strong>{j.stage || 'Inference'}</strong></span>
+                      <span className="job-progress-num font-mono">{j.progress || 100}%</span>
                     </div>
 
-                    {/* Actions */}
-                    <div className="flex items-center gap-2 pt-1 border-t border-[#1e315b]/40">
-                      {j.status === 'DONE' ? (
-                        <>
-                          <button
-                            type="button"
-                            onClick={() => onJobSelect(j.job_id)}
-                            className="flex-1 py-1 px-2.5 rounded bg-[#0055a5] hover:bg-[#004488] text-white text-[11px] font-mono font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer border border-[#00c2cb]/40"
-                          >
-                            <Eye className="w-3 h-3 text-[#00c2cb]" />
-                            <span>LAUNCH 3D COCKPIT</span>
-                          </button>
+                    <div className="job-progress-bar">
+                      <div
+                        className={`job-progress-fill ${j.status.toLowerCase()}`}
+                        style={{ width: `${Math.max(j.progress || 100, 8)}%` }}
+                      />
+                    </div>
 
-                          {onNavigateValidate && (
-                            <button
-                              type="button"
-                              onClick={() => onNavigateValidate(j.job_id)}
-                              className="py-1 px-2 rounded bg-[#09152b] hover:bg-[#11244a] text-slate-300 hover:text-white text-[11px] font-mono flex items-center justify-center gap-1 transition cursor-pointer border border-[#1e315b]"
-                              title="Evaluate LiDAR Accuracy"
-                            >
-                              <Scale className="w-3 h-3 text-[#ff9944]" />
-                              <span>LIDAR</span>
-                            </button>
-                          )}
-                        </>
-                      ) : (
+                    <div className="job-actions-row">
+                      <button
+                        type="button"
+                        onClick={() => onJobSelect(j.job_id)}
+                        className="btn-job-action primary"
+                      >
+                        <Eye size={12} />
+                        <span>LAUNCH 3D COCKPIT</span>
+                      </button>
+
+                      {onNavigateValidate && (
                         <button
                           type="button"
-                          onClick={() => onJobSelect(j.job_id)}
-                          className="w-full py-1 px-2 rounded bg-[#091224] hover:bg-[#11203f] text-slate-300 text-[11px] font-mono flex items-center justify-center gap-1.5 transition cursor-pointer border border-[#1e315b]"
+                          onClick={() => onNavigateValidate(j.job_id)}
+                          className="btn-job-action secondary"
+                          title="Evaluate LiDAR Accuracy"
                         >
-                          <Clock className="w-3 h-3 text-[#00c2cb]" />
-                          <span>VIEW PIPELINE TELEMETRY</span>
+                          <Scale size={12} />
+                          <span>LIDAR</span>
                         </button>
                       )}
                     </div>
@@ -658,18 +547,18 @@ export const UploadPage: React.FC<UploadPageProps> = ({
             </div>
           </div>
 
-          {/* Institutional Compliance Card */}
-          <div className="mission-panel rounded-xl p-4 border border-[#1e315b] text-[11px] font-mono text-slate-400 flex flex-col gap-2">
-            <div className="flex items-center gap-2 text-slate-300 font-bold">
-              <ShieldCheck className="w-4 h-4 text-emerald-400" />
+          {/* Institutional Photogrammetry Standards Card */}
+          <div className="mission-sidebar-card compliance">
+            <div className="compliance-header">
+              <ShieldCheck size={16} className="text-emerald-400" />
               <span>NRSC &amp; ASPRS PHOTOGRAMMETRY STANDARD</span>
             </div>
-            <p className="text-[10px] text-slate-400 leading-relaxed font-sans">
+            <p className="compliance-text">
               Complies with national standards for digital elevation data. Vertical accuracy benchmarked against aerial LiDAR ground truth (0.33m GSD). Outputs standard 32-bit GeoTIFF and decimation Level-of-Detail 3D GLB tiles.
             </p>
           </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 };

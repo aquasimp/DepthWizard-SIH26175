@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Settings, Cpu, Globe, Sliders, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import { X, Settings, Cpu, Globe, Sliders, CheckCircle2, AlertCircle, Loader2, Moon, Sun, Palette, Sparkles } from 'lucide-react';
 import { getApiBase, setApiBase, checkBackendHealth } from '../utils/apiConfig';
 
 export default function SettingsModal(props) {
@@ -12,6 +12,8 @@ export default function SettingsModal(props) {
     onColorRampChange = null,
     verticalExaggeration = 1.0,
     onVerticalExaggerationChange = null,
+    theme = 'dark',
+    onThemeChange = null,
   } = props || {};
 
   const [apiUrl, setApiUrl] = useState(() => getApiBase());
@@ -64,6 +66,60 @@ export default function SettingsModal(props) {
         </div>
 
         <div className="modal-body-scrollable">
+          {/* Section 0: Appearance & Theme Mode (Comprehensive Dark/Light Mode) */}
+          <div className="settings-section-card">
+            <h4 className="settings-section-title">
+              <Palette size={16} />
+              <span>Appearance &amp; Visual Theme Mode</span>
+            </h4>
+            <p className="text-xs text-slate-400 mb-3 font-sans">
+              Choose your photogrammetry telemetry interface style. Cyber Aerospace Dark offers deep contrast for mission control analysis.
+            </p>
+
+            <div className="theme-selector-grid">
+              {/* Dark Mode Card */}
+              <button
+                type="button"
+                className={`theme-option-card ${theme === 'dark' ? 'active' : ''}`}
+                onClick={() => onThemeChange && onThemeChange('dark')}
+              >
+                <div className="theme-card-icon-box dark">
+                  <Moon size={18} />
+                </div>
+                <div className="theme-card-details">
+                  <div className="theme-card-title">
+                    <span>Cyber Aerospace Dark</span>
+                    <span className="theme-pill-recommended">Recommended</span>
+                  </div>
+                  <p className="theme-card-desc">
+                    Ultra-high contrast midnight palette with neon cyan telemetry accents.
+                  </p>
+                </div>
+                <div className={`theme-radio-indicator ${theme === 'dark' ? 'checked' : ''}`} />
+              </button>
+
+              {/* Light Mode Card */}
+              <button
+                type="button"
+                className={`theme-option-card ${theme === 'light' ? 'active' : ''}`}
+                onClick={() => onThemeChange && onThemeChange('light')}
+              >
+                <div className="theme-card-icon-box light">
+                  <Sun size={18} />
+                </div>
+                <div className="theme-card-details">
+                  <div className="theme-card-title">
+                    <span>Luminous Celestial Light</span>
+                  </div>
+                  <p className="theme-card-desc">
+                    Daylight photogrammetry theme with sky-blue gradients and crisp cards.
+                  </p>
+                </div>
+                <div className={`theme-radio-indicator ${theme === 'light' ? 'checked' : ''}`} />
+              </button>
+            </div>
+          </div>
+
           {/* Section 1: System & Compute Diagnostics */}
           <div className="settings-section-card">
             <h4 className="settings-section-title">
@@ -123,8 +179,8 @@ export default function SettingsModal(props) {
               <Globe size={16} />
               <span>API Gateway &amp; Backend Connectivity</span>
             </h4>
-            <p className="text-xs text-slate-400 mb-3">
-              On Vercel, DepthWizard runs an automatic in-browser depth engine. If you have a deployed PyTorch backend (e.g., Render, Railway, Ngrok, EC2), enter the base URL below:
+            <p className="text-xs text-slate-400 mb-3 font-sans">
+              DepthWizard automatically runs an in-browser depth engine on Vercel. If connecting to a live PyTorch GPU server (e.g. Render, Railway, Ngrok, Localhost:8000), enter the base URL below:
             </p>
 
             <div className="flex flex-col gap-2">
@@ -133,7 +189,7 @@ export default function SettingsModal(props) {
                   type="text"
                   value={apiUrl}
                   onChange={(e) => setApiUrl(e.target.value)}
-                  placeholder="e.g. https://my-depthwizard-backend.onrender.com"
+                  placeholder="e.g. http://127.0.0.1:8000 or https://api.depthwizard.ai"
                   className="flex-1 px-3 py-1.5 text-xs font-mono bg-slate-900 border border-slate-700 rounded text-slate-200 focus:outline-none focus:border-cyan-500"
                 />
                 <button

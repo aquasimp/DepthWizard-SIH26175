@@ -53,6 +53,7 @@ export const IsroHeader: React.FC<IsroHeaderProps> = ({
               src="/isro_insignia.svg" 
               alt="ISRO Space Applications Centre" 
               className="w-9 h-9 object-contain group-hover:scale-105 transition"
+              style={{ width: '36px', height: '36px', maxWidth: '36px', maxHeight: '36px' }}
             />
           </div>
 

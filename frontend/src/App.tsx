@@ -61,6 +61,29 @@ export function App() {
   const [selectedMeasurement, setSelectedMeasurement] = useState<any>(null);
   const [resetViewTrigger, setResetViewTrigger] = useState(0);
 
+  // Comprehensive Dark/Light Theme Mode (Default: Cyber Aerospace Dark)
+  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
+    const saved = localStorage.getItem('depthwizard_theme');
+    if (saved === 'dark' || saved === 'light') return saved;
+    return 'dark';
+  });
+
+  useEffect(() => {
+    localStorage.setItem('depthwizard_theme', theme);
+    document.documentElement.setAttribute('data-theme', theme);
+    if (theme === 'dark') {
+      document.body.classList.add('theme-dark');
+      document.body.classList.remove('theme-light');
+    } else {
+      document.body.classList.add('theme-light');
+      document.body.classList.remove('theme-dark');
+    }
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
+  };
+
   // Read URL query params on mount for direct link navigation
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -495,11 +518,14 @@ export function App() {
           }}
           isRunning={isRunning}
           systemStatus={systemStatus}
+          isDark={theme === 'dark'}
+          onToggleTheme={toggleTheme}
         />
         <UploadPage
           onJobSelect={(id) => navigateTo('viewer', id)}
           onJobCreated={(id) => navigateTo('status', id)}
           onNavigateValidate={(id) => navigateTo('validate', id)}
+          onNavigateHome={() => navigateTo('dashboard')}
         />
       </div>
     );
@@ -519,6 +545,8 @@ export function App() {
           }}
           isRunning={isRunning}
           systemStatus={systemStatus}
+          isDark={theme === 'dark'}
+          onToggleTheme={toggleTheme}
         />
         <ViewerPage
           jobId={targetJobId}
@@ -546,6 +574,8 @@ export function App() {
           }}
           isRunning={isRunning}
           systemStatus={systemStatus}
+          isDark={theme === 'dark'}
+          onToggleTheme={toggleTheme}
         />
         <JobStatusPage
           jobId={activeJobId}
@@ -571,6 +601,8 @@ export function App() {
           }}
           isRunning={isRunning}
           systemStatus={systemStatus}
+          isDark={theme === 'dark'}
+          onToggleTheme={toggleTheme}
         />
         <ValidatePage
           jobId={targetJobId}
@@ -594,6 +626,8 @@ export function App() {
         }}
         isRunning={isRunning}
         systemStatus={systemStatus}
+        isDark={theme === 'dark'}
+        onToggleTheme={toggleTheme}
       />
 
       {/* 2. LUMINOUS HERO SECTION */}
@@ -758,6 +792,8 @@ export function App() {
           onColorRampChange={setColorRamp}
           verticalExaggeration={verticalExaggeration}
           onVerticalExaggerationChange={setVerticalExaggeration}
+          theme={theme}
+          onThemeChange={setTheme}
         />
       </ErrorBoundary>
     </div>
