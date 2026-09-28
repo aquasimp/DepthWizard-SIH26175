@@ -492,10 +492,15 @@ export function App() {
 
     const targetId = sectionMap[id];
     if (targetId) {
-      setTimeout(() => {
+      const scrollFn = () => {
         const el = document.getElementById(targetId);
-        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 50);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      };
+      scrollFn();
+      setTimeout(scrollFn, 80);
+      setTimeout(scrollFn, 220);
     } else {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }

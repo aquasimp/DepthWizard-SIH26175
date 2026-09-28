@@ -1439,6 +1439,41 @@ code, .font-mono {
   gap: 16px;
 }
 
+/* Fullscreen Mode Optimization (Zero Glitch / Full Monitor Fill) */
+.terrain-section-card:fullscreen,
+.terrain-section-card.fullscreen-mode {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  max-width: 100vw !important;
+  max-height: 100vh !important;
+  margin: 0 !important;
+  padding: 14px 18px !important;
+  border-radius: 0 !important;
+  border: none !important;
+  background: #060c18 !important;
+  z-index: 999999 !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.terrain-section-card:fullscreen .terrain-canvas-wrapper,
+.terrain-section-card.fullscreen-mode .terrain-canvas-wrapper {
+  flex: 1 1 auto !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  border-radius: 8px !important;
+}
+
+.terrain-section-card:fullscreen .terrain-header-toolbar,
+.terrain-section-card.fullscreen-mode .terrain-header-toolbar {
+  padding-bottom: 6px;
+}
+
+
 .terrain-header-toolbar {
   display: flex;
   align-items: center;
@@ -1895,6 +1930,46 @@ body.theme-dark .exag-preset-chip.active {
 .btn-launch-cockpit-direct:hover {
   background: linear-gradient(135deg, #0055a5 0%, #00c2cb 100%);
   transform: translateY(-1px);
+}
+
+.btn-view-graphs-direct {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: #f0fdf4;
+  border: 1px solid #86efac;
+  color: #15803d;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 700;
+  padding: 10px;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(22, 101, 52, 0.08);
+}
+
+.btn-view-graphs-direct:hover {
+  background: #dcfce7;
+  border-color: #4ade80;
+  color: #14532d;
+  transform: translateY(-1px);
+}
+
+[data-theme="dark"] .btn-view-graphs-direct,
+body.theme-dark .btn-view-graphs-direct {
+  background: #052e16;
+  border-color: #166534;
+  color: #4ade80;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .btn-view-graphs-direct:hover,
+body.theme-dark .btn-view-graphs-direct:hover {
+  background: #14532d;
+  border-color: #22c55e;
+  color: #86efac;
 }
 
 .tool-btn-accent {

@@ -25,10 +25,9 @@ export default function FloatingNavbar({
   const navItems = [
     { id: 'dashboard', label: 'Home' },
     { id: 'upload', label: 'Mission Portal' },
-    { id: 'da3', label: 'DA3 Engine' },
     { id: 'terrain', label: '3D Flythrough' },
+    { id: 'accuracy', label: '📊 Accuracy & Graphs' },
     { id: 'dsm-analysis', label: 'DSM & GeoTIFF' },
-    { id: 'accuracy', label: 'Accuracy' },
     { id: 'measurements', label: 'Terrain Analysis' },
     { id: 'gamus', label: 'GAMUS Data' },
   ];

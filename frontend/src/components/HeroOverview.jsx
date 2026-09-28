@@ -13,6 +13,7 @@ export default function HeroOverview({
     { id: 'dsm-analysis', icon: 'fa-solid fa-mountain-sun', label: 'Metric DSM & GeoTIFF' },
     { id: 'terrain', icon: 'fa-solid fa-cube', label: '3D WebGL Flythrough' },
     { id: 'measurements', icon: 'fa-solid fa-layer-group', label: 'Slope & Height Profile' },
+    { id: 'accuracy', icon: 'fa-solid fa-chart-simple', label: 'Model Accuracy & Graphs' },
   ];
 
   return (

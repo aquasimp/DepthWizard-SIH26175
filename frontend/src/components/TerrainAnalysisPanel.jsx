@@ -10,6 +10,7 @@ import {
   Activity,
   Layers,
   Box,
+  BarChart3,
 } from 'lucide-react';
 
 export default function TerrainAnalysisPanel(props) {
@@ -256,6 +257,21 @@ export default function TerrainAnalysisPanel(props) {
             <span>Launch Tactical Cockpit ↗</span>
           </button>
         )}
+
+        <button
+          type="button"
+          className="btn-view-graphs-direct"
+          onClick={() => {
+            const el = document.getElementById('accuracy-section');
+            if (el) {
+              el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+          }}
+          title="Scroll directly to Model Accuracy &amp; Interactive Graphs"
+        >
+          <BarChart3 size={15} />
+          <span>Model Accuracy &amp; Graphs ↓</span>
+        </button>
       </div>
     </aside>
   );

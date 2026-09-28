@@ -495,23 +495,51 @@ export default function TerrainViewer({
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('keyup', handleKeyUp);
 
-    // Resize observer
+    // Robust multi-phase resize handler with sub-pixel and fullscreen stabilization
     const handleResize = () => {
-      if (!container) return;
-      const w = container.clientWidth;
-      const h = container.clientHeight;
-      if (w === 0 || h === 0) return;
-      camera.aspect = w / h;
-      camera.updateProjectionMatrix();
-      renderer.setSize(w, h);
+      const cont = mountRef.current;
+      const cam = cameraRef.current;
+      const rend = rendererRef.current;
+      const ctrl = controlsRef.current;
+      if (!cont || !cam || !rend) return;
+
+      const w = cont.clientWidth;
+      const h = cont.clientHeight;
+      if (w < 10 || h < 10) return;
+
+      cam.aspect = w / h;
+      cam.updateProjectionMatrix();
+      rend.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      rend.setSize(w, h, false);
+      if (rend.domElement) {
+        rend.domElement.style.width = '100%';
+        rend.domElement.style.height = '100%';
+      }
+      if (ctrl) {
+        ctrl.update();
+      }
     };
 
     const resizeObserver = new ResizeObserver(() => handleResize());
     resizeObserver.observe(container);
 
+    const handleFullscreenTransition = () => {
+      handleResize();
+      setTimeout(handleResize, 50);
+      setTimeout(handleResize, 150);
+      setTimeout(handleResize, 350);
+    };
+
+    window.addEventListener('resize', handleResize);
+    document.addEventListener('fullscreenchange', handleFullscreenTransition);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenTransition);
+
     return () => {
       cancelAnimationFrame(animId);
       resizeObserver.disconnect();
+      window.removeEventListener('resize', handleResize);
+      document.removeEventListener('fullscreenchange', handleFullscreenTransition);
+      document.removeEventListener('webkitfullscreenchange', handleFullscreenTransition);
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
       domElement.removeEventListener('pointerdown', handlePointerDown);
