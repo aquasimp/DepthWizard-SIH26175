@@ -474,16 +474,11 @@ export const UploadPage: React.FC<UploadPageProps> = ({
 
               {/* Vercel Model Limitations Advisory Notice */}
               {isVercelEnvironment() && (
-                <div className="p-3.5 rounded-xl border border-amber-500/50 bg-[#161105] text-amber-200 text-xs font-mono flex items-start gap-2.5 my-2 shadow-sm">
-                  <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-                  <div className="space-y-1">
-                    <span className="font-bold text-amber-300 uppercase tracking-wide">
-                      Vercel Serverless Hosting Notice:
-                    </span>
-                    <p className="text-[11px] text-amber-200/90 leading-relaxed">
-                      Heavy PyTorch/CUDA deep learning models (35.1M parameters) cannot run on Vercel's serverless edge. When submitting here on Vercel, DepthWizard automatically routes your image through our <strong>WebGL In-Browser Surface Engine</strong>. For full PyTorch GPU neural inference, connect your local backend URL in Settings.
-                    </p>
-                  </div>
+                <div className="px-3.5 py-2 rounded-lg border border-amber-500/30 bg-[#0d1627] text-slate-300 text-xs font-mono flex items-center gap-2 my-2">
+                  <AlertTriangle className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                  <span className="text-[11px]">
+                    <strong className="text-amber-300">Vercel Notice:</strong> AI models are not supported on serverless edge; uploads process via in-browser client engine.
+                  </span>
                 </div>
               )}
 
