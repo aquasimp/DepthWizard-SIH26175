@@ -15,6 +15,7 @@ import {
   Upload,
 } from 'lucide-react';
 import { getApiBase } from '../utils/apiConfig';
+import { processClientDepthPipeline } from '../utils/clientDepthEngine';
 
 interface JobSummary {
   job_id: string;
@@ -216,24 +217,48 @@ export const UploadPage: React.FC<UploadPageProps> = ({
 
     try {
       const apiBase = getApiBase();
-      if (!apiBase) {
-        throw new Error('A live backend endpoint is required for queued jobs. Use the main Dashboard for instant In-Browser 3D reconstruction, or configure your backend in Settings.');
-      }
-      const resp = await fetch(`${apiBase}/api/jobs`, {
-        method: 'POST',
-        body: formData,
-      });
+      let jobCreated = false;
 
-      if (!resp.ok) {
-        const errJson = await resp.json().catch(() => ({}));
-        const msg = errJson.detail?.detail || errJson.detail || 'Reconstruction job initialization failed.';
-        throw new Error(msg);
+      // 1. Attempt remote GPU inference job if backend endpoint is configured
+      if (apiBase) {
+        try {
+          const resp = await fetch(`${apiBase}/api/jobs`, {
+            method: 'POST',
+            body: formData,
+          });
+
+          if (resp.ok) {
+            const data = await resp.json();
+            if (data?.job_id) {
+              onJobCreated(data.job_id);
+              jobCreated = true;
+              return;
+            }
+          } else {
+            console.warn('[UploadPage] Remote backend returned non-OK status, falling back to in-browser engine');
+          }
+        } catch (fetchErr) {
+          console.warn('[UploadPage] Remote backend unreachable, switching to In-Browser Client Depth Engine:', fetchErr);
+        }
       }
 
-      const data = await resp.json();
-      onJobCreated(data.job_id);
+      // 2. Standalone In-Browser Elevation & 3D Reconstruction Fallback
+      if (!jobCreated) {
+        const clientRes = await processClientDepthPipeline(
+          selectedFile,
+          parseFloat(zExag) || 1.0
+        );
+
+        // Store client result in session for Viewer / Status consumption
+        if (typeof window !== 'undefined') {
+          sessionStorage.setItem(`depthwizard_job_${clientRes.job_id}`, JSON.stringify(clientRes));
+        }
+
+        onJobCreated(clientRes.job_id);
+      }
     } catch (err: any) {
-      setError(err.message || 'An error occurred during submission.');
+      console.error('[UploadPage] Reconstruction pipeline error:', err);
+      setError(err.message || 'An error occurred during reconstruction.');
     } finally {
       setIsSubmitting(false);
     }

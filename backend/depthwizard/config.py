@@ -18,6 +18,9 @@ class Settings(BaseSettings):
     port: int = 8000
     environment: str = "development"
     cors_origins: List[str] = [
+        "*",
+        "https://depthwizardd.vercel.app",
+        "https://pilot-climb-transmit-supplier.trycloudflare.com",
         "http://localhost:5173",
         "http://localhost:8080",
         "http://127.0.0.1:5173",

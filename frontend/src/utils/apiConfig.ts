@@ -7,7 +7,7 @@
 
 const STORAGE_KEY = 'depthwizard_api_base';
 
-export const CLOUDFLARE_BACKEND_TUNNEL = 'https://tool-intro-fans-toolbox.trycloudflare.com';
+export const CLOUDFLARE_BACKEND_TUNNEL = 'https://grams-distributor-never-shared.trycloudflare.com';
 
 export function getApiBase(): string {
   if (typeof window !== 'undefined') {

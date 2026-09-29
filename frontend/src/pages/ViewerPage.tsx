@@ -71,6 +71,33 @@ export const ViewerPage: React.FC<ViewerPageProps> = ({
       crs: 'EPSG:32643 (Metric Grid · WGS84 UTM 43N)',
     } as any;
 
+    // Check if job was generated in-browser via clientDepthEngine
+    if (typeof window !== 'undefined') {
+      const stored = sessionStorage.getItem(`depthwizard_job_${effectiveJobId}`);
+      if (stored) {
+        try {
+          const clientData = JSON.parse(stored);
+          setMeta({
+            width: clientData.width || 1024,
+            height: clientData.height || 612,
+            h_min_raw: clientData.min_height || 0.0,
+            h_max_raw: clientData.max_height || 35.0,
+            assumed_gsd_m: 0.33,
+            is_absolute: false,
+            crs: 'EPSG:3857 (Metric Grid · WGS84 UTM 18N)',
+          } as any);
+          if (clientData.texture_url) setActiveTextureUrl(clientData.texture_url);
+          if (clientData.dsm_vis_url) setActiveHeightmapUrl(clientData.dsm_vis_url);
+          if (clientData.heights) {
+            setCpuHeightmap(new Float32Array(clientData.heights));
+          }
+          return;
+        } catch (e) {
+          console.warn('[ViewerPage] Error parsing client job from session storage:', e);
+        }
+      }
+    }
+
     if (!apiBase) {
       setMeta(fallbackMeta);
       setActiveTextureUrl('/samples/benchmark_optical.jpg');
