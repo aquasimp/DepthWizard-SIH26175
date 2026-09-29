@@ -56,7 +56,7 @@ export function App() {
     ...defaultTerrainMesh,
     texture_url: sampleOpticalImg,
   }));
-  const [cameraMode, setCameraMode] = useState<'orbit' | 'fly'>('orbit');
+  const [cameraMode, setCameraMode] = useState<'orbit' | 'fly'>('fly');
   const [textureMode, setTextureMode] = useState<'rgb' | 'colormap' | 'slope' | 'wireframe'>('rgb');
   const [verticalExaggeration, setVerticalExaggeration] = useState(0.2);
   const [colorRamp, setColorRamp] = useState('terrain');

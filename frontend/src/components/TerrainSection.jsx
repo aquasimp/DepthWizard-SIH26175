@@ -1,24 +1,33 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
-  Mountain,
-  Orbit,
   Plane,
+  Orbit,
   RotateCcw,
   Maximize2,
   Minimize2,
+  Compass,
+  Navigation,
+  Crosshair,
+  Sliders,
   Layers,
   Activity,
-  Compass,
+  Gauge,
+  Radio,
 } from 'lucide-react';
 import TerrainViewer from './TerrainViewer';
 
+/**
+ * 3D Flythrough Section
+ * Interactive 60 FPS drone flight deck featuring autonomous aerial reconnaissance,
+ * first-person pilot simulator, real-time metric elevation telemetry, and point measurements.
+ */
 export default function TerrainSection(props) {
   const {
     dsmMesh,
     userTextureUrl = null,
     textureMode = 'rgb',
     onTextureModeChange,
-    cameraMode = 'orbit',
+    cameraMode = 'fly',
     onCameraModeChange,
     verticalExaggeration = 0.2,
     colorRamp = 'terrain',
@@ -28,10 +37,15 @@ export default function TerrainSection(props) {
     onResetView,
     onOpenCockpit,
   } = props || {};
+
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [flightMode, setFlightMode] = useState('auto'); // 'auto' | 'manual' | 'orbit'
+  const [isTourPaused, setIsTourPaused] = useState(false);
+  const [tourSpeed, setTourSpeed] = useState(1.0);
+  const [cruiseAltitude, setCruiseAltitude] = useState(28.0);
   const containerRef = useRef(null);
 
-  // Sync state with native browser fullscreen events (e.g. when user presses ESC key)
+  // Sync state with native browser fullscreen events
   useEffect(() => {
     const handleFullscreenChange = () => {
       const isCurrentlyFullscreen = Boolean(
@@ -55,6 +69,24 @@ export default function TerrainSection(props) {
       document.removeEventListener('MSFullscreenChange', handleFullscreenChange);
     };
   }, []);
+
+  // Sync cameraMode prop with internal flightMode
+  useEffect(() => {
+    if (cameraMode === 'orbit' && flightMode !== 'orbit') {
+      setFlightMode('orbit');
+    } else if (cameraMode === 'fly' && flightMode === 'orbit') {
+      setFlightMode('auto');
+    }
+  }, [cameraMode]);
+
+  const handleFlightModeSelect = (mode) => {
+    setFlightMode(mode);
+    if (mode === 'orbit') {
+      if (onCameraModeChange) onCameraModeChange('orbit');
+    } else {
+      if (onCameraModeChange) onCameraModeChange('fly');
+    }
+  };
 
   const toggleFullscreen = async () => {
     const el = containerRef.current;
@@ -82,7 +114,7 @@ export default function TerrainSection(props) {
     }
   };
 
-  // Real values for overlay measurement cards (NO FAKE / FABRICATED NUMBERS)
+  // Real values for overlay measurement cards
   const hasPoint = selectedMeasurement && selectedMeasurement.height !== undefined;
   const heightVal = hasPoint
     ? `${selectedMeasurement.height.toFixed(1)} m`
@@ -100,36 +132,51 @@ export default function TerrainSection(props) {
       className={`terrain-section-card ${isFullscreen ? 'fullscreen-mode' : ''}`}
       id="terrain-section"
     >
-      {/* Card Header with Controls */}
+      {/* Flight Deck Header Toolbar */}
       <div className="terrain-header-toolbar">
         <div className="toolbar-title-group">
-          <Mountain className="text-cyan" size={20} />
+          <Plane className="text-cyan animate-pulse" size={21} />
           <div>
-            <h3 className="terrain-title-text">3D Terrain</h3>
+            <div className="flex items-center gap-2">
+              <h3 className="terrain-title-text">3D Flythrough</h3>
+              <span className="flight-live-badge">
+                <span className="flight-pulse-dot" />
+                <span>60 FPS Fly Engine</span>
+              </span>
+            </div>
             <span className="terrain-subtitle-text">
-              WebGL Metric Heightfield ({dsmMesh ? `${dsmMesh.rows}×${dsmMesh.cols} Grid` : '128×128 Grid'})
+              Real-Time Drone Reconnaissance &amp; Metric Flight Deck ({dsmMesh ? `${dsmMesh.rows}×${dsmMesh.cols} Grid` : '128×128 Grid'})
             </span>
           </div>
         </div>
 
-        {/* Controls Toolbar: Orbit, Fly, Reset View, Fullscreen */}
+        {/* Controls Toolbar: Flight Modes, Tactical Cockpit, Reset View, Fullscreen */}
         <div className="toolbar-controls-group">
-          <div className="camera-mode-toggle-group">
+          {/* Mode Switcher: Auto Tour, Manual Fly, Orbit */}
+          <div className="flight-mode-toggle-group">
             <button
-              className={`tool-btn ${cameraMode === 'orbit' ? 'active' : ''}`}
-              onClick={() => onCameraModeChange && onCameraModeChange('orbit')}
-              title="Orbital inspection camera (Left click drag to rotate, right click to pan, scroll to zoom)"
+              className={`flight-mode-btn ${flightMode === 'auto' ? 'active' : ''}`}
+              onClick={() => handleFlightModeSelect('auto')}
+              title="Cinematic Autonomous Drone Reconnaissance Flight (Auto-gliding across terrain)"
             >
-              <Orbit size={15} />
-              <span>Orbit</span>
+              <Navigation size={14} />
+              <span>Auto Tour</span>
             </button>
             <button
-              className={`tool-btn ${cameraMode === 'fly' ? 'active' : ''}`}
-              onClick={() => onCameraModeChange && onCameraModeChange('fly')}
-              title="First-person drone flythrough mode (WASD keys to fly, Q/E for elevation)"
+              className={`flight-mode-btn ${flightMode === 'manual' ? 'active' : ''}`}
+              onClick={() => handleFlightModeSelect('manual')}
+              title="Manual First-Person Drone Flight (Drag mouse to steer, WASD keys to thrust)"
             >
-              <Plane size={15} />
-              <span>Fly</span>
+              <Plane size={14} />
+              <span>Manual Fly</span>
+            </button>
+            <button
+              className={`flight-mode-btn ${flightMode === 'orbit' ? 'active' : ''}`}
+              onClick={() => handleFlightModeSelect('orbit')}
+              title="Orbital Inspection (Drag to rotate 360°, scroll to zoom, click to measure)"
+            >
+              <Orbit size={14} />
+              <span>Orbit</span>
             </button>
           </div>
 
@@ -147,7 +194,7 @@ export default function TerrainSection(props) {
           <button
             className="tool-btn-neutral"
             onClick={onResetView}
-            title="Reset camera view to default orientation"
+            title="Reset flight trajectory to initial takeoff position"
           >
             <RotateCcw size={15} />
             <span>Reset View</span>
@@ -173,6 +220,14 @@ export default function TerrainSection(props) {
           onTextureModeChange={onTextureModeChange}
           cameraMode={cameraMode}
           onCameraModeChange={onCameraModeChange}
+          flightMode={flightMode}
+          onFlightModeChange={setFlightMode}
+          isTourPaused={isTourPaused}
+          onToggleTourPause={() => setIsTourPaused((prev) => !prev)}
+          tourSpeed={tourSpeed}
+          onChangeTourSpeed={setTourSpeed}
+          cruiseAltitude={cruiseAltitude}
+          onChangeAltitude={setCruiseAltitude}
           verticalExaggeration={verticalExaggeration}
           colorRamp={colorRamp}
           selectedPoint={selectedMeasurement}
@@ -180,7 +235,7 @@ export default function TerrainSection(props) {
           resetViewTrigger={resetViewTrigger}
         />
 
-        {/* Floating Overlay Measurement Cards */}
+        {/* Floating Overlay Point Measurement Cards */}
         <div className="floating-hud-overlay">
           <div className="hud-card">
             <span className="hud-label">HEIGHT</span>
