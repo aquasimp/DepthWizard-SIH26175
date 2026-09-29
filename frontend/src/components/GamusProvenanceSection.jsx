@@ -16,7 +16,7 @@ export default function GamusProvenanceSection() {
           <div>
             <h3 className="section-title-text">GAMUS Benchmark Dataset &amp; Provenance</h3>
             <p className="section-subtitle-text">
-              Official Hugging Face repository <code className="font-mono bg-white/70 px-1.5 py-0.5 rounded border border-slate-200">earthflow/GAMUS</code> — 3,817 quality-controlled metropolitan crops evaluated against airborne LiDAR.
+              Official Hugging Face repository <code className="font-mono bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-cyan-300 px-1.5 py-0.5 rounded border border-slate-300 dark:border-slate-700">earthflow/GAMUS</code> — 3,817 quality-controlled metropolitan crops evaluated against airborne LiDAR.
             </p>
           </div>
         </div>

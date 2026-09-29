@@ -35,7 +35,19 @@ export function DisplacedTerrain({
   // Load and configure the 16-bit PNG height texture
   const heightTexture = useMemo(() => {
     const loader = new THREE.TextureLoader();
-    const tex = loader.load(heightmapUrl);
+    const tex = loader.load(
+      heightmapUrl,
+      (t) => {
+        t.needsUpdate = true;
+        if (materialRef.current) {
+          materialRef.current.needsUpdate = true;
+        }
+      },
+      undefined,
+      (err) => {
+        console.warn('[DisplacedTerrain] Heightmap texture load warning:', err);
+      }
+    );
     // CRITICAL: Configure LinearFilter and NoColorSpace to prevent sRGB-decoding distortion
     tex.minFilter = THREE.LinearFilter;
     tex.magFilter = THREE.LinearFilter;
@@ -49,7 +61,20 @@ export function DisplacedTerrain({
   // Load base-color RGB texture
   const baseTexture = useMemo(() => {
     const loader = new THREE.TextureLoader();
-    const tex = loader.load(textureUrl);
+    const tex = loader.load(
+      textureUrl,
+      (t) => {
+        t.needsUpdate = true;
+        if (materialRef.current) {
+          materialRef.current.map = t;
+          materialRef.current.needsUpdate = true;
+        }
+      },
+      undefined,
+      (err) => {
+        console.warn('[DisplacedTerrain] Base texture load warning:', err);
+      }
+    );
     tex.minFilter = THREE.LinearMipmapLinearFilter;
     tex.magFilter = THREE.LinearFilter;
     tex.wrapS = THREE.ClampToEdgeWrapping;

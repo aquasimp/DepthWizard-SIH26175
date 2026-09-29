@@ -104,7 +104,7 @@ def get_default_terrain_mesh(
     manager: JobManager = Depends(get_job_manager),
 ) -> Dict[str, Any]:
     """Serve authentic 3D terrain mesh data for the active benchmark tile."""
-    candidates = ["job_1790534856_4dc57795", "job_1789027816_bc4209d8"]
+    candidates = ["job_1790662888_5ffbdc8e", "demo", "job_1790534856_4dc57795", "job_1789027816_bc4209d8"]
     for cid in candidates:
         cdir = manager.get_job_dir(cid)
         if (cdir / "heightmap.meta.json").exists():

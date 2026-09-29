@@ -33,9 +33,6 @@ export default function HeroOverview({
           <circle cx="1220" cy="220" r="3" fill="rgba(255, 255, 255, 0.7)" />
           <circle cx="1180" cy="420" r="3" fill="rgba(255, 255, 255, 0.7)" />
 
-          {/* Central subtle technical crosshairs */}
-          <line x1="720" y1="50" x2="720" y2="70" stroke="rgba(255, 255, 255, 0.3)" strokeWidth="1" />
-          <line x1="710" y1="60" x2="730" y2="60" stroke="rgba(255, 255, 255, 0.3)" strokeWidth="1" />
         </svg>
       </div>
 

@@ -1,9 +1,8 @@
 import React, { Suspense, useEffect, useMemo, useState } from 'react';
 import * as THREE from 'three';
 import { Canvas } from '@react-three/fiber';
-import { AlertTriangle, Compass, Satellite } from 'lucide-react';
+import { Compass, Satellite, ArrowLeft, AlertTriangle } from 'lucide-react';
 import { ControlHud, type LodLevel, type RenderPath } from '../components/ControlHud';
-import { IsroHeader } from '../components/IsroHeader';
 import { CameraRig, type CameraMode } from '../viewer/CameraRig';
 import { DisplacedTerrain } from '../viewer/DisplacedTerrain';
 import { GlbTerrain } from '../viewer/GlbTerrain';
@@ -41,6 +40,10 @@ export const ViewerPage: React.FC<ViewerPageProps> = ({
   const [fps, setFps] = useState(60);
   const [loadError, setLoadError] = useState<string | null>(null);
 
+  // Resolved texture and heightmap URLs with reliable local fallbacks
+  const [activeTextureUrl, setActiveTextureUrl] = useState<string>('/samples/benchmark_optical.jpg');
+  const [activeHeightmapUrl, setActiveHeightmapUrl] = useState<string>('/dsm_vis.png');
+
   // Height Probe & Measure Tool states
   const [probe, setProbe] = useState<ProbeData | null>(null);
   const [measureActive, setMeasureActive] = useState(false);
@@ -49,27 +52,33 @@ export const ViewerPage: React.FC<ViewerPageProps> = ({
 
   const apiBase = getApiBase();
 
-  // Artifact URLs
-  const metaUrl = apiBase ? `${apiBase}/api/jobs/${jobId}/artifacts/heightmap.meta.json` : `/api/jobs/${jobId}/artifacts/heightmap.meta.json`;
-  const heightmapUrl = apiBase ? `${apiBase}/api/jobs/${jobId}/artifacts/heightmap_16bit.png` : `/api/jobs/${jobId}/artifacts/heightmap_16bit.png`;
-  const textureUrl = apiBase ? `${apiBase}/api/jobs/${jobId}/artifacts/texture.jpg` : `/samples/benchmark_optical.jpg`;
-  const glbUrl = apiBase ? `${apiBase}/api/jobs/${jobId}/artifacts/terrain_${lod}.glb` : `/api/jobs/${jobId}/artifacts/terrain_${lod}.glb`;
+  const glbUrl = apiBase && jobId !== 'demo'
+    ? `${apiBase}/api/jobs/${jobId}/artifacts/terrain_${lod}.glb`
+    : `/api/jobs/${jobId}/artifacts/terrain_${lod}.glb`;
 
-  // 1. Fetch sidecar metadata
+  // 1. Fetch sidecar metadata with fallback
   useEffect(() => {
     setLoadError(null);
-    if (jobId === 'demo' || !apiBase) {
-      setMeta({
-        width: 518,
-        height: 518,
-        h_min_raw: 12.52,
-        h_max_raw: 34.77,
-        assumed_gsd_m: 0.33,
-        is_absolute: true,
-        crs: 'EPSG:3857 (Metric Grid · WGS84 UTM 18N)',
-      } as any);
+    const fallbackMeta: HeightmapMeta = {
+      width: 1024,
+      height: 612,
+      h_min_raw: 0.0,
+      h_max_raw: 35.0,
+      assumed_gsd_m: 0.33,
+      is_absolute: false,
+      crs: 'EPSG:32643 (Metric Grid · WGS84 UTM 43N)',
+    } as any;
+
+    if (!jobId || jobId === 'demo' || !apiBase) {
+      setMeta(fallbackMeta);
+      setActiveTextureUrl('/samples/benchmark_optical.jpg');
+      setActiveHeightmapUrl('/heightmap_16bit.png');
       return;
     }
+
+    const metaUrl = `${apiBase}/api/jobs/${jobId}/artifacts/heightmap.meta.json`;
+    const textureCandidate = `${apiBase}/api/jobs/${jobId}/artifacts/texture.jpg`;
+    const heightCandidate = `${apiBase}/api/jobs/${jobId}/artifacts/heightmap_16bit.png`;
 
     fetch(metaUrl)
       .then((r) => {
@@ -78,20 +87,19 @@ export const ViewerPage: React.FC<ViewerPageProps> = ({
         }
         return r.json();
       })
-      .then((data: HeightmapMeta) => setMeta(data))
+      .then((data: HeightmapMeta) => {
+        setMeta(data);
+        setActiveTextureUrl(textureCandidate);
+        setActiveHeightmapUrl(heightCandidate);
+      })
       .catch((err) => {
-        console.warn('Backend unavailable, using bundled GAMUS baseline:', err);
-        setMeta({
-          width: 518,
-          height: 518,
-          h_min_raw: 12.52,
-          h_max_raw: 34.77,
-          assumed_gsd_m: 0.33,
-          is_absolute: true,
-          crs: 'EPSG:3857 (Metric Grid · WGS84 UTM 18N)',
-        } as any);
+        console.warn('Job artifact metadata unavailable, using bundled GAMUS baseline:', err);
+        setMeta(fallbackMeta);
+        setActiveTextureUrl('/samples/benchmark_optical.jpg');
+        setActiveHeightmapUrl('/heightmap_16bit.png');
       });
-  }, [metaUrl, jobId, apiBase]);
+  }, [jobId, apiBase]);
+
 
   // 2. Decode authoritative CPU Float32Array from 16-bit PNG via hidden 2D canvas
   useEffect(() => {
@@ -128,8 +136,19 @@ export const ViewerPage: React.FC<ViewerPageProps> = ({
       );
       setCpuHeightmap(decoded);
     };
-    img.src = heightmapUrl;
-  }, [meta, heightmapUrl]);
+
+    img.onerror = () => {
+      console.warn('[ViewerPage] Heightmap image failed to load, generating smooth gradient');
+      const totalPx = (meta.width || 518) * (meta.height || 518);
+      const fallback = new Float32Array(totalPx);
+      for (let i = 0; i < totalPx; i++) {
+        fallback[i] = meta.h_min_raw + ((i % 518) / 518) * (meta.h_max_raw - meta.h_min_raw) * 0.4;
+      }
+      setCpuHeightmap(fallback);
+    };
+
+    img.src = activeHeightmapUrl;
+  }, [meta, activeHeightmapUrl]);
 
   // 3. FPS Monitoring and automatic LOD degradation guard
   useEffect(() => {
@@ -276,21 +295,21 @@ export const ViewerPage: React.FC<ViewerPageProps> = ({
 
   return (
     <div className="relative h-screen w-screen overflow-hidden bg-[#050811] flex flex-col select-none">
-      {/* Top ISRO Mission Header */}
-      <IsroHeader
-        currentPage="viewer"
-        activeJobId={jobId}
-        onNavigate={(page, id) => {
-          if (page === 'upload' || page === 'dashboard') onNavigateBack();
-          else if (page === 'validate' && id) onNavigateValidate(id);
-        }}
-      />
-
       {/* Main 3D Viewport Workspace */}
       <div className="relative flex-1 w-full h-full overflow-hidden">
-        {/* Top Tactical Telemetry Bar */}
-        <div className="absolute top-3 left-4 z-20 flex items-center gap-2">
-          <div className="mission-panel rounded-lg border border-[#1e315b] px-3.5 py-1.5 flex items-center gap-3 text-[11px] font-mono shadow-xl text-slate-300">
+        {/* Top Tactical Telemetry Bar positioned cleanly below FloatingNavbar */}
+        <div className="absolute top-20 left-4 z-20 flex items-center gap-2">
+          <button
+            type="button"
+            onClick={onNavigateBack}
+            className="mission-panel rounded-lg border border-[#00c2cb]/50 px-3 py-1.5 flex items-center gap-1.5 text-[11px] font-mono font-bold text-white hover:bg-[#00c2cb]/20 transition cursor-pointer shadow-lg backdrop-blur-md"
+            title="Return to Dashboard Home"
+          >
+            <ArrowLeft className="w-3.5 h-3.5 text-[#00c2cb]" />
+            <span>DASHBOARD</span>
+          </button>
+
+          <div className="mission-panel rounded-lg border border-[#1e315b] px-3.5 py-1.5 flex items-center gap-3 text-[11px] font-mono shadow-xl text-slate-300 backdrop-blur-md">
             <div className="flex items-center gap-1.5 text-white font-bold">
               <Satellite className="w-3.5 h-3.5 text-[#ff6600]" />
               <span>TARGET #{jobId.slice(0, 16)}</span>
@@ -315,20 +334,20 @@ export const ViewerPage: React.FC<ViewerPageProps> = ({
           </div>
         </div>
 
-        {/* Tactical Heading Compass Tape at Top Center */}
-        <div className="absolute top-3 left-1/2 -translate-x-1/2 z-20 pointer-events-none hidden md:flex items-center gap-2 mission-panel rounded-md border border-[#1e315b]/80 px-4 py-1 text-[10px] font-mono text-slate-400">
+        {/* Tactical Heading Compass Tape at Top Center below FloatingNavbar */}
+        <div className="absolute top-20 left-1/2 -translate-x-1/2 z-20 pointer-events-none hidden xl:flex items-center gap-2 mission-panel rounded-md border border-[#1e315b]/80 px-4 py-1.5 text-[10px] font-mono text-slate-400 backdrop-blur-md">
           <Compass className="w-3 h-3 text-[#00c2cb]" />
           <span>270° W ··· 300° ··· 330° ··· <strong className="text-[#ff6600]">000° N</strong> ··· 030° ··· 060° ··· 090° E</span>
         </div>
 
         {/* Viewport Corner Framing Reticles */}
-        <div className="absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 border-[#ff6600] pointer-events-none z-10" />
-        <div className="absolute top-2 right-2 w-4 h-4 border-t-2 border-r-2 border-[#00c2cb] pointer-events-none z-10" />
+        <div className="absolute top-20 left-2 w-4 h-4 border-t-2 border-l-2 border-[#ff6600] pointer-events-none z-10" />
+        <div className="absolute top-20 right-2 w-4 h-4 border-t-2 border-r-2 border-[#00c2cb] pointer-events-none z-10" />
         <div className="absolute bottom-2 left-2 w-4 h-4 border-b-2 border-l-2 border-[#00c2cb] pointer-events-none z-10" />
         <div className="absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 border-[#ff6600] pointer-events-none z-10" />
 
         {/* Authoritative Height Probe Badge */}
-        <div className="absolute top-14 left-4 z-20">
+        <div className="absolute top-32 left-4 z-20">
           <HeightProbeBadge probe={probe} />
         </div>
 
@@ -417,8 +436,8 @@ export const ViewerPage: React.FC<ViewerPageProps> = ({
           <Suspense fallback={null}>
             {renderPath === 'DISPLACEMENT' ? (
               <DisplacedTerrain
-                heightmapUrl={heightmapUrl}
-                textureUrl={textureUrl}
+                heightmapUrl={activeHeightmapUrl}
+                textureUrl={activeTextureUrl}
                 meta={meta}
                 zExag={zExag}
                 showSlope={showSlope}

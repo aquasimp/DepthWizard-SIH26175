@@ -31,6 +31,7 @@ export function App() {
   // Active navigation anchor
   const [activeNav, setActiveNav] = useState('dashboard');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [pendingScrollTarget, setPendingScrollTarget] = useState<string | null>(null);
 
   // Backend telemetry status
   const [systemStatus, setSystemStatus] = useState<any>(null);
@@ -39,9 +40,9 @@ export function App() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isSampleBenchmarkLoaded, setIsSampleBenchmarkLoaded] = useState(true);
   const [fileName, setFileName] = useState('benchmark_optical.tif');
-  const [fileFormat, setFileFormat] = useState('GeoTIFF (EPSG:32618 · WGS84 UTM 18N)');
+  const [fileFormat, setFileFormat] = useState('GeoTIFF (EPSG:32643 · WGS84 UTM 43N · 0.33m/px)');
   const [filePreviewUrl, setFilePreviewUrl] = useState<string | null>('/samples/benchmark_optical.jpg');
-  const [fileResolution, setFileResolution] = useState('518 × 518 px');
+  const [fileResolution, setFileResolution] = useState('1024 × 612 px');
   const [clientGeotiffBlob, setClientGeotiffBlob] = useState<Blob | null>(null);
 
   // Pipeline Execution State
@@ -72,11 +73,13 @@ export function App() {
     localStorage.setItem('depthwizard_theme', theme);
     document.documentElement.setAttribute('data-theme', theme);
     if (theme === 'dark') {
-      document.body.classList.add('theme-dark');
+      document.documentElement.classList.add('dark');
+      document.body.classList.add('dark', 'theme-dark');
       document.body.classList.remove('theme-light');
     } else {
+      document.documentElement.classList.remove('dark');
+      document.body.classList.remove('dark', 'theme-dark');
       document.body.classList.add('theme-light');
-      document.body.classList.remove('theme-dark');
     }
   }, [theme]);
 
@@ -95,10 +98,31 @@ export function App() {
       if (pageParam && ['status', 'viewer', 'validate'].includes(pageParam)) {
         setCurrentPage(pageParam);
       } else {
-        setCurrentPage('viewer');
+        setCurrentPage('dashboard');
       }
     }
   }, []);
+
+  // Reliable cross-page smooth scroll listener
+  useEffect(() => {
+    if (currentPage === 'dashboard' && pendingScrollTarget) {
+      const scrollFn = () => {
+        const el = document.getElementById(pendingScrollTarget);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          setPendingScrollTarget(null);
+        }
+      };
+      const t1 = setTimeout(scrollFn, 60);
+      const t2 = setTimeout(scrollFn, 200);
+      const t3 = setTimeout(scrollFn, 450);
+      return () => {
+        clearTimeout(t1);
+        clearTimeout(t2);
+        clearTimeout(t3);
+      };
+    }
+  }, [currentPage, pendingScrollTarget]);
 
   // Fetch initial backend telemetry if remote API is configured
   useEffect(() => {
@@ -160,8 +184,8 @@ export function App() {
     setIsSampleBenchmarkLoaded(true);
     setClientGeotiffBlob(null);
     setFileName('benchmark_optical.tif');
-    setFileFormat('GeoTIFF (EPSG:32618 · WGS84 UTM 18N)');
-    setFileResolution('518 × 518 px');
+    setFileFormat('GeoTIFF (EPSG:32643 · WGS84 UTM 43N · 0.33m/px)');
+    setFileResolution('1024 × 612 px');
     setFilePreviewUrl('/samples/benchmark_optical.jpg');
     setSelectedFile(null);
   };
@@ -476,10 +500,6 @@ export function App() {
       return;
     }
 
-    if (currentPage !== 'dashboard') {
-      navigateTo('dashboard');
-    }
-
     const sectionMap: Record<string, string | null> = {
       dashboard: null,
       da3: 'upload-section',
@@ -491,6 +511,15 @@ export function App() {
     };
 
     const targetId = sectionMap[id];
+
+    if (currentPage !== 'dashboard') {
+      if (targetId) {
+        setPendingScrollTarget(targetId);
+      }
+      navigateTo('dashboard');
+      return;
+    }
+
     if (targetId) {
       const scrollFn = () => {
         const el = document.getElementById(targetId);

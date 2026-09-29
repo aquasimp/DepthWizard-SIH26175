@@ -77,7 +77,7 @@ export const ControlHud: React.FC<ControlHudProps> = ({
       )}
 
       {/* Floating ISRO Telemetry HUD Controls Panel */}
-      <div className="absolute top-16 right-4 z-20 flex flex-col gap-2 min-w-[290px] max-w-[320px]">
+      <div className="absolute top-20 right-4 z-20 flex flex-col gap-2 min-w-[290px] max-w-[320px] max-h-[calc(100vh-95px)] overflow-y-auto pr-1">
         {/* Top Header Card */}
         <div className="mission-panel rounded-lg border border-[#1e315b] p-3 shadow-xl flex items-center justify-between text-slate-200">
           <div className="flex items-center gap-2">
