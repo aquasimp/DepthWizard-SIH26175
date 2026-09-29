@@ -52,9 +52,11 @@ export const ViewerPage: React.FC<ViewerPageProps> = ({
 
   const apiBase = getApiBase();
 
-  const glbUrl = apiBase && jobId !== 'demo'
-    ? `${apiBase}/api/jobs/${jobId}/artifacts/terrain_${lod}.glb`
-    : `/api/jobs/${jobId}/artifacts/terrain_${lod}.glb`;
+  const effectiveJobId = (!jobId || jobId === 'demo') ? 'job_1790662888_5ffbdc8e' : jobId;
+
+  const glbUrl = apiBase
+    ? `${apiBase}/api/jobs/${effectiveJobId}/artifacts/terrain_${lod}.glb`
+    : `/samples/terrain_${lod}.glb`;
 
   // 1. Fetch sidecar metadata with fallback
   useEffect(() => {
@@ -69,16 +71,16 @@ export const ViewerPage: React.FC<ViewerPageProps> = ({
       crs: 'EPSG:32643 (Metric Grid · WGS84 UTM 43N)',
     } as any;
 
-    if (!jobId || jobId === 'demo' || !apiBase) {
+    if (!apiBase) {
       setMeta(fallbackMeta);
       setActiveTextureUrl('/samples/benchmark_optical.jpg');
       setActiveHeightmapUrl('/heightmap_16bit.png');
       return;
     }
 
-    const metaUrl = `${apiBase}/api/jobs/${jobId}/artifacts/heightmap.meta.json`;
-    const textureCandidate = `${apiBase}/api/jobs/${jobId}/artifacts/texture.jpg`;
-    const heightCandidate = `${apiBase}/api/jobs/${jobId}/artifacts/heightmap_16bit.png`;
+    const metaUrl = `${apiBase}/api/jobs/${effectiveJobId}/artifacts/heightmap.meta.json`;
+    const textureCandidate = `${apiBase}/api/jobs/${effectiveJobId}/artifacts/texture.jpg`;
+    const heightCandidate = `${apiBase}/api/jobs/${effectiveJobId}/artifacts/heightmap_16bit.png`;
 
     fetch(metaUrl)
       .then((r) => {
@@ -98,7 +100,7 @@ export const ViewerPage: React.FC<ViewerPageProps> = ({
         setActiveTextureUrl('/samples/benchmark_optical.jpg');
         setActiveHeightmapUrl('/heightmap_16bit.png');
       });
-  }, [jobId, apiBase]);
+  }, [effectiveJobId, apiBase]);
 
 
   // 2. Decode authoritative CPU Float32Array from 16-bit PNG via hidden 2D canvas

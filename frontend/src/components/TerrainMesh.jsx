@@ -35,7 +35,8 @@ export function createTerrainGeometry({
   let maxElev = -Infinity;
 
   for (let i = 0; i < numVertices; i++) {
-    const h = (heights && i < heights.length) ? heights[i] : 0;
+    const rawH = (heights && i < heights.length) ? heights[i] : 0;
+    const h = (typeof rawH === 'number' && Number.isFinite(rawH)) ? rawH : 0;
     if (h < minElev) minElev = h;
     if (h > maxElev) maxElev = h;
   }
@@ -59,17 +60,23 @@ export function createTerrainGeometry({
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < cols; c++) {
       const idx = r * cols + c;
-      const val = (heights && idx < heights.length) ? heights[idx] : baseOffset;
+      const rawVal = (heights && idx < heights.length) ? heights[idx] : baseOffset;
+      const val = (typeof rawVal === 'number' && Number.isFinite(rawVal)) ? rawVal : baseOffset;
 
       if (r === 0 || r === rows - 1 || c === 0 || c === cols - 1) {
         smoothedHeights[idx] = val;
         continue;
       }
 
-      const nUp = heights[(r - 1) * cols + c] ?? val;
-      const nDown = heights[(r + 1) * cols + c] ?? val;
-      const nLeft = heights[r * cols + (c - 1)] ?? val;
-      const nRight = heights[r * cols + (c + 1)] ?? val;
+      const getSafe = (rIdx, cIdx) => {
+        const v = heights[(rIdx) * cols + cIdx];
+        return (typeof v === 'number' && Number.isFinite(v)) ? v : val;
+      };
+
+      const nUp = getSafe(r - 1, c);
+      const nDown = getSafe(r + 1, c);
+      const nLeft = getSafe(r, c - 1);
+      const nRight = getSafe(r, c + 1);
       const neighborMean = (nUp + nDown + nLeft + nRight) * 0.25;
 
       // If vertex is an isolated spike deviating excessively from surrounding neighborhood, smooth it
@@ -82,9 +89,10 @@ export function createTerrainGeometry({
   }
 
   for (let i = 0; i < numVertices; i++) {
-    const h = smoothedHeights[i];
+    const rawH = smoothedHeights[i];
+    const h = (typeof rawH === 'number' && Number.isFinite(rawH)) ? rawH : baseOffset;
     const relH = Math.max(0, (h - baseOffset) * reliefMultiplier);
-    posAttr.setY(i, relH * verticalExaggeration);
+    posAttr.setY(i, Number.isFinite(relH) ? relH * verticalExaggeration : 0);
   }
 
   posAttr.needsUpdate = true;

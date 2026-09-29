@@ -7,6 +7,8 @@
 
 const STORAGE_KEY = 'depthwizard_api_base';
 
+export const CLOUDFLARE_BACKEND_TUNNEL = 'https://tool-intro-fans-toolbox.trycloudflare.com';
+
 export function getApiBase(): string {
   if (typeof window !== 'undefined') {
     const saved = localStorage.getItem(STORAGE_KEY);
@@ -17,10 +19,19 @@ export function getApiBase(): string {
 
   const envUrl =
     import.meta.env.VITE_API_BASE_URL ||
-    import.meta.env.VITE_API_URL ||
-    (import.meta.env.DEV ? 'http://127.0.0.1:8000' : '');
+    import.meta.env.VITE_API_URL;
 
-  return String(envUrl).trim().replace(/\/+$/, '');
+  if (envUrl) {
+    return String(envUrl).trim().replace(/\/+$/, '');
+  }
+
+  // In local dev, use local uvicorn server on port 8000
+  if (import.meta.env.DEV) {
+    return 'http://127.0.0.1:8000';
+  }
+
+  // In deployed production (e.g. Vercel), default to active Cloudflare GPU tunnel
+  return CLOUDFLARE_BACKEND_TUNNEL;
 }
 
 export function setApiBase(url: string): void {

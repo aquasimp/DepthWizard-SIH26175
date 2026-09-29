@@ -103,11 +103,18 @@ export default function TerrainViewer({
       if (meta.texture_url.startsWith('blob:') || meta.texture_url.startsWith('data:')) {
         return meta.texture_url;
       }
-      // If it's a relative /api/ link
+      // If it's a relative /api/ link or references localhost:8000
       if (meta.texture_url.startsWith('/api/') || meta.texture_url.includes('localhost:8000')) {
-        const apiBase = getApiBase() || 'http://127.0.0.1:8000';
-        const cleanPath = meta.texture_url.replace(/^.*localhost:\d+/, '');
-        return `${apiBase}${cleanPath}`;
+        const apiBase = getApiBase();
+        if (apiBase) {
+          // If running on HTTPS (e.g. Vercel), do NOT use insecure http://127.0.0.1 which causes Mixed Content block
+          if (typeof window !== 'undefined' && window.location.protocol === 'https:' && apiBase.startsWith('http://127.0.0.1')) {
+            return sampleOpticalImg;
+          }
+          const cleanPath = meta.texture_url.replace(/^.*localhost:\d+/, '');
+          return `${apiBase}${cleanPath}`;
+        }
+        return sampleOpticalImg;
       }
       return meta.texture_url;
     }
@@ -162,6 +169,7 @@ export default function TerrainViewer({
     let activeMap = colorTexture;
     if (effectiveTextureMode === 'slope') activeMap = slopeTexture;
     else if (effectiveTextureMode === 'colormap') activeMap = colorTexture;
+    else if (effectiveTextureMode === 'rgb' && opticalTextureRef.current) activeMap = opticalTextureRef.current;
 
     let terrainMaterial = terrainMaterialRef.current;
     if (!terrainMaterial) {
