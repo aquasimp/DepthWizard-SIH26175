@@ -39,6 +39,9 @@ interface ControlHudProps {
   onDownloadGlb: () => void;
   onNavigateValidate: () => void;
   isFlyMode: boolean;
+  isEmbedded?: boolean;
+  autoTour?: boolean;
+  onToggleAutoTour?: () => void;
 }
 
 export const ControlHud: React.FC<ControlHudProps> = ({
@@ -63,6 +66,9 @@ export const ControlHud: React.FC<ControlHudProps> = ({
   onDownloadGlb,
   onNavigateValidate,
   isFlyMode,
+  isEmbedded = false,
+  autoTour = false,
+  onToggleAutoTour,
 }) => {
   const [collapsed, setCollapsed] = useState(false);
 
@@ -70,14 +76,14 @@ export const ControlHud: React.FC<ControlHudProps> = ({
     <>
       {/* Fly mode tactical instructions banner */}
       {isFlyMode && (
-        <div className="absolute top-16 left-1/2 -translate-x-1/2 z-30 flex items-center gap-3 rounded-lg border border-[#00c2cb]/60 bg-[#061022]/95 px-5 py-2 shadow-2xl backdrop-blur-md text-xs font-mono text-slate-100 animate-pulse">
+        <div className={`absolute ${isEmbedded ? 'top-14' : 'top-16'} left-1/2 -translate-x-1/2 z-30 flex items-center gap-3 rounded-lg border border-[#00c2cb]/60 bg-[#061022]/95 px-5 py-2 shadow-2xl backdrop-blur-md text-xs font-mono text-slate-100 animate-pulse`}>
           <span className="font-bold text-[#ff9944]">TACTICAL FLIGHT COCKPIT:</span>
           <span>Click canvas to lock crosshair · WASD move · QE altitude · Shift 3× boost · ESC release</span>
         </div>
       )}
 
       {/* Floating ISRO Telemetry HUD Controls Panel */}
-      <div className="absolute top-20 right-4 z-20 flex flex-col gap-2 min-w-[290px] max-w-[320px] max-h-[calc(100vh-95px)] overflow-y-auto pr-1">
+      <div className={`absolute ${isEmbedded ? 'top-3 right-3 max-h-[calc(100%-24px)]' : 'top-20 right-4 max-h-[calc(100vh-95px)]'} z-20 flex flex-col gap-2 min-w-[280px] max-w-[315px] overflow-y-auto pr-1`}>
         {/* Top Header Card */}
         <div className="mission-panel rounded-lg border border-[#1e315b] p-3 shadow-xl flex items-center justify-between text-slate-200">
           <div className="flex items-center gap-2">
@@ -138,6 +144,21 @@ export const ControlHud: React.FC<ControlHudProps> = ({
                   </button>
                 ))}
               </div>
+              {onToggleAutoTour && cameraMode === 'ORBIT' && (
+                <button
+                  type="button"
+                  onClick={onToggleAutoTour}
+                  className={`mt-1 py-1 px-2.5 rounded text-[10.5px] font-mono flex items-center justify-center gap-1.5 transition cursor-pointer border ${
+                    autoTour
+                      ? 'bg-emerald-950/80 text-emerald-300 border-emerald-500/60 shadow-[0_0_10px_rgba(16,185,129,0.25)]'
+                      : 'bg-[#070e1d] text-slate-400 border-[#1e315b] hover:text-white'
+                  }`}
+                  title="Toggle automatic sweeping flythrough tour"
+                >
+                  <span className={`w-1.5 h-1.5 rounded-full ${autoTour ? 'bg-emerald-400 animate-ping' : 'bg-slate-500'}`} />
+                  <span>{autoTour ? 'AUTO FLYTHROUGH: ACTIVE' : 'START AUTO TOUR (SWEEP 360°)'}</span>
+                </button>
+              )}
             </div>
 
             {/* Render Path Toggle */}

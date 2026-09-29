@@ -25,7 +25,7 @@ export default function FloatingNavbar({
   const navItems = [
     { id: 'dashboard', label: 'Home' },
     { id: 'upload', label: 'Mission Portal' },
-    { id: 'terrain', label: '3D Flythrough' },
+    { id: 'terrain', label: 'Tactical Cockpit' },
     { id: 'accuracy', label: 'Accuracy & Graphs' },
     { id: 'dsm-analysis', label: 'DSM & GeoTIFF' },
     { id: 'measurements', label: 'Terrain Analysis' },

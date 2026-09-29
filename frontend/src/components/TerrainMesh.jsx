@@ -8,15 +8,20 @@ import * as THREE from 'three';
  * z = (row / (rows - 1) - 0.5) * length_meters
  * y = elevation_meters * verticalExaggeration
  */
-export function createTerrainGeometry({
-  heights,
-  rows,
-  cols,
-  planeSize = 200,
-  aspectRatio = 1.0,
-  verticalExaggeration = 0.2,
-}) {
-  const ar = Math.max(0.2, Math.min(5.0, Number(aspectRatio) || 1.0));
+export function createTerrainGeometry(arg1 = {}, arg2 = {}) {
+  const params = {
+    ...(typeof arg1 === 'object' && arg1 !== null ? arg1 : {}),
+    ...(typeof arg2 === 'object' && arg2 !== null ? arg2 : {}),
+  };
+
+  const heights = params.heights || [];
+  const rows = Math.max(2, Number(params.rows) || 128);
+  const cols = Math.max(2, Number(params.cols) || 128);
+  const planeSize = Number(params.planeSize || params.planeWidth || 200);
+  const aspectRatio = Number(params.aspectRatio || params.aspect_ratio || 1.0);
+  const verticalExaggeration = Number(params.verticalExaggeration ?? 0.2);
+
+  const ar = Math.max(0.2, Math.min(5.0, aspectRatio));
   const planeWidth = ar >= 1.0 ? planeSize : planeSize * ar;
   const planeHeight = ar >= 1.0 ? planeSize / ar : planeSize;
 
@@ -27,6 +32,7 @@ export function createTerrainGeometry({
     rows - 1
   );
   geometry.rotateX(-Math.PI / 2); // Orient horizontal (XZ plane)
+  geometry.morphAttributes = geometry.morphAttributes || {};
 
   const posAttr = geometry.attributes.position;
   const numVertices = posAttr.count;

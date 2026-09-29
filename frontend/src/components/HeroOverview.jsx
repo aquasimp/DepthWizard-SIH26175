@@ -11,7 +11,7 @@ export default function HeroOverview({
     { id: 'upload', icon: 'fa-solid fa-satellite', label: 'Single-View Optical' },
     { id: 'da3', icon: 'fa-solid fa-chart-line', label: 'Relative Depth (DA3)' },
     { id: 'dsm-analysis', icon: 'fa-solid fa-mountain-sun', label: 'Metric DSM & GeoTIFF' },
-    { id: 'terrain', icon: 'fa-solid fa-cube', label: '3D WebGL Flythrough' },
+    { id: 'terrain', icon: 'fa-solid fa-compass', label: 'Tactical Cockpit & 3D' },
     { id: 'measurements', icon: 'fa-solid fa-layer-group', label: 'Slope & Height Profile' },
     { id: 'accuracy', icon: 'fa-solid fa-chart-simple', label: 'Model Accuracy & Graphs' },
   ];
@@ -62,7 +62,7 @@ export default function HeroOverview({
           </div>
         </div>
 
-        {/* Dual Action CTA Buttons with Font Awesome Icons */}
+        {/* Triple Action CTA Buttons with Font Awesome Icons */}
         <div className="hero-cta-buttons-row">
           {/* Primary Dark Button with Intense Soft Ambient Glow */}
           <button
@@ -82,6 +82,17 @@ export default function HeroOverview({
                 <i className="fa-solid fa-arrow-right"></i>
               </>
             )}
+          </button>
+
+          {/* Tactical Cockpit Dedicated CTA Button for Judges */}
+          <button
+            className="hero-btn-cockpit-pill"
+            onClick={() => onSelectFeature?.('terrain')}
+            title="Launch Real-Time 3D Tactical Cockpit with Auto & Manual Fly"
+          >
+            <i className="fa-solid fa-compass text-amber-400"></i>
+            <span>Tactical Cockpit 3D</span>
+            <span className="cockpit-badge-live">LIVE 60 FPS</span>
           </button>
 
           {/* Secondary Crisp White Pill Button */}

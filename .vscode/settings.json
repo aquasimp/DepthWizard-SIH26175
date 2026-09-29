@@ -1,0 +1,13 @@
+{
+  "remote.portsAttributes": {
+    "5173": {
+      "label": "BHOOMI-3D Frontend Dashboard",
+      "onAutoForward": "notify",
+      "elevateIfNeeded": true
+    },
+    "8000": {
+      "label": "DepthWizard AI Inference Backend",
+      "onAutoForward": "silent"
+    }
+  }
+}

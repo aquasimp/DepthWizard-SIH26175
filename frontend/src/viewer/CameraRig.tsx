@@ -13,6 +13,7 @@ interface CameraRigProps {
   meta: HeightmapMeta;
   zExag: number;
   cpuHeightmap: Float32Array | null;
+  autoRotate?: boolean;
 }
 
 export function CameraRig({
@@ -21,6 +22,7 @@ export function CameraRig({
   meta,
   zExag,
   cpuHeightmap,
+  autoRotate = false,
 }: CameraRigProps) {
   const { camera } = useThree();
   const widthM = (meta.width - 1) * (meta.assumed_gsd_m || 0.33);
@@ -73,6 +75,8 @@ export function CameraRig({
         maxDistance={maxDim * 3.5}
         enableDamping
         dampingFactor={0.05}
+        autoRotate={Boolean(autoRotate)}
+        autoRotateSpeed={0.8}
       />
     );
   }

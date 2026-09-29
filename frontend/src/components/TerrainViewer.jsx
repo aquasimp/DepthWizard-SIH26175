@@ -21,6 +21,14 @@ import {
   Radio,
   Activity,
   Box,
+  Plane,
+  Orbit,
+  Map,
+  ArrowUp,
+  ArrowDown,
+  ArrowLeft,
+  ArrowRight,
+  Zap,
 } from 'lucide-react';
 import sampleOpticalImg from '../assets/sample_gamus_optical.png';
 import defaultTerrainMesh from '../data/default_terrain_mesh.json';
@@ -29,9 +37,13 @@ import { getApiBase } from '../utils/apiConfig';
 
 /**
  * TerrainViewer - Tactical 3D Cockpit & Aerial Reconnaissance Engine
- * 60 FPS WebGL engine with automated cinematic flythrough tour,
- * manual first-person drone flight simulator, solar angle illumination,
- * surface diagnostics, and point probe measurements.
+ * 60 FPS WebGL engine featuring:
+ * - Real-time ISRO / SAC Telemetry HUD (Heading, AGL, Airspeed, MSL, Coordinates)
+ * - Autonomous Drone Reconnaissance (Auto Tour) with Speed & Altitude Controls
+ * - Manual Drone Flight Simulator with Keyboard (WASD + Mouse-Look) & Interactive On-Screen D-Pad
+ * - Interactive Solar Illumination (Azimuth & Elevation sliders with real-time shadow casting)
+ * - Multi-band Surface Diagnostics (Slope Analysis, Wireframe Grid, Colormap, Optical RGB)
+ * - High-precision 3D Point Probe Sampling for elevation & slope gradient
  */
 export default function TerrainViewer({
   dsmData = null,
@@ -102,9 +114,9 @@ export default function TerrainViewer({
   // Tactical Cockpit Solar Lighting State
   const [sunAzimuth, setSunAzimuth] = useState(135); // 0-360 deg
   const [sunElevation, setSunElevation] = useState(45); // 10-90 deg
-  const [lodLevel, setLodLevel] = useState('lod0'); // 'lod0' | 'lod1' | 'lod2'
   const [hudDrawerOpen, setHudDrawerOpen] = useState(true);
   const [showCrosshair, setShowCrosshair] = useState(true);
+  const [isSprintActive, setIsSprintActive] = useState(false);
 
   // Fly controls movement state
   const flyStateRef = useRef({
@@ -198,57 +210,54 @@ export default function TerrainViewer({
 
     const u = (worldX / planeWidth) + 0.5;
     const v = (worldZ / planeHeight) + 0.5;
+
     if (u < 0 || u > 1 || v < 0 || v > 1) return 0;
 
-    const c = Math.max(0, Math.min(cols - 1, Math.round(u * (cols - 1))));
-    const r = Math.max(0, Math.min(rows - 1, Math.round(v * (rows - 1))));
-    const val = meta.heights[r * cols + c];
-    if (val === undefined || val === null) return 0;
+    const c = Math.max(0, Math.min(cols - 1, Math.floor(u * (cols - 1))));
+    const r = Math.max(0, Math.min(rows - 1, Math.floor(v * (rows - 1))));
 
-    const baseOffset = terrainMeshRef.current?.userData?.baseOffset || 0;
-    const reliefMultiplier = terrainMeshRef.current?.userData?.reliefMultiplier || 1.0;
-    return Math.max(0, (val - baseOffset) * reliefMultiplier);
+    const heights = meta.heights;
+    const val = heights[r * cols + c];
+    if (val === undefined) return 0;
+
+    const baseOffset = meta.min_height || 0;
+    return Math.max(0, val - baseOffset);
   }, []);
 
-  // Update dynamic sun light position based on azimuth and elevation
-  useEffect(() => {
-    if (!sunLightRef.current) return;
-    const azRad = (sunAzimuth * Math.PI) / 180;
-    const elRad = (sunElevation * Math.PI) / 180;
-    const dist = 320;
-    const sx = dist * Math.cos(elRad) * Math.sin(azRad);
-    const sy = dist * Math.sin(elRad);
-    const sz = dist * Math.cos(elRad) * Math.cos(azRad);
-    sunLightRef.current.position.set(sx, sy, sz);
-  }, [sunAzimuth, sunElevation]);
-
-  // Build or update terrain mesh geometry and textures
+  // Procedural Builder: Terrain Mesh & Materials
   const buildOrUpdateMesh = useCallback((scene, meta) => {
     if (!scene || !meta || !meta.heights || !meta.heights.length) return;
 
     const planeSize = 200;
-    const {
-      geometry,
-      minElevation,
-      maxElevation,
-      baseOffset = 0,
-      reliefMultiplier = 1.0,
-      planeWidth = 200,
-      planeHeight = 200,
-    } = createTerrainGeometry({
-      heights: meta.heights,
-      rows: meta.rows,
-      cols: meta.cols,
-      planeSize,
-      aspectRatio: meta.aspect_ratio || 1.0,
+    const planeWidth = planeSize;
+    const planeHeight = planeSize;
+
+    const terrainData = createTerrainGeometry(meta, {
       verticalExaggeration: verticalExaggerationRef.current,
+      planeWidth,
+      planeHeight,
+      planeSize,
     });
+
+    const geometry = terrainData?.geometry || terrainData;
+    if (!geometry || !geometry.attributes || !geometry.attributes.position) {
+      console.warn('[TerrainViewer] Failed to create geometry, skipping mesh update');
+      return;
+    }
+    if (!geometry.morphAttributes) {
+      geometry.morphAttributes = {};
+    }
+
+    const minElevation = terrainData?.minElevation ?? (meta.min_height !== undefined ? meta.min_height : 0);
+    const maxElevation = terrainData?.maxElevation ?? (meta.max_height !== undefined ? meta.max_height : 100);
+    const baseOffset = terrainData?.baseOffset ?? minElevation;
+    const reliefMultiplier = terrainData?.reliefMultiplier ?? 1.0;
 
     // Procedural Colormap & Slope Textures
     const colorTexture = createElevationColorTexture(
       meta.heights,
-      meta.rows,
-      meta.cols,
+      meta.rows || 128,
+      meta.cols || 128,
       minElevation,
       maxElevation,
       colorRamp
@@ -257,8 +266,8 @@ export default function TerrainViewer({
 
     const slopeTexture = createSlopeColorTexture(
       meta.heights,
-      meta.rows,
-      meta.cols,
+      meta.rows || 128,
+      meta.cols || 128,
       planeSize
     );
     slopeTextureRef.current = slopeTexture;
@@ -289,57 +298,63 @@ export default function TerrainViewer({
       terrainMaterial.needsUpdate = true;
     }
 
-    textureLoader.load(
-      opticalUrl,
-      (loadedTex) => {
-        loadedTex.wrapS = THREE.ClampToEdgeWrapping;
-        loadedTex.wrapT = THREE.ClampToEdgeWrapping;
-        loadedTex.needsUpdate = true;
-        opticalTextureRef.current = loadedTex;
-        if (textureMode === 'rgb' && terrainMaterialRef.current) {
-          terrainMaterialRef.current.map = loadedTex;
-          terrainMaterialRef.current.needsUpdate = true;
+    if (opticalUrl) {
+      textureLoader.load(
+        opticalUrl,
+        (loadedTex) => {
+          loadedTex.wrapS = THREE.ClampToEdgeWrapping;
+          loadedTex.wrapT = THREE.ClampToEdgeWrapping;
+          loadedTex.needsUpdate = true;
+          opticalTextureRef.current = loadedTex;
+          if (textureMode === 'rgb' && terrainMaterialRef.current) {
+            terrainMaterialRef.current.map = loadedTex;
+            terrainMaterialRef.current.needsUpdate = true;
+          }
+        },
+        undefined,
+        () => {
+          if (opticalUrl !== sampleOpticalImg) {
+            textureLoader.load(sampleOpticalImg, (fbTex) => {
+              opticalTextureRef.current = fbTex;
+              if (textureMode === 'rgb' && terrainMaterialRef.current) {
+                terrainMaterialRef.current.map = fbTex;
+                terrainMaterialRef.current.needsUpdate = true;
+              }
+            });
+          }
         }
-      },
-      undefined,
-      () => {
-        if (opticalUrl !== sampleOpticalImg) {
-          textureLoader.load(sampleOpticalImg, (fbTex) => {
-            opticalTextureRef.current = fbTex;
-            if (textureMode === 'rgb' && terrainMaterialRef.current) {
-              terrainMaterialRef.current.map = fbTex;
-              terrainMaterialRef.current.needsUpdate = true;
-            }
-          });
-        }
-      }
-    );
-
-    let mesh = terrainMeshRef.current;
-    if (mesh) {
-      if (mesh.geometry) mesh.geometry.dispose();
-      mesh.geometry = geometry;
-      mesh.material = terrainMaterial;
-      if (!scene.children.includes(mesh)) {
-        scene.add(mesh);
-      }
-    } else {
-      mesh = new THREE.Mesh(geometry, terrainMaterial);
-      mesh.receiveShadow = true;
-      mesh.castShadow = true;
-      scene.add(mesh);
-      terrainMeshRef.current = mesh;
+      );
     }
 
-    mesh.visible = true;
-    mesh.userData = {
-      baseOffset,
-      reliefMultiplier,
-      verticalExaggeration: verticalExaggerationRef.current,
-      planeWidth,
-      planeHeight,
-      meta,
-    };
+    try {
+      let mesh = terrainMeshRef.current;
+      if (mesh) {
+        if (mesh.geometry) mesh.geometry.dispose();
+        mesh.geometry = geometry;
+        mesh.material = terrainMaterial;
+        if (!scene.children.includes(mesh)) {
+          scene.add(mesh);
+        }
+      } else {
+        mesh = new THREE.Mesh(geometry, terrainMaterial);
+        mesh.receiveShadow = true;
+        mesh.castShadow = true;
+        scene.add(mesh);
+        terrainMeshRef.current = mesh;
+      }
+
+      mesh.visible = true;
+      mesh.userData = {
+        baseOffset,
+        reliefMultiplier,
+        verticalExaggeration: verticalExaggerationRef.current,
+        planeWidth,
+        planeHeight,
+        meta,
+      };
+    } catch (meshErr) {
+      console.error('[TerrainViewer] Error adding mesh to scene:', meshErr);
+    }
   }, [colorRamp, textureMode, resolveOpticalTextureUrl]);
 
   // 1. Scene & WebGLRenderer Setup
@@ -365,7 +380,7 @@ export default function TerrainViewer({
     // C. WebGL Renderer
     const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
     renderer.setSize(width, height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFShadowMap;
     rendererRef.current = renderer;
@@ -525,7 +540,7 @@ export default function TerrainViewer({
         } else {
           // --- MANUAL FIRST-PERSON DRONE FLIGHT SIMULATOR ---
           const fly = flyStateRef.current;
-          const isSprint = fly.isSprint;
+          const isSprint = fly.isSprint || isSprintActive;
           const baseSpeed = isSprint ? 68.0 : 28.0;
           const moveDist = baseSpeed * delta;
 
@@ -577,7 +592,7 @@ export default function TerrainViewer({
           speedKmH = isTourPausedRef.current ? 0 : Math.round(52 * tourSpeedRef.current);
         } else if (currentFlight === 'manual') {
           const isMoving = flyStateRef.current.moveForward || flyStateRef.current.moveBackward || flyStateRef.current.moveLeft || flyStateRef.current.moveRight || flyStateRef.current.moveUp || flyStateRef.current.moveDown;
-          speedKmH = isMoving ? (flyStateRef.current.isSprint ? 115 : 46) : 0;
+          speedKmH = isMoving ? (flyStateRef.current.isSprint || isSprintActive ? 115 : 46) : 0;
         }
 
         setTelemetry({
@@ -820,7 +835,20 @@ export default function TerrainViewer({
     }
   }, [loadedMeshMeta, buildOrUpdateMesh]);
 
-  // 3. Ultra-fast IN-PLACE Vertical Exaggeration update
+  // 3. Dynamic Sun Directional Light Update
+  useEffect(() => {
+    const sunLight = sunLightRef.current;
+    if (!sunLight) return;
+    const radAz = (sunAzimuth * Math.PI) / 180;
+    const radEl = (sunElevation * Math.PI) / 180;
+    const dist = 320;
+    const x = dist * Math.cos(radEl) * Math.sin(radAz);
+    const y = Math.max(25, dist * Math.sin(radEl));
+    const z = dist * Math.cos(radEl) * Math.cos(radAz);
+    sunLight.position.set(x, y, z);
+  }, [sunAzimuth, sunElevation]);
+
+  // 4. Ultra-fast IN-PLACE Vertical Exaggeration update
   useEffect(() => {
     const mesh = terrainMeshRef.current;
     if (!mesh || !mesh.geometry || !loadedMeshMeta?.heights) return;
@@ -864,7 +892,7 @@ export default function TerrainViewer({
     }
   }, [verticalExaggeration, loadedMeshMeta]);
 
-  // 4. IN-PLACE Texture Mode Switching
+  // 5. IN-PLACE Texture Mode Switching
   useEffect(() => {
     const mat = terrainMaterialRef.current;
     if (!mat) return;
@@ -885,14 +913,14 @@ export default function TerrainViewer({
     mat.needsUpdate = true;
   }, [textureMode]);
 
-  // 5. Hide 3D marker when measurement cleared
+  // 6. Hide 3D marker when measurement cleared
   useEffect(() => {
     if (markerGroupRef.current && !selectedPoint) {
       markerGroupRef.current.visible = false;
     }
   }, [selectedPoint]);
 
-  // 6. Camera / Drone Reset Trigger
+  // 7. Camera / Drone Reset Trigger
   useEffect(() => {
     if (cameraRef.current && resetViewTrigger > 0) {
       if (effectiveFlightMode === 'orbit') {
@@ -934,6 +962,44 @@ export default function TerrainViewer({
 
   const handleTextureChange = (mode) => {
     if (onTextureModeChange) onTextureModeChange(mode);
+  };
+
+  const handleFlightModeSelect = (mode) => {
+    if (onFlightModeChange) onFlightModeChange(mode);
+    if (mode === 'orbit' || mode === 'topdown') {
+      if (onCameraModeChange) onCameraModeChange('orbit');
+    } else {
+      if (onCameraModeChange) onCameraModeChange('fly');
+    }
+  };
+
+  // Virtual thrust handler for manual flight button clicks
+  const handleVirtualThrust = (direction) => {
+    const cam = cameraRef.current;
+    if (!cam) return;
+    const currentExag = verticalExaggerationRef.current || 0.2;
+    const forward = new THREE.Vector3(
+      Math.sin(yawRef.current) * Math.cos(pitchRef.current),
+      Math.sin(pitchRef.current),
+      -Math.cos(yawRef.current) * Math.cos(pitchRef.current)
+    ).normalize();
+    const right = new THREE.Vector3().crossVectors(forward, cam.up).normalize();
+
+    const dist = (isSprintActive ? 14.0 : 7.0);
+
+    if (direction === 'forward') cam.position.addScaledVector(forward, dist);
+    else if (direction === 'backward') cam.position.addScaledVector(forward, -dist);
+    else if (direction === 'left') cam.position.addScaledVector(right, -dist);
+    else if (direction === 'right') cam.position.addScaledVector(right, dist);
+    else if (direction === 'ascend') cam.position.y += dist;
+    else if (direction === 'descend') cam.position.y -= dist;
+    else if (direction === 'steer-left') yawRef.current += 0.2;
+    else if (direction === 'steer-right') yawRef.current -= 0.2;
+
+    const groundH = sampleTerrainHeight(cam.position.x, cam.position.z);
+    const minCamY = (groundH * currentExag) + 2.5;
+    if (cam.position.y < minCamY) cam.position.y = minCamY;
+    cam.lookAt(cam.position.clone().add(forward));
   };
 
   return (
@@ -990,6 +1056,183 @@ export default function TerrainViewer({
 
           {hudDrawerOpen && (
             <>
+              {/* Flight Mode Selection in HUD */}
+              <div className="cockpit-hud-section">
+                <div className="cockpit-section-label">
+                  <span>FLIGHT NAVIGATION MODE</span>
+                </div>
+                <div className="cockpit-btn-grid">
+                  <button
+                    type="button"
+                    className={`cockpit-toggle-btn ${effectiveFlightMode === 'auto' ? 'active' : ''}`}
+                    onClick={() => handleFlightModeSelect('auto')}
+                    title="Autonomous Reconnaissance Gliding Tour"
+                  >
+                    <Navigation size={11} />
+                    <span>Auto Tour</span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`cockpit-toggle-btn ${effectiveFlightMode === 'manual' ? 'active' : ''}`}
+                    onClick={() => handleFlightModeSelect('manual')}
+                    title="Manual First-Person Drone Flight Simulator"
+                  >
+                    <Plane size={11} />
+                    <span>Manual Fly</span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`cockpit-toggle-btn ${effectiveFlightMode === 'orbit' ? 'active' : ''}`}
+                    onClick={() => handleFlightModeSelect('orbit')}
+                    title="Orbital 360° Inspection"
+                  >
+                    <Orbit size={11} />
+                    <span>Orbit 360°</span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`cockpit-toggle-btn ${effectiveFlightMode === 'topdown' ? 'active' : ''}`}
+                    onClick={() => handleFlightModeSelect('topdown')}
+                    title="Top-Down Nadir 2D View"
+                  >
+                    <Map size={11} />
+                    <span>Top-Down</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Specific Options for Auto Fly */}
+              {effectiveFlightMode === 'auto' && (
+                <div className="cockpit-hud-section">
+                  <div className="cockpit-section-label">
+                    <span>AUTO TOUR OPTIONS</span>
+                    <span className="text-emerald-400 font-mono text-[9px]">
+                      {isTourPaused ? 'PAUSED' : 'CRUISING'}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1.5 mt-1">
+                    <button
+                      type="button"
+                      className="cockpit-toggle-btn flex-1 text-xs py-1"
+                      onClick={onToggleTourPause}
+                    >
+                      {isTourPaused ? <Play size={11} className="text-emerald-400" /> : <Pause size={11} className="text-amber-400" />}
+                      <span>{isTourPaused ? 'Resume Tour' : 'Hover / Pause'}</span>
+                    </button>
+                    <button
+                      type="button"
+                      className={`cockpit-toggle-btn flex-1 text-xs py-1 ${tourSpeed > 1 ? 'active' : ''}`}
+                      onClick={() => onChangeTourSpeed && onChangeTourSpeed(tourSpeed > 1 ? 1.0 : 1.75)}
+                    >
+                      <FastForward size={11} />
+                      <span>{tourSpeed > 1 ? '1.75x Speed' : '1.0x Cruise'}</span>
+                    </button>
+                  </div>
+                  <div className="flex items-center gap-1 mt-1.5">
+                    <span className="text-[9.5px] text-slate-400 font-mono">AGL:</span>
+                    <button
+                      type="button"
+                      className={`cockpit-toggle-btn flex-1 text-[9.5px] py-0.5 ${cruiseAltitude < 22 ? 'active' : ''}`}
+                      onClick={() => onChangeAltitude && onChangeAltitude(18)}
+                    >
+                      18m Low
+                    </button>
+                    <button
+                      type="button"
+                      className={`cockpit-toggle-btn flex-1 text-[9.5px] py-0.5 ${cruiseAltitude >= 22 && cruiseAltitude <= 38 ? 'active' : ''}`}
+                      onClick={() => onChangeAltitude && onChangeAltitude(28)}
+                    >
+                      28m Mid
+                    </button>
+                    <button
+                      type="button"
+                      className={`cockpit-toggle-btn flex-1 text-[9.5px] py-0.5 ${cruiseAltitude > 38 ? 'active' : ''}`}
+                      onClick={() => onChangeAltitude && onChangeAltitude(55)}
+                    >
+                      55m High
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Specific Options for Manual Flight Simulator */}
+              {effectiveFlightMode === 'manual' && (
+                <div className="cockpit-hud-section">
+                  <div className="cockpit-section-label">
+                    <span>MANUAL DRONE FLIGHT SIMULATOR</span>
+                    <span className="text-cyan-300 font-mono text-[9px]">WASD + MOUSE</span>
+                  </div>
+                  {/* Virtual Flight Direction D-Pad */}
+                  <div className="mt-1 flex flex-col items-center gap-1 bg-slate-950/70 p-2 rounded border border-slate-800">
+                    <button
+                      type="button"
+                      className="cockpit-toggle-btn w-20 py-1 text-[10px]"
+                      onClick={() => handleVirtualThrust('forward')}
+                      title="Forward Thrust (W key)"
+                    >
+                      <ArrowUp size={11} />
+                      <span>FWD (W)</span>
+                    </button>
+                    <div className="flex items-center gap-1">
+                      <button
+                        type="button"
+                        className="cockpit-toggle-btn w-16 py-1 text-[10px]"
+                        onClick={() => handleVirtualThrust('left')}
+                        title="Strafe Left (A key)"
+                      >
+                        <ArrowLeft size={11} />
+                        <span>LEFT</span>
+                      </button>
+                      <button
+                        type="button"
+                        className="cockpit-toggle-btn w-16 py-1 text-[10px]"
+                        onClick={() => handleVirtualThrust('backward')}
+                        title="Reverse Thrust (S key)"
+                      >
+                        <ArrowDown size={11} />
+                        <span>REV</span>
+                      </button>
+                      <button
+                        type="button"
+                        className="cockpit-toggle-btn w-16 py-1 text-[10px]"
+                        onClick={() => handleVirtualThrust('right')}
+                        title="Strafe Right (D key)"
+                      >
+                        <ArrowRight size={11} />
+                        <span>RIGHT</span>
+                      </button>
+                    </div>
+                    <div className="flex items-center gap-1 w-full mt-1">
+                      <button
+                        type="button"
+                        className="cockpit-toggle-btn flex-1 py-1 text-[9.5px]"
+                        onClick={() => handleVirtualThrust('ascend')}
+                        title="Climb Altitude (E key)"
+                      >
+                        <span>⇡ Climb (E)</span>
+                      </button>
+                      <button
+                        type="button"
+                        className="cockpit-toggle-btn flex-1 py-1 text-[9.5px]"
+                        onClick={() => handleVirtualThrust('descend')}
+                        title="Descend Altitude (Q key)"
+                      >
+                        <span>⇣ Descend (Q)</span>
+                      </button>
+                      <button
+                        type="button"
+                        className={`cockpit-toggle-btn flex-1 py-1 text-[9.5px] ${isSprintActive ? 'active' : ''}`}
+                        onClick={() => setIsSprintActive(!isSprintActive)}
+                        title="Toggle Turbo Boost (Shift key)"
+                      >
+                        <Zap size={10} className={isSprintActive ? 'text-amber-400' : ''} />
+                        <span>{isSprintActive ? '115kph' : 'Turbo'}</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Telemetry Avionics Grid */}
               <div className="cockpit-hud-section">
                 <div className="cockpit-section-label">
@@ -1169,8 +1412,40 @@ export default function TerrainViewer({
         )}
 
         {effectiveFlightMode === 'manual' && (
-          <div className="flight-hint-pill font-mono">
-            <span>🖱️ Drag to Steer | WASD Thrust | Q/E Alt | Shift Boost</span>
+          <div className="flex items-center gap-2">
+            <div className="flight-controls-pill-group">
+              <span className="text-[10.5px] font-mono text-emerald-400 font-bold px-1 flex items-center gap-1">
+                <Plane size={11} /> MANUAL FPV
+              </span>
+              <button
+                type="button"
+                className={`flight-deck-btn ${isSprintActive ? 'active text-amber-300' : ''}`}
+                onClick={() => setIsSprintActive(!isSprintActive)}
+                title="Toggle 3x Turbo Thruster Speed (Shift key)"
+              >
+                <Zap size={11} />
+                <span>{isSprintActive ? '115 km/h' : 'Turbo Boost'}</span>
+              </button>
+              <button
+                type="button"
+                className="flight-deck-btn"
+                onClick={() => handleVirtualThrust('ascend')}
+                title="Climb altitude (+7m)"
+              >
+                <span>Climb +7m</span>
+              </button>
+              <button
+                type="button"
+                className="flight-deck-btn"
+                onClick={() => handleVirtualThrust('descend')}
+                title="Descend altitude (-7m)"
+              >
+                <span>Descend -7m</span>
+              </button>
+            </div>
+            <div className="flight-hint-pill font-mono hidden md:flex">
+              <span>🖱️ Drag to Steer | WASD Thrust | Q/E Alt | Shift Boost</span>
+            </div>
           </div>
         )}
 
