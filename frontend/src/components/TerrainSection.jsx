@@ -13,13 +13,20 @@ import {
   Activity,
   Gauge,
   Radio,
+  Sun,
+  Eye,
+  Map,
 } from 'lucide-react';
 import TerrainViewer from './TerrainViewer';
 
 /**
- * 3D Flythrough Section
- * Interactive 60 FPS drone flight deck featuring autonomous aerial reconnaissance,
- * first-person pilot simulator, real-time metric elevation telemetry, and point measurements.
+ * Tactical 3D Cockpit & Aerial Reconnaissance Section
+ * Interactive 60 FPS flight deck featuring:
+ * - Full Tactical Cockpit HUD with Solar Lighting & Sun Angle simulation
+ * - Autonomous Drone Reconnaissance Flythrough (Auto Tour)
+ * - First-Person Manual Drone Flight Simulator (WASD + Mouse-Look)
+ * - 360° Orbital Inspection and Top-Down Nadir satellite views
+ * - Authoritative point measurements & surface diagnostics
  */
 export default function TerrainSection(props) {
   const {
@@ -30,6 +37,7 @@ export default function TerrainSection(props) {
     cameraMode = 'fly',
     onCameraModeChange,
     verticalExaggeration = 0.2,
+    onVerticalExaggerationChange,
     colorRamp = 'terrain',
     selectedMeasurement,
     onSelectMeasurement,
@@ -39,7 +47,8 @@ export default function TerrainSection(props) {
   } = props || {};
 
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [flightMode, setFlightMode] = useState('auto'); // 'auto' | 'manual' | 'orbit'
+  const [viewMode, setViewMode] = useState('cockpit'); // 'cockpit' | 'flythrough'
+  const [flightMode, setFlightMode] = useState('auto'); // 'auto' | 'manual' | 'orbit' | 'topdown'
   const [isTourPaused, setIsTourPaused] = useState(false);
   const [tourSpeed, setTourSpeed] = useState(1.0);
   const [cruiseAltitude, setCruiseAltitude] = useState(28.0);
@@ -81,7 +90,7 @@ export default function TerrainSection(props) {
 
   const handleFlightModeSelect = (mode) => {
     setFlightMode(mode);
-    if (mode === 'orbit') {
+    if (mode === 'orbit' || mode === 'topdown') {
       if (onCameraModeChange) onCameraModeChange('orbit');
     } else {
       if (onCameraModeChange) onCameraModeChange('fly');
@@ -135,63 +144,110 @@ export default function TerrainSection(props) {
       {/* Flight Deck Header Toolbar */}
       <div className="terrain-header-toolbar">
         <div className="toolbar-title-group">
-          <Plane className="text-cyan animate-pulse" size={21} />
+          <Navigation className="text-cyan animate-pulse" size={22} />
           <div>
-            <div className="flex items-center gap-2">
-              <h3 className="terrain-title-text">3D Flythrough</h3>
+            <div className="flex items-center gap-2 flex-wrap">
+              <h3 className="terrain-title-text">Tactical 3D Cockpit &amp; Flythrough</h3>
               <span className="flight-live-badge">
                 <span className="flight-pulse-dot" />
                 <span>60 FPS Fly Engine</span>
               </span>
+              <span className="hidden sm:inline-flex px-1.5 py-0.5 text-[10px] font-mono bg-sky-950/70 text-sky-300 border border-sky-800/60 rounded">
+                ISRO / SAC Telemetry
+              </span>
             </div>
             <span className="terrain-subtitle-text">
-              Real-Time Drone Reconnaissance &amp; Metric Flight Deck ({dsmMesh ? `${dsmMesh.rows}×${dsmMesh.cols} Grid` : '128×128 Grid'})
+              Real-Time Drone Reconnaissance &amp; Metric Elevation Flight Deck ({dsmMesh ? `${dsmMesh.rows}×${dsmMesh.cols} Grid` : '128×128 Grid'} · 0.33m GSD)
             </span>
           </div>
         </div>
 
-        {/* Controls Toolbar: Flight Modes, Tactical Cockpit, Reset View, Fullscreen */}
+        {/* Controls Toolbar: View Mode, Flight Modes, Tactical Cockpit, Fullscreen */}
         <div className="toolbar-controls-group">
-          {/* Mode Switcher: Auto Tour, Manual Fly, Orbit */}
+          {/* View Mode Toggle: Tactical Cockpit vs Flythrough */}
+          <div className="flex items-center bg-slate-900 border border-slate-700/60 rounded-full p-0.5">
+            <button
+              type="button"
+              className={`px-3 py-1 text-xs font-semibold rounded-full transition flex items-center gap-1.5 cursor-pointer ${
+                viewMode === 'cockpit'
+                  ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-sm'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+              onClick={() => setViewMode('cockpit')}
+              title="Tactical Cockpit View with Solar Lighting, HUD Avionics & Diagnostics"
+            >
+              <Compass size={13} />
+              <span>Cockpit HUD</span>
+            </button>
+            <button
+              type="button"
+              className={`px-3 py-1 text-xs font-semibold rounded-full transition flex items-center gap-1.5 cursor-pointer ${
+                viewMode === 'flythrough'
+                  ? 'bg-gradient-to-r from-sky-500 to-blue-600 text-white shadow-sm'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+              onClick={() => setViewMode('flythrough')}
+              title="Clean 3D Flythrough View"
+            >
+              <Plane size={13} />
+              <span>Flythrough</span>
+            </button>
+          </div>
+
+          {/* Flight Modes: Auto Tour, Manual Fly, Orbit, Top-Down */}
           <div className="flight-mode-toggle-group">
             <button
+              type="button"
               className={`flight-mode-btn ${flightMode === 'auto' ? 'active' : ''}`}
               onClick={() => handleFlightModeSelect('auto')}
-              title="Cinematic Autonomous Drone Reconnaissance Flight (Auto-gliding across terrain)"
+              title="Autonomous Drone Reconnaissance (Auto-gliding across terrain)"
             >
-              <Navigation size={14} />
+              <Navigation size={13} />
               <span>Auto Tour</span>
             </button>
             <button
+              type="button"
               className={`flight-mode-btn ${flightMode === 'manual' ? 'active' : ''}`}
               onClick={() => handleFlightModeSelect('manual')}
-              title="Manual First-Person Drone Flight (Drag mouse to steer, WASD keys to thrust)"
+              title="Manual Drone Flight Simulator (Drag mouse to steer, WASD keys to thrust)"
             >
-              <Plane size={14} />
+              <Plane size={13} />
               <span>Manual Fly</span>
             </button>
             <button
+              type="button"
               className={`flight-mode-btn ${flightMode === 'orbit' ? 'active' : ''}`}
               onClick={() => handleFlightModeSelect('orbit')}
-              title="Orbital Inspection (Drag to rotate 360°, scroll to zoom, click to measure)"
+              title="Orbital 360° Inspection (Drag to rotate, scroll to zoom, click to measure)"
             >
-              <Orbit size={14} />
+              <Orbit size={13} />
               <span>Orbit</span>
+            </button>
+            <button
+              type="button"
+              className={`flight-mode-btn ${flightMode === 'topdown' ? 'active' : ''}`}
+              onClick={() => handleFlightModeSelect('topdown')}
+              title="Top-Down Nadir 2D/3D Map View"
+            >
+              <Map size={13} />
+              <span>Top-Down</span>
             </button>
           </div>
 
           {onOpenCockpit && (
             <button
+              type="button"
               className="tool-btn-accent"
               onClick={onOpenCockpit}
               title="Launch full-screen Tactical 3D Cockpit with ISRO Telemetry HUD, Solar Illumination & LOD controls"
             >
               <Compass size={15} />
-              <span>Tactical Cockpit ↗</span>
+              <span>Cockpit Page ↗</span>
             </button>
           )}
 
           <button
+            type="button"
             className="tool-btn-neutral"
             onClick={onResetView}
             title="Reset flight trajectory to initial takeoff position"
@@ -201,6 +257,7 @@ export default function TerrainSection(props) {
           </button>
 
           <button
+            type="button"
             className="tool-btn-neutral"
             onClick={toggleFullscreen}
             title={isFullscreen ? 'Exit Fullscreen' : 'View Fullscreen'}
@@ -229,10 +286,12 @@ export default function TerrainSection(props) {
           cruiseAltitude={cruiseAltitude}
           onChangeAltitude={setCruiseAltitude}
           verticalExaggeration={verticalExaggeration}
+          onVerticalExaggerationChange={onVerticalExaggerationChange}
           colorRamp={colorRamp}
           selectedPoint={selectedMeasurement}
           onSelectPoint={onSelectMeasurement}
           resetViewTrigger={resetViewTrigger}
+          showCockpitHud={viewMode === 'cockpit'}
         />
 
         {/* Floating Overlay Point Measurement Cards */}

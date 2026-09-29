@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import {
@@ -13,6 +13,14 @@ import {
   Sliders,
   Layers,
   Eye,
+  Sun,
+  Maximize2,
+  Minimize2,
+  ChevronDown,
+  ChevronUp,
+  Radio,
+  Activity,
+  Box,
 } from 'lucide-react';
 import sampleOpticalImg from '../assets/sample_gamus_optical.png';
 import defaultTerrainMesh from '../data/default_terrain_mesh.json';
@@ -20,18 +28,19 @@ import { createTerrainGeometry, createElevationColorTexture, createSlopeColorTex
 import { getApiBase } from '../utils/apiConfig';
 
 /**
- * TerrainViewer - 3D Aerial Reconnaissance Flythrough & Heightfield Viewer
+ * TerrainViewer - Tactical 3D Cockpit & Aerial Reconnaissance Engine
  * 60 FPS WebGL engine with automated cinematic flythrough tour,
- * manual first-person drone flight simulator, and 360° orbital point inspection.
+ * manual first-person drone flight simulator, solar angle illumination,
+ * surface diagnostics, and point probe measurements.
  */
 export default function TerrainViewer({
   dsmData = null,
   userTextureUrl = null,
   textureMode = 'rgb', // 'rgb', 'colormap', 'slope', 'wireframe'
   onTextureModeChange = null,
-  cameraMode = 'fly', // 'fly' or 'orbit'
+  cameraMode = 'fly', // 'fly', 'orbit', 'topdown'
   onCameraModeChange = null,
-  flightMode = 'auto', // 'auto' | 'manual' | 'orbit'
+  flightMode = 'auto', // 'auto' | 'manual' | 'orbit' | 'topdown'
   onFlightModeChange = null,
   isTourPaused = false,
   onToggleTourPause = null,
@@ -40,10 +49,12 @@ export default function TerrainViewer({
   cruiseAltitude = 28.0,
   onChangeAltitude = null,
   verticalExaggeration = 0.2,
+  onVerticalExaggerationChange = null,
   colorRamp = 'terrain',
   selectedPoint = null,
   onSelectPoint = null,
   resetViewTrigger = 0,
+  showCockpitHud = true,
 }) {
   const mountRef = useRef(null);
   const sceneRef = useRef(null);
@@ -52,6 +63,7 @@ export default function TerrainViewer({
   const controlsRef = useRef(null);
   const terrainMeshRef = useRef(null);
   const terrainMaterialRef = useRef(null);
+  const sunLightRef = useRef(null);
   const markerGroupRef = useRef(null);
   const ringMeshRef = useRef(null);
   const raycasterRef = useRef(new THREE.Raycaster());
@@ -87,6 +99,13 @@ export default function TerrainViewer({
   const cruiseAltitudeRef = useRef(cruiseAltitude);
   cruiseAltitudeRef.current = cruiseAltitude;
 
+  // Tactical Cockpit Solar Lighting State
+  const [sunAzimuth, setSunAzimuth] = useState(135); // 0-360 deg
+  const [sunElevation, setSunElevation] = useState(45); // 10-90 deg
+  const [lodLevel, setLodLevel] = useState('lod0'); // 'lod0' | 'lod1' | 'lod2'
+  const [hudDrawerOpen, setHudDrawerOpen] = useState(true);
+  const [showCrosshair, setShowCrosshair] = useState(true);
+
   // Fly controls movement state
   const flyStateRef = useRef({
     moveForward: false,
@@ -116,6 +135,7 @@ export default function TerrainViewer({
     speedKmH: 52,
     x: 0,
     z: 0,
+    fps: 60,
   });
 
   // Keep internal mesh meta in sync with dsmData prop
@@ -144,7 +164,7 @@ export default function TerrainViewer({
     }
   }, [dsmData]);
 
-  // Resolve best available optical texture URL without making broken network calls
+  // Resolve optical texture with robust fallbacks
   const resolveOpticalTextureUrl = useCallback((meta) => {
     if (userTextureUrl) return userTextureUrl;
     if (meta?.texture_url) {
@@ -189,6 +209,18 @@ export default function TerrainViewer({
     const reliefMultiplier = terrainMeshRef.current?.userData?.reliefMultiplier || 1.0;
     return Math.max(0, (val - baseOffset) * reliefMultiplier);
   }, []);
+
+  // Update dynamic sun light position based on azimuth and elevation
+  useEffect(() => {
+    if (!sunLightRef.current) return;
+    const azRad = (sunAzimuth * Math.PI) / 180;
+    const elRad = (sunElevation * Math.PI) / 180;
+    const dist = 320;
+    const sx = dist * Math.cos(elRad) * Math.sin(azRad);
+    const sy = dist * Math.sin(elRad);
+    const sz = dist * Math.cos(elRad) * Math.cos(azRad);
+    sunLightRef.current.position.set(sx, sy, sz);
+  }, [sunAzimuth, sunElevation]);
 
   // Build or update terrain mesh geometry and textures
   const buildOrUpdateMesh = useCallback((scene, meta) => {
@@ -245,8 +277,8 @@ export default function TerrainViewer({
       terrainMaterial = new THREE.MeshStandardMaterial({
         map: textureMode === 'wireframe' ? null : activeMap,
         wireframe: textureMode === 'wireframe',
-        roughness: 0.75,
-        metalness: 0.05,
+        roughness: 0.72,
+        metalness: 0.08,
         side: THREE.DoubleSide,
       });
       terrainMaterialRef.current = terrainMaterial;
@@ -310,7 +342,7 @@ export default function TerrainViewer({
     };
   }, [colorRamp, textureMode, resolveOpticalTextureUrl]);
 
-  // 1. Scene & WebGLRenderer Setup (Mount once)
+  // 1. Scene & WebGLRenderer Setup
   useEffect(() => {
     const container = mountRef.current;
     if (!container) return;
@@ -320,11 +352,11 @@ export default function TerrainViewer({
 
     // A. Scene
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x070c17);
-    scene.fog = new THREE.FogExp2(0x070c17, 0.0018);
+    scene.background = new THREE.Color(0x060c18);
+    scene.fog = new THREE.FogExp2(0x060c18, 0.0018);
     sceneRef.current = scene;
 
-    // B. Camera - initially set to optimal drone recon altitude
+    // B. Camera
     const camera = new THREE.PerspectiveCamera(50, width / height, 0.5, 3500);
     camera.position.set(0, 36, 92);
     camera.lookAt(0, 12, 0);
@@ -340,7 +372,7 @@ export default function TerrainViewer({
     container.innerHTML = '';
     container.appendChild(renderer.domElement);
 
-    // D. OrbitControls (only active in orbit mode)
+    // D. OrbitControls
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.06;
@@ -350,18 +382,25 @@ export default function TerrainViewer({
     controls.enabled = effectiveFlightMode === 'orbit';
     controlsRef.current = controls;
 
-    // E. Lighting
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.85);
+    // E. Lighting (with Dynamic Solar Directional Light)
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.75);
     scene.add(ambientLight);
 
-    const sunLight = new THREE.DirectionalLight(0xfff8ed, 1.55);
+    const sunLight = new THREE.DirectionalLight(0xfff5ea, 1.6);
     sunLight.position.set(130, 230, 95);
     sunLight.castShadow = true;
     sunLight.shadow.mapSize.width = 2048;
     sunLight.shadow.mapSize.height = 2048;
+    sunLight.shadow.camera.near = 10;
+    sunLight.shadow.camera.far = 700;
+    sunLight.shadow.camera.left = -120;
+    sunLight.shadow.camera.right = 120;
+    sunLight.shadow.camera.top = 120;
+    sunLight.shadow.camera.bottom = -120;
     scene.add(sunLight);
+    sunLightRef.current = sunLight;
 
-    const skyFill = new THREE.HemisphereLight(0x38bdf8, 0x070c17, 0.6);
+    const skyFill = new THREE.HemisphereLight(0x38bdf8, 0x060c18, 0.6);
     scene.add(skyFill);
 
     // F. Base Metric Grid
@@ -411,13 +450,24 @@ export default function TerrainViewer({
     let animId;
     let lastTime = performance.now();
     let lastTelemetryUpdate = 0;
+    let frameCount = 0;
+    let fpsTimer = performance.now();
+    let currentFps = 60;
 
     const animate = (currentTime) => {
       animId = requestAnimationFrame(animate);
       const delta = Math.min((currentTime - lastTime) / 1000, 0.1);
       lastTime = currentTime;
 
-      // Pulse pin marker if visible
+      // Track FPS
+      frameCount++;
+      if (currentTime - fpsTimer >= 1000) {
+        currentFps = Math.round((frameCount * 1000) / (currentTime - fpsTimer));
+        frameCount = 0;
+        fpsTimer = currentTime;
+      }
+
+      // Pulse pin marker
       if (markerGroup.visible && ringMeshRef.current) {
         const pulse = 1.0 + 0.15 * Math.sin(currentTime * 0.006);
         ringMeshRef.current.scale.set(pulse, 1, pulse);
@@ -427,6 +477,9 @@ export default function TerrainViewer({
       const currentExag = verticalExaggerationRef.current || 0.2;
 
       if (currentFlight === 'orbit') {
+        controls.enabled = true;
+        controls.update();
+      } else if (currentFlight === 'topdown') {
         controls.enabled = true;
         controls.update();
       } else {
@@ -451,7 +504,7 @@ export default function TerrainViewer({
           const aheadX = radiusX * Math.sin(aheadT);
           const aheadZ = radiusZ * Math.sin(2 * aheadT) * 0.65;
 
-          // Terrain elevation & safe AGL flight clearance
+          // Dynamic AGL flight clearance
           const groundH = sampleTerrainHeight(pathX, pathZ);
           const groundY = groundH * currentExag;
           const targetCamY = groundY + cruiseAltitudeRef.current + 3.0 * Math.sin(t * 1.6);
@@ -473,7 +526,7 @@ export default function TerrainViewer({
           // --- MANUAL FIRST-PERSON DRONE FLIGHT SIMULATOR ---
           const fly = flyStateRef.current;
           const isSprint = fly.isSprint;
-          const baseSpeed = isSprint ? 65.0 : 28.0;
+          const baseSpeed = isSprint ? 68.0 : 28.0;
           const moveDist = baseSpeed * delta;
 
           // Direction vector from mouse-look pitch & yaw
@@ -536,6 +589,7 @@ export default function TerrainViewer({
           speedKmH,
           x: Number(camera.position.x.toFixed(1)),
           z: Number(camera.position.z.toFixed(1)),
+          fps: currentFps,
         });
       }
 
@@ -766,7 +820,7 @@ export default function TerrainViewer({
     }
   }, [loadedMeshMeta, buildOrUpdateMesh]);
 
-  // 3. Ultra-fast IN-PLACE Vertical Exaggeration update (Zero scene recreation!)
+  // 3. Ultra-fast IN-PLACE Vertical Exaggeration update
   useEffect(() => {
     const mesh = terrainMeshRef.current;
     if (!mesh || !mesh.geometry || !loadedMeshMeta?.heights) return;
@@ -847,6 +901,12 @@ export default function TerrainViewer({
           controlsRef.current.target.set(0, 0, 0);
           controlsRef.current.update();
         }
+      } else if (effectiveFlightMode === 'topdown') {
+        cameraRef.current.position.set(0, 200, 0.01);
+        if (controlsRef.current) {
+          controlsRef.current.target.set(0, 0, 0);
+          controlsRef.current.update();
+        }
       } else {
         flightTimeRef.current = 0;
         yawRef.current = 0;
@@ -858,13 +918,17 @@ export default function TerrainViewer({
     }
   }, [resetViewTrigger, effectiveFlightMode]);
 
-  // Handle switching to manual flight - align yaw/pitch smoothly from current view
+  // Handle switching to manual flight
   useEffect(() => {
     if (effectiveFlightMode === 'manual' && cameraRef.current) {
       const dir = new THREE.Vector3();
       cameraRef.current.getWorldDirection(dir);
       yawRef.current = Math.atan2(dir.x, -dir.z);
       pitchRef.current = Math.asin(Math.max(-0.95, Math.min(0.95, dir.y)));
+    } else if (effectiveFlightMode === 'topdown' && cameraRef.current && controlsRef.current) {
+      cameraRef.current.position.set(0, 210, 0.01);
+      controlsRef.current.target.set(0, 0, 0);
+      controlsRef.current.update();
     }
   }, [effectiveFlightMode]);
 
@@ -876,43 +940,184 @@ export default function TerrainViewer({
     <div className="terrain-viewer-container" style={{ width: '100%', height: '100%', position: 'relative' }}>
       <div ref={mountRef} className="terrain-webgl-canvas" style={{ width: '100%', height: '100%', overflow: 'hidden' }} />
 
-      {/* TOP-RIGHT: Live Flight Telemetry & Compass Pod */}
-      <div className="flight-avionics-hud">
-        <div className="flight-telemetry-box">
-          <div className="flight-telemetry-header">
-            <span className="flight-telemetry-title">
-              <Navigation size={12} className="text-cyan animate-pulse" />
-              <span>
-                {effectiveFlightMode === 'auto' ? 'RECON FLIGHT' : effectiveFlightMode === 'manual' ? 'PILOT HUD' : 'ORBIT DECK'}
+      {/* ISRO Tactical Mission Banner */}
+      <div className="cockpit-mission-banner">
+        <Radio size={12} className="text-emerald-400 animate-pulse" />
+        <span className="text-white font-bold tracking-wider">ISRO / SAC TACTICAL COCKPIT</span>
+        <span className="text-slate-500">|</span>
+        <span className="text-cyan-300">0.33m GSD</span>
+        <span className="text-slate-500">|</span>
+        <span className="text-amber-300 font-semibold">{telemetry.fps} FPS</span>
+      </div>
+
+      {/* Cockpit Reticle / Flight Crosshairs */}
+      {showCrosshair && (
+        <div className="cockpit-crosshair-center">
+          <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="60" cy="60" r="30" stroke="#38bdf8" strokeWidth="1" strokeDasharray="3 3" opacity="0.6" />
+            <circle cx="60" cy="60" r="2.5" fill="#ff9944" />
+            {/* Horizon pitch marks */}
+            <line x1="20" y1="60" x2="45" y2="60" stroke="#38bdf8" strokeWidth="1.5" />
+            <line x1="75" y1="60" x2="100" y2="60" stroke="#38bdf8" strokeWidth="1.5" />
+            <line x1="60" y1="20" x2="60" y2="35" stroke="#38bdf8" strokeWidth="1.5" />
+            <line x1="60" y1="85" x2="60" y2="100" stroke="#38bdf8" strokeWidth="1.5" />
+          </svg>
+        </div>
+      )}
+
+      {/* TOP-RIGHT: Tactical Cockpit Controls HUD Drawer */}
+      {showCockpitHud && (
+        <div className="tactical-cockpit-drawer">
+          <div className="cockpit-drawer-header">
+            <span className="cockpit-drawer-title">
+              <Sliders size={13} className="text-[#ff9944]" />
+              <span>COCKPIT CONTROLS HUD</span>
+            </span>
+            <div className="flex items-center gap-1.5">
+              <span className="px-1.5 py-0.5 rounded font-mono text-[9px] font-bold bg-emerald-950/90 text-emerald-400 border border-emerald-700/60">
+                {telemetry.fps} FPS
               </span>
-            </span>
-            <span className="px-1.5 py-0.5 text-[9px] font-mono bg-sky-950/80 text-sky-300 border border-sky-700/60 rounded">
-              {telemetry.heading.toString().padStart(3, '0')}° {telemetry.cardinal}
-            </span>
+              <button
+                type="button"
+                onClick={() => setHudDrawerOpen(!hudDrawerOpen)}
+                className="p-1 rounded text-slate-400 hover:text-white hover:bg-slate-800/60 transition cursor-pointer"
+                title={hudDrawerOpen ? 'Collapse HUD Drawer' : 'Expand HUD Drawer'}
+              >
+                {hudDrawerOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+              </button>
+            </div>
           </div>
 
-          <div className="flight-telemetry-grid">
-            <div className="telemetry-cell">
-              <span className="telemetry-cell-label">ALT (AGL)</span>
-              <span className="telemetry-cell-value text-emerald-400">{telemetry.altAgl} m</span>
-            </div>
-            <div className="telemetry-cell">
-              <span className="telemetry-cell-label">AIRSPEED</span>
-              <span className="telemetry-cell-value text-cyan-300">{telemetry.speedKmH} km/h</span>
-            </div>
-            <div className="telemetry-cell">
-              <span className="telemetry-cell-label">DATUM MSL</span>
-              <span className="telemetry-cell-value text-slate-200">{telemetry.datumMsl} m</span>
-            </div>
-            <div className="telemetry-cell">
-              <span className="telemetry-cell-label">GRID COORDS</span>
-              <span className="telemetry-cell-value text-slate-300 text-[10px]">
-                {telemetry.x > 0 ? '+' : ''}{telemetry.x},{telemetry.z > 0 ? '+' : ''}{telemetry.z}
-              </span>
-            </div>
-          </div>
+          {hudDrawerOpen && (
+            <>
+              {/* Telemetry Avionics Grid */}
+              <div className="cockpit-hud-section">
+                <div className="cockpit-section-label">
+                  <span>FLIGHT AVIONICS</span>
+                  <span className="text-slate-300 font-mono text-[9.5px]">
+                    {telemetry.heading.toString().padStart(3, '0')}° {telemetry.cardinal}
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 gap-2 text-xs font-mono">
+                  <div className="bg-slate-900/80 p-1.5 rounded border border-slate-800">
+                    <span className="text-[9px] text-slate-400 block">ALT (AGL)</span>
+                    <strong className="text-emerald-400 text-xs">{telemetry.altAgl} m</strong>
+                  </div>
+                  <div className="bg-slate-900/80 p-1.5 rounded border border-slate-800">
+                    <span className="text-[9px] text-slate-400 block">AIRSPEED</span>
+                    <strong className="text-cyan-300 text-xs">{telemetry.speedKmH} km/h</strong>
+                  </div>
+                  <div className="bg-slate-900/80 p-1.5 rounded border border-slate-800">
+                    <span className="text-[9px] text-slate-400 block">DATUM MSL</span>
+                    <strong className="text-slate-200 text-xs">{telemetry.datumMsl} m</strong>
+                  </div>
+                  <div className="bg-slate-900/80 p-1.5 rounded border border-slate-800">
+                    <span className="text-[9px] text-slate-400 block">COORDS</span>
+                    <strong className="text-slate-300 text-[10px] truncate block">
+                      {telemetry.x > 0 ? '+' : ''}{telemetry.x}, {telemetry.z > 0 ? '+' : ''}{telemetry.z}
+                    </strong>
+                  </div>
+                </div>
+              </div>
+
+              {/* Solar Lighting Simulation */}
+              <div className="cockpit-hud-section">
+                <div className="cockpit-section-label">
+                  <span className="flex items-center gap-1.5">
+                    <Sun size={11} className="text-amber-400" />
+                    <span>SOLAR ILLUMINATION</span>
+                  </span>
+                </div>
+                <div className="sun-slider-wrap">
+                  <div className="sun-slider-header">
+                    <span>Sun Azimuth</span>
+                    <span className="font-mono text-amber-400">{sunAzimuth}°</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="360"
+                    step="5"
+                    value={sunAzimuth}
+                    onChange={(e) => setSunAzimuth(Number(e.target.value))}
+                    className="sun-slider-input"
+                  />
+                </div>
+                <div className="sun-slider-wrap mt-1">
+                  <div className="sun-slider-header">
+                    <span>Sun Elevation</span>
+                    <span className="font-mono text-amber-400">{sunElevation}°</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="10"
+                    max="90"
+                    step="5"
+                    value={sunElevation}
+                    onChange={(e) => setSunElevation(Number(e.target.value))}
+                    className="sun-slider-input"
+                  />
+                </div>
+              </div>
+
+              {/* Surface Diagnostics: Slope, Wireframe, Reticle */}
+              <div className="cockpit-hud-section">
+                <div className="cockpit-section-label">
+                  <span>SURFACE DIAGNOSTICS</span>
+                </div>
+                <div className="cockpit-btn-grid">
+                  <button
+                    type="button"
+                    className={`cockpit-toggle-btn ${textureMode === 'slope' ? 'active' : ''}`}
+                    onClick={() => handleTextureChange(textureMode === 'slope' ? 'rgb' : 'slope')}
+                  >
+                    <span>Slope Analysis</span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`cockpit-toggle-btn ${textureMode === 'wireframe' ? 'active' : ''}`}
+                    onClick={() => handleTextureChange(textureMode === 'wireframe' ? 'rgb' : 'wireframe')}
+                  >
+                    <span>Wireframe Grid</span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`cockpit-toggle-btn ${textureMode === 'colormap' ? 'active' : ''}`}
+                    onClick={() => handleTextureChange(textureMode === 'colormap' ? 'rgb' : 'colormap')}
+                  >
+                    <span>Colormap</span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`cockpit-toggle-btn ${showCrosshair ? 'active' : ''}`}
+                    onClick={() => setShowCrosshair(!showCrosshair)}
+                  >
+                    <Crosshair size={11} />
+                    <span>HUD Reticle</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Vertical Relief Slider */}
+              <div className="cockpit-hud-section">
+                <div className="cockpit-section-label">
+                  <span>VERTICAL RELIEF</span>
+                  <span className="font-mono text-cyan-300 font-bold">{verticalExaggeration.toFixed(1)}x</span>
+                </div>
+                <input
+                  type="range"
+                  min="0.0"
+                  max="3.0"
+                  step="0.1"
+                  value={verticalExaggeration}
+                  onChange={(e) => onVerticalExaggerationChange && onVerticalExaggerationChange(parseFloat(e.target.value))}
+                  className="sun-slider-input"
+                />
+              </div>
+            </>
+          )}
         </div>
-      </div>
+      )}
 
       {/* BOTTOM-BAR: Flight Controls & Mode Specific Controls */}
       <div className="flight-deck-bar">
@@ -975,7 +1180,13 @@ export default function TerrainViewer({
           </div>
         )}
 
-        {/* Texture Mode Selector Quick Pills */}
+        {effectiveFlightMode === 'topdown' && (
+          <div className="flight-hint-pill font-mono">
+            <span>🗺️ Top-Down Nadir 2D View · Drag to Pan · Scroll to Zoom</span>
+          </div>
+        )}
+
+        {/* Quick Texture Mode Pills */}
         <div className="viewport-mode-pills pointer-events-auto">
           <button
             className={`pill-btn ${textureMode === 'rgb' ? 'active' : ''}`}

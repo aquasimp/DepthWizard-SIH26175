@@ -772,6 +772,7 @@ export function App() {
                 cameraMode={cameraMode}
                 onCameraModeChange={setCameraMode}
                 verticalExaggeration={verticalExaggeration}
+                onVerticalExaggerationChange={setVerticalExaggeration}
                 colorRamp={colorRamp}
                 selectedMeasurement={selectedMeasurement}
                 onSelectMeasurement={setSelectedMeasurement}
