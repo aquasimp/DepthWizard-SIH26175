@@ -10,7 +10,6 @@ import {
   Upload,
   Wrench,
 } from 'lucide-react';
-import { IsroHeader } from '../components/IsroHeader';
 import { getApiBase } from '../utils/apiConfig';
 import { TerrainPerformanceTable } from '../components/TerrainPerformanceTable';
 
@@ -54,14 +53,19 @@ interface ValidatePageProps {
   onNavigateBack: () => void;
   onNavigateHome?: () => void;
   onNavigateStatus?: (jobId: string) => void;
+  isDark?: boolean;
 }
 
 export const ValidatePage: React.FC<ValidatePageProps> = ({
   jobId,
   onNavigateBack,
-  onNavigateHome,
-  onNavigateStatus,
+  onNavigateHome: _onNavigateHome,
+  onNavigateStatus: _onNavigateStatus,
+  isDark: isDarkProp,
 }) => {
+  const isDark = isDarkProp !== undefined 
+    ? isDarkProp 
+    : (typeof document !== 'undefined' ? (document.documentElement.getAttribute('data-theme') === 'dark' || document.body.classList.contains('dark') || document.body.classList.contains('theme-dark')) : false);
   const [metrics, setMetrics] = useState<MetricsData | null>(null);
   const [jobStatus, setJobStatus] = useState<any>(null);
   const [refFile, setRefFile] = useState<File | null>(null);
@@ -254,34 +258,30 @@ export const ValidatePage: React.FC<ValidatePageProps> = ({
   const maxHistCount = metrics?.histogram?.counts ? Math.max(...metrics.histogram.counts, 1) : 1;
 
   return (
-    <div className="min-h-screen bg-[#050811] text-slate-100 flex flex-col font-sans relative">
-      <div className="absolute inset-0 bg-aerospace-grid opacity-75 pointer-events-none z-0" />
+    <div className={`min-h-screen ${isDark ? 'bg-[#050811] text-slate-100' : 'bg-[#f4f8fd] text-slate-900'} flex flex-col font-sans relative transition-colors duration-300`}>
+      <div className={`absolute inset-0 bg-aerospace-grid ${isDark ? 'opacity-75' : 'opacity-25 invert'} pointer-events-none z-0`} />
 
-      {/* ISRO Mission Header */}
-      <IsroHeader
-        currentPage="validate"
-        activeJobId={jobId}
-        onNavigate={(page, id) => {
-          if ((page === 'upload' || page === 'dashboard') && onNavigateHome) onNavigateHome();
-          else if (page === 'viewer') onNavigateBack();
-          else if (page === 'status' && id && onNavigateStatus) onNavigateStatus(id);
-        }}
-      />
-
-      <main className="flex-1 max-w-6xl w-full mx-auto p-4 sm:p-6 lg:p-8 flex flex-col gap-6 relative z-10">
+      <main 
+        className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pb-16 flex flex-col gap-6 relative z-10"
+        style={{ paddingTop: '125px' }}
+      >
         {/* Top Assessment Header */}
-        <div className="mission-panel rounded-xl p-5 border border-[#1e315b] relative overflow-hidden flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className={`rounded-xl p-5 border ${
+          isDark 
+            ? 'border-[#1e315b] bg-[#070e1d]/95 text-white shadow-xl' 
+            : 'border-slate-200/90 bg-white/95 text-slate-900 shadow-xl shadow-slate-200/50'
+        } backdrop-blur-xl relative overflow-hidden flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 transition-colors duration-300`}>
           <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-[#ff6600] via-[#0055a5] to-[#00c2cb]" />
 
           <div className="flex flex-col gap-1">
-            <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-widest text-[#00c2cb]">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+            <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-widest text-[#0088cc] font-bold">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
               <span>NRSC / ISRO PHOTOGRAMMETRIC ACCURACY VERIFICATION</span>
             </div>
-            <h2 className="text-xl sm:text-2xl font-black text-white font-display">
+            <h2 className={`text-xl sm:text-2xl font-black ${isDark ? 'text-white' : 'text-slate-900'} font-display`}>
               LiDAR Ground Truth Validation Deck #{jobId}
             </h2>
-            <p className="text-xs text-slate-300 mt-0.5 font-sans">
+            <p className={`text-xs ${isDark ? 'text-slate-300' : 'text-slate-600'} mt-0.5 font-sans`}>
               Co-register single-view estimated 3D DSM with high-resolution reference LiDAR to compute statistical errors (RMSE, MAE, LE90, NMAD, Pearson r).
             </p>
           </div>
@@ -290,7 +290,11 @@ export const ValidatePage: React.FC<ValidatePageProps> = ({
             <button
               type="button"
               onClick={() => setShowGcpForm(!showGcpForm)}
-              className="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-[#09152b] hover:bg-[#11244a] text-xs font-mono text-slate-200 border border-[#1e315b] hover:border-[#00c2cb] transition cursor-pointer"
+              className={`flex items-center gap-2 px-3.5 py-2 rounded-lg ${
+                isDark 
+                  ? 'bg-[#09152b] hover:bg-[#11244a] text-slate-200 border-[#1e315b]' 
+                  : 'bg-slate-100 hover:bg-slate-200 text-slate-800 border-slate-300 shadow-sm'
+              } text-xs font-mono border hover:border-[#00c2cb] transition cursor-pointer`}
             >
               <Wrench className="w-3.5 h-3.5 text-[#ff6600]" />
               <span>{showGcpForm ? 'HIDE GCP FIT' : 'RECALIBRATE WITH GCPS'}</span>
@@ -299,7 +303,7 @@ export const ValidatePage: React.FC<ValidatePageProps> = ({
             <button
               type="button"
               onClick={onNavigateBack}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#0055a5] hover:bg-[#004488] text-xs font-mono text-white font-bold transition cursor-pointer border border-[#00c2cb]/40"
+              className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#0055a5] hover:bg-[#004488] text-xs font-mono text-white font-bold transition cursor-pointer border border-[#00c2cb]/40 shadow-sm"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>3D COCKPIT</span>

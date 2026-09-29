@@ -83,9 +83,9 @@ export const ControlHud: React.FC<ControlHudProps> = ({
       )}
 
       {/* Floating ISRO Telemetry HUD Controls Panel */}
-      <div className={`absolute ${isEmbedded ? 'top-3 right-3 max-h-[calc(100%-24px)]' : 'top-20 right-4 max-h-[calc(100vh-95px)]'} z-20 flex flex-col gap-2 min-w-[280px] max-w-[315px] overflow-y-auto pr-1`}>
+      <div className={`absolute ${isEmbedded ? 'top-3 right-3 max-h-[calc(100%-24px)]' : 'top-20 right-4 max-h-[calc(100vh-95px)]'} z-20 flex flex-col gap-2 min-w-[275px] max-w-[310px] pr-0.5 pointer-events-auto select-none`}>
         {/* Top Header Card */}
-        <div className="mission-panel rounded-lg border border-[#1e315b] p-3 shadow-xl flex items-center justify-between text-slate-200">
+        <div className="rounded-lg border border-[#1e315b] bg-[#060c18]/95 backdrop-blur-xl p-3 shadow-2xl flex items-center justify-between text-slate-200">
           <div className="flex items-center gap-2">
             <Sliders className="w-4 h-4 text-[#ff6600]" />
             <span className="text-xs font-bold tracking-wider uppercase font-mono text-white">
@@ -119,7 +119,7 @@ export const ControlHud: React.FC<ControlHudProps> = ({
         </div>
 
         {!collapsed && (
-          <div className="mission-panel rounded-lg border border-[#1e315b] p-3.5 shadow-2xl flex flex-col gap-3 text-xs text-slate-300 max-h-[calc(100vh-140px)] overflow-y-auto">
+          <div className={`rounded-lg border border-[#1e315b] bg-[#060c18]/95 backdrop-blur-xl p-3.5 shadow-2xl flex flex-col gap-3 text-xs text-slate-300 ${isEmbedded ? 'max-h-[500px]' : 'max-h-[calc(100vh-140px)]'} overflow-y-auto scrollbar-thin scrollbar-thumb-[#1e315b]`}>
             {/* Camera Mode Rig */}
             <div className="flex flex-col gap-1.5">
               <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider flex items-center justify-between font-mono">
@@ -279,14 +279,14 @@ export const ControlHud: React.FC<ControlHudProps> = ({
             </div>
 
             {/* Solar Illumination Vector Controls */}
-            <div className="flex flex-col gap-2 pt-1 border-t border-[#1e315b]/60">
+            <div className="flex flex-col gap-1.5 pt-1 border-t border-[#1e315b]/60">
               <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider flex items-center gap-1.5 font-mono">
                 <Sun className="w-3 h-3 text-[#ff9944]" /> SOLAR VECTOR (AZIMUTH &amp; ELEVATION)
               </span>
-              <div className="flex flex-col gap-1.5 text-[11px] font-mono">
-                <div className="flex justify-between">
+              <div className="flex flex-col gap-2 p-2.5 rounded-lg bg-[#070e1d] border border-[#1e315b] text-[11px] font-mono">
+                <div className="flex justify-between items-center">
                   <span className="text-slate-400">Solar Azimuth (&Phi;):</span>
-                  <span className="text-[#00c2cb] font-bold">{sunAzimuth}°</span>
+                  <span className="text-[#00c2cb] font-bold bg-[#0a1a2e] px-1.5 py-0.5 rounded border border-[#00c2cb]/30">{sunAzimuth}°</span>
                 </div>
                 <input
                   type="range"
@@ -295,12 +295,12 @@ export const ControlHud: React.FC<ControlHudProps> = ({
                   step="5"
                   value={sunAzimuth}
                   onChange={(e) => onSunAzimuthChange(parseInt(e.target.value, 10))}
-                  className="accent-[#00c2cb] cursor-pointer h-1.5 bg-[#070e1d] rounded-lg"
+                  className="accent-[#00c2cb] cursor-pointer h-1.5 bg-[#09152b] rounded-lg"
                 />
 
-                <div className="flex justify-between mt-1">
+                <div className="flex justify-between items-center mt-0.5">
                   <span className="text-slate-400">Solar Elevation (&Theta;):</span>
-                  <span className="text-[#ff9944] font-bold">{sunElevation}°</span>
+                  <span className="text-[#ff9944] font-bold bg-[#261505] px-1.5 py-0.5 rounded border border-[#ff6600]/30">{sunElevation}°</span>
                 </div>
                 <input
                   type="range"
@@ -309,7 +309,7 @@ export const ControlHud: React.FC<ControlHudProps> = ({
                   step="5"
                   value={sunElevation}
                   onChange={(e) => onSunElevationChange(parseInt(e.target.value, 10))}
-                  className="accent-[#ff6600] cursor-pointer h-1.5 bg-[#070e1d] rounded-lg"
+                  className="accent-[#ff6600] cursor-pointer h-1.5 bg-[#09152b] rounded-lg"
                 />
               </div>
             </div>

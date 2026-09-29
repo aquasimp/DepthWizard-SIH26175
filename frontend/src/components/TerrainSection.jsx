@@ -27,6 +27,10 @@ export default function TerrainSection(props) {
 
   // Sync state with native browser fullscreen events
   useEffect(() => {
+    const triggerLayoutRecalculation = () => {
+      window.dispatchEvent(new Event('resize'));
+    };
+
     const handleFullscreenChange = () => {
       const isCurrentlyFullscreen = Boolean(
         document.fullscreenElement ||
@@ -35,6 +39,14 @@ export default function TerrainSection(props) {
         document.msFullscreenElement
       );
       setIsFullscreen(isCurrentlyFullscreen);
+
+      // Staggered layout resize triggers to allow browser DOM transition to finish
+      triggerLayoutRecalculation();
+      requestAnimationFrame(triggerLayoutRecalculation);
+      setTimeout(triggerLayoutRecalculation, 50);
+      setTimeout(triggerLayoutRecalculation, 150);
+      setTimeout(triggerLayoutRecalculation, 300);
+      setTimeout(triggerLayoutRecalculation, 500);
     };
 
     document.addEventListener('fullscreenchange', handleFullscreenChange);
@@ -73,8 +85,12 @@ export default function TerrainSection(props) {
       }
     } catch (err) {
       console.warn('[DepthWizard] Fullscreen toggle error:', err);
+    } finally {
+      requestAnimationFrame(() => window.dispatchEvent(new Event('resize')));
+      setTimeout(() => window.dispatchEvent(new Event('resize')), 100);
     }
   };
+
 
   return (
     <section

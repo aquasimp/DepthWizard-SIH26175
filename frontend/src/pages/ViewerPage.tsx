@@ -356,9 +356,9 @@ export const ViewerPage: React.FC<ViewerPageProps> = ({
   }
 
   return (
-    <div className={`relative ${isEmbedded ? 'w-full h-full min-h-[580px] lg:min-h-[640px] rounded-2xl border border-[#1e315b]/90 shadow-2xl' : 'h-screen w-screen'} overflow-hidden bg-[#050811] flex flex-col select-none`}>
+    <div className={`relative ${isEmbedded ? 'w-full max-w-full h-full min-h-[580px] lg:min-h-[640px] rounded-2xl border border-[#1e315b]/90 shadow-2xl' : 'h-screen w-screen max-w-full'} overflow-hidden bg-[#050811] flex flex-col select-none`}>
       {/* Main 3D Viewport Workspace */}
-      <div className="relative flex-1 w-full h-full overflow-hidden">
+      <div className="relative flex-1 w-full max-w-full h-full overflow-hidden">
         {/* Top Tactical Telemetry Bar positioned cleanly */}
         <div className={`absolute ${isEmbedded ? 'top-3 left-3' : 'top-20 left-4'} z-20 flex items-center gap-2`}>
           {!isEmbedded ? (

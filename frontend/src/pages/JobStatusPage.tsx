@@ -13,7 +13,6 @@ import {
   Radio,
   Scale,
 } from 'lucide-react';
-import { IsroHeader } from '../components/IsroHeader';
 import { getApiBase } from '../utils/apiConfig';
 
 interface JobStatus {
@@ -39,6 +38,7 @@ interface JobStatusPageProps {
   onOpenViewer: (jobId: string) => void;
   onNavigateHome: () => void;
   onNavigateValidate?: (jobId: string) => void;
+  isDark?: boolean;
 }
 
 const STAGES = [
@@ -153,214 +153,242 @@ export const JobStatusPage: React.FC<JobStatusPageProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-[#050811] text-slate-100 flex flex-col font-sans relative">
-      <div className="absolute inset-0 bg-aerospace-grid opacity-75 pointer-events-none z-0" />
-
-      {/* ISRO Mission Header */}
-      <IsroHeader
-        currentPage="status"
-        activeJobId={jobId}
-        onNavigate={(page, id) => {
-          if (page === 'upload' || page === 'dashboard') onNavigateHome();
-          else if (page === 'viewer' && id) onOpenViewer(id);
-          else if (page === 'validate' && id && onNavigateValidate) onNavigateValidate(id);
-        }}
-      />
-
-      {/* Main Mission Operations Dashboard */}
-      <main className="flex-1 max-w-6xl w-full mx-auto p-4 sm:p-6 lg:p-8 flex flex-col gap-6 relative z-10 justify-center">
-        {/* Mission Status Telemetry Ribbon */}
-        <div className="mission-panel rounded-xl p-5 border border-[#1e315b] relative overflow-hidden flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-[#ff6600] via-[#0055a5] to-[#00c2cb]" />
-
-          <div className="flex flex-col gap-1">
-            <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-widest text-[#00c2cb]">
-              <Radio className="w-3.5 h-3.5 text-[#ff6600] animate-pulse" />
-              <span>ISRO SAC GROUND STATION TELEMETRY PIPELINE</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <h2 className="text-xl sm:text-2xl font-black text-white font-display">
-                MISSION PIPELINE #{jobId}
-              </h2>
-            </div>
-            <div className="flex items-center gap-3 text-xs font-mono text-slate-400 mt-0.5">
-              <span>ELAPSED TIME: <strong className="text-white">{elapsedSeconds}s</strong></span>
-              <span>•</span>
-              <span>GEODETIC DATUM: <strong className="text-[#00c2cb]">EGM96 ORTHOMETRIC</strong></span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <div
-              className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold border tracking-wider flex items-center gap-2 ${
-                job?.status === 'DONE'
-                  ? 'bg-emerald-950/80 text-emerald-400 border-emerald-700/60 shadow-lg shadow-emerald-950/50'
-                  : job?.status === 'FAILED'
-                  ? 'bg-rose-950/80 text-rose-400 border-rose-700/60'
-                  : 'bg-[#091834] text-[#00c2cb] border-[#00c2cb]/50 animate-pulse'
-              }`}
+    <div className="mission-portal-page">
+      {/* Top Breadcrumb & Status Action Bar */}
+      <div className="mission-portal-top-bar">
+        <div className="mission-top-bar-left">
+          {onNavigateHome && (
+            <button
+              type="button"
+              onClick={onNavigateHome}
+              className="mission-btn-back"
+              title="Return to 3D Dashboard"
             >
-              <span
-                className={`w-2 h-2 rounded-full ${
-                  job?.status === 'DONE'
-                    ? 'bg-emerald-400'
-                    : job?.status === 'FAILED'
-                    ? 'bg-rose-400'
-                    : 'bg-[#00c2cb] animate-ping'
-                }`}
-              />
-              <span>{job?.status ? `STATUS: ${job.status}` : 'INITIALIZING TELEMETRY...'}</span>
-            </div>
+              <ArrowLeft size={14} />
+              <span>Dashboard Home</span>
+            </button>
+          )}
+          <div className="mission-institutional-tag">
+            <Radio className="w-3.5 h-3.5 text-[#ff6600] animate-pulse" />
+            <span>ISRO SAC GROUND STATION TELEMETRY PIPELINE</span>
           </div>
         </div>
 
-        {/* Global Progress Bar */}
-        <div className="mission-panel rounded-xl p-5 border border-[#1e315b] flex flex-col gap-2.5">
-          <div className="flex justify-between items-center text-xs font-mono text-slate-300">
-            <span className="flex items-center gap-1.5 uppercase tracking-wider font-semibold">
-              <Clock className="w-3.5 h-3.5 text-[#ff6600]" /> OVERALL RECONSTRUCTION PROGRESS
-            </span>
-            <span className="text-sm font-bold text-white font-mono">{job?.progress || 0}%</span>
-          </div>
-
-          <div className="h-3.5 w-full bg-[#070e1d] rounded-full overflow-hidden border border-[#1e315b] p-0.5">
-            <div
-              className={`h-full rounded-full transition-all duration-500 shadow-md ${
+        <div className="flex items-center gap-2">
+          <div
+            className={`status-badge ${
+              job?.status === 'DONE'
+                ? 'done'
+                : job?.status === 'FAILED'
+                ? 'failed'
+                : 'active'
+            }`}
+          >
+            <span
+              className={`w-2 h-2 rounded-full ${
                 job?.status === 'DONE'
-                  ? 'bg-emerald-400'
+                  ? 'bg-emerald-500'
                   : job?.status === 'FAILED'
                   ? 'bg-rose-500'
-                  : 'bg-gradient-to-r from-[#ff6600] via-[#0055a5] to-[#00c2cb]'
+                  : 'bg-[#0284c7] animate-ping'
               }`}
-              style={{ width: `${Math.max(job?.progress || 0, 3)}%` }}
             />
+            <span>{job?.status ? `STATUS: ${job.status}` : 'INITIALIZING TELEMETRY...'}</span>
           </div>
+        </div>
+      </div>
 
-          <div className="flex justify-between text-[10px] font-mono text-slate-500 pt-0.5">
-            <span>STAGE: {job?.stage || 'STANDBY'}</span>
-            <span>VERIFICATION: AUTOMATIC (PARITY TESTED)</span>
+      {/* Mission Status Telemetry Ribbon */}
+      <div className="status-telemetry-card">
+        <div className="status-accent-bar" />
+
+        <div className="status-header-content">
+          <div className="status-tag">
+            <Radio className="w-3.5 h-3.5 text-[#ff6600]" />
+            <span>TELEMETRY STREAM ACTIVE • REAL-TIME FEED</span>
+          </div>
+          <h2 className="status-job-title">
+            MISSION PIPELINE #{jobId}
+          </h2>
+          <div className="status-meta-row">
+            <span>
+              ELAPSED TIME: <strong>{elapsedSeconds}s</strong>
+            </span>
+            <span>•</span>
+            <span>
+              GEODETIC DATUM: <strong className="text-[#0284c7]">EGM96 ORTHOMETRIC</strong>
+            </span>
+            <span>•</span>
+            <span>
+              AI BACKBONE: <strong className="text-[#ff6600]">DINOv2-ViT-L/14</strong>
+            </span>
           </div>
         </div>
 
-        {/* 5-Stage Aerospace Sequencer Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
-          {STAGES.map((s) => {
-            const status = getStageStatus(s.id);
-            const Icon = s.icon;
+        <div className="flex items-center gap-3">
+          <div
+            className={`status-badge ${
+              job?.status === 'DONE'
+                ? 'done'
+                : job?.status === 'FAILED'
+                ? 'failed'
+                : 'active'
+            }`}
+          >
+            <span
+              className={`w-2 h-2 rounded-full ${
+                job?.status === 'DONE'
+                  ? 'bg-emerald-500'
+                  : job?.status === 'FAILED'
+                  ? 'bg-rose-500'
+                  : 'bg-[#0284c7] animate-ping'
+              }`}
+            />
+            <span>{job?.status ? `PIPELINE ${job.status}` : 'PROCESSING...'}</span>
+          </div>
+        </div>
+      </div>
 
-            return (
-              <div
-                key={s.id}
-                className={`mission-panel rounded-xl border p-4 flex flex-col justify-between gap-3 transition relative overflow-hidden ${
-                  status === 'active'
-                    ? 'border-[#00c2cb] bg-[#091b38] shadow-lg shadow-[#0055a5]/30'
-                    : status === 'completed'
-                    ? 'border-emerald-700/60 bg-[#071922]/60'
-                    : 'border-[#1e315b]/60 bg-[#091224]/50 opacity-60'
-                }`}
-              >
-                {/* Active pulse highlight */}
-                {status === 'active' && (
-                  <div className="absolute top-0 left-0 right-0 h-1 bg-[#00c2cb] animate-pulse" />
+      {/* Global Progress Bar */}
+      <div className="status-progress-card">
+        <div className="status-progress-header">
+          <span className="status-progress-title-group">
+            <Clock className="w-4 h-4 text-[#ff6600]" />
+            <span>OVERALL RECONSTRUCTION PROGRESS</span>
+          </span>
+          <span className="status-progress-percent">{job?.progress || 0}%</span>
+        </div>
+
+        <div className="status-progress-track">
+          <div
+            className="status-progress-fill"
+            style={{ width: `${Math.max(job?.progress || 0, 3)}%` }}
+          />
+        </div>
+
+        <div className="status-progress-footer">
+          <span>STAGE: <strong>{job?.stage || 'STANDBY'}</strong></span>
+          <span>VERIFICATION: AUTOMATIC (PARITY TESTED)</span>
+        </div>
+      </div>
+
+      {/* 5-Stage Aerospace Sequencer Grid */}
+      <div className="status-stages-grid">
+        {STAGES.map((s) => {
+          const status = getStageStatus(s.id);
+          const Icon = s.icon;
+
+          return (
+            <div
+              key={s.id}
+              className={`status-stage-card ${
+                status === 'active'
+                  ? 'status-active'
+                  : status === 'completed'
+                  ? 'status-completed'
+                  : ''
+              }`}
+            >
+              <div className="status-stage-top">
+                <span className="status-stage-code">STAGE {s.code}</span>
+                {status === 'completed' ? (
+                  <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                ) : status === 'active' ? (
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#0284c7] animate-ping" />
+                ) : (
+                  <span className="w-2.5 h-2.5 rounded-full border border-[var(--border-subtle)]" />
                 )}
-
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-mono font-bold text-[#ff9944]">
-                    STAGE {s.code}
-                  </span>
-                  {status === 'completed' ? (
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                  ) : status === 'active' ? (
-                    <span className="w-2 h-2 rounded-full bg-[#00c2cb] animate-ping" />
-                  ) : null}
-                </div>
-
-                <div className="w-10 h-10 rounded-lg flex items-center justify-center border border-[#1e315b] bg-[#070e1d]">
-                  <Icon
-                    className={`w-5 h-5 ${
-                      status === 'active'
-                        ? 'text-[#00c2cb]'
-                        : status === 'completed'
-                        ? 'text-emerald-400'
-                        : 'text-slate-500'
-                    }`}
-                  />
-                </div>
-
-                <div>
-                  <h4 className="font-bold text-xs text-white font-display tracking-wide">{s.label}</h4>
-                  <p className="text-[10px] text-slate-400 mt-1 leading-relaxed font-sans">{s.desc}</p>
-                </div>
-
-                <div className="pt-2 border-t border-[#1e315b]/40 text-[9px] font-mono text-slate-500">
-                  {s.sub}
-                </div>
               </div>
-            );
-          })}
+
+              <div className="status-stage-icon-box">
+                <Icon
+                  className={`w-5 h-5 ${
+                    status === 'active'
+                      ? 'text-[#0284c7]'
+                      : status === 'completed'
+                      ? 'text-emerald-500'
+                      : 'text-slate-400'
+                  }`}
+                />
+              </div>
+
+              <div className="flex-1 flex flex-col justify-start">
+                <h4 className="status-stage-title">{s.label}</h4>
+                <p className="status-stage-desc">{s.desc}</p>
+              </div>
+
+              <div className="status-stage-sub">
+                <span className="status-sub-dot" />
+                <span>{s.sub}</span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Failure Report */}
+      {job?.status === 'FAILED' && (
+        <div className="status-telemetry-card" style={{ borderColor: 'rgba(239, 68, 68, 0.4)', background: 'rgba(239, 68, 68, 0.05)' }}>
+          <div className="flex items-start gap-3">
+            <AlertTriangle className="w-5 h-5 text-rose-500 shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-bold text-rose-600 font-display">Mission Processing Terminated</p>
+              <p className="text-xs text-rose-500 mt-1">{job.error || 'Check server logs for GPU or dataset details.'}</p>
+            </div>
+          </div>
         </div>
+      )}
 
-        {/* Failure Report */}
-        {job?.status === 'FAILED' && (
-          <div className="p-4 rounded-xl border border-rose-600 bg-rose-950/50 text-xs font-mono text-rose-200 flex items-start gap-3 shadow-xl">
-            <AlertTriangle className="w-5 h-5 text-rose-400 shrink-0" />
-            <div>
-              <p className="font-bold text-sm text-rose-100 font-display">Mission Processing Terminated</p>
-              <p className="mt-1">{job.error || 'Check server logs for GPU or dataset details.'}</p>
-            </div>
+      {/* Completion Launch Deck */}
+      {job?.status === 'DONE' && (
+        <div className="status-completion-deck">
+          <div className="status-completion-icon-ring">
+            <CheckCircle2 className="w-8 h-8 text-emerald-500" />
           </div>
-        )}
 
-        {/* Completion Launch Deck */}
-        {job?.status === 'DONE' && (
-          <div className="mission-panel rounded-xl p-6 border border-[#00c2cb]/50 flex flex-col items-center gap-4 text-center shadow-2xl shadow-[#0055a5]/30">
-            <div className="w-12 h-12 rounded-full bg-emerald-950/80 border border-emerald-600/80 flex items-center justify-center text-emerald-400">
-              <CheckCircle2 className="w-7 h-7" />
-            </div>
+          <div>
+            <h3 className="status-completion-title">
+              Surface Reconstruction Completed &amp; Geodetically Registered
+            </h3>
+            <p className="status-completion-desc">
+              All 3 LOD GLB meshes, 32-bit metric GeoTIFF, and 16-bit heightmap generated successfully.
+            </p>
+          </div>
 
-            <div>
-              <h3 className="text-lg font-bold text-white font-display tracking-wide">
-                Surface Reconstruction Completed &amp; Geodetically Registered
-              </h3>
-              <p className="text-xs text-slate-300 font-mono mt-1">
-                All 3 LOD GLB meshes, 32-bit metric GeoTIFF, and 16-bit heightmap generated successfully.
-              </p>
-            </div>
+          <div className="status-completion-actions">
+            <button
+              type="button"
+              onClick={() => onOpenViewer(jobId)}
+              className="btn-launch-cockpit"
+            >
+              <Eye className="w-4 h-4 text-white" />
+              <span>LAUNCH 3D RECONNAISSANCE COCKPIT</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
 
-            <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+            {onNavigateValidate && (
               <button
                 type="button"
-                onClick={() => onOpenViewer(jobId)}
-                className="py-3 px-6 rounded-xl bg-gradient-to-r from-[#0055a5] to-[#00c2cb] hover:from-[#004488] hover:to-[#00a2ab] text-white font-bold text-sm flex items-center gap-2.5 shadow-lg shadow-[#0055a5]/40 transition cursor-pointer font-display tracking-wider uppercase border border-[#00c2cb]/60"
+                onClick={() => onNavigateValidate(jobId)}
+                className="btn-validate-benchmark"
               >
-                <Eye className="w-4 h-4 text-white" />
-                <span>LAUNCH 3D RECONNAISSANCE COCKPIT</span>
-                <ArrowRight className="w-4 h-4" />
+                <Scale className="w-4 h-4 text-[#ff6600]" />
+                <span>EVALUATE LIDAR BENCHMARK</span>
               </button>
+            )}
 
-              {onNavigateValidate && (
-                <button
-                  type="button"
-                  onClick={() => onNavigateValidate(jobId)}
-                  className="py-3 px-5 rounded-xl bg-[#09152b] hover:bg-[#11244a] text-slate-200 font-bold text-xs flex items-center gap-2 transition cursor-pointer font-mono border border-[#1e315b]"
-                >
-                  <Scale className="w-4 h-4 text-[#ff9944]" />
-                  <span>EVALUATE LIDAR BENCHMARK</span>
-                </button>
-              )}
-
-              <button
-                type="button"
-                onClick={onNavigateHome}
-                className="py-3 px-4 rounded-xl bg-[#070e1d] hover:bg-[#0f1d38] text-slate-400 hover:text-white text-xs font-mono flex items-center gap-1.5 transition cursor-pointer border border-[#1e315b]"
-              >
-                <ArrowLeft className="w-3.5 h-3.5" />
-                <span>RETURN TO INGESTION</span>
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={onNavigateHome}
+              className="btn-return-ingestion"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>RETURN TO INGESTION</span>
+            </button>
           </div>
-        )}
-      </main>
+        </div>
+      )}
     </div>
   );
 };
+

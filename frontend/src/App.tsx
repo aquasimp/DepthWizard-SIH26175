@@ -626,6 +626,7 @@ export function App() {
         />
         <JobStatusPage
           jobId={activeJobId}
+          isDark={theme === 'dark'}
           onOpenViewer={(id) => navigateTo('viewer', id)}
           onNavigateHome={() => navigateTo('dashboard')}
           onNavigateValidate={(id) => navigateTo('validate', id)}
@@ -657,6 +658,7 @@ export function App() {
         />
         <ValidatePage
           jobId={targetJobId}
+          isDark={theme === 'dark'}
           onNavigateBack={() => navigateTo('viewer', targetJobId)}
           onNavigateHome={() => navigateTo('dashboard')}
           onNavigateStatus={(id) => navigateTo('status', id)}
