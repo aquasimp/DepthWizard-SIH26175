@@ -204,7 +204,7 @@ def run_pipeline(
 
         # 5. MESH (Decimation into 3 LODs + Textured GLBs)
         mgr.update_job(job_id, stage="MESH", progress=88)
-        z_exag = float(opts.get("z_exag", 0.2))
+        z_exag = float(opts.get("z_exag", 1.0))
         export_all_lod_glbs(
             heightmap=dsm,
             rgb_image=canon_rgb,

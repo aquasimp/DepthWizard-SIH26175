@@ -20,6 +20,7 @@ import { ViewerPage } from './pages/ViewerPage';
 import { Cpu, Layers, ShieldCheck } from 'lucide-react';
 import { getApiBase, checkBackendHealth } from './utils/apiConfig';
 import { processClientDepthPipeline } from './utils/clientDepthEngine';
+import { VercelNoticeModal } from './components/VercelNoticeModal';
 
 export type PageView = 'dashboard' | 'upload' | 'status' | 'viewer' | 'validate';
 
@@ -542,6 +543,10 @@ export function App() {
   if (currentPage === 'upload') {
     return (
       <div className="luminous-app-root">
+        <VercelNoticeModal
+          onOpenSettings={() => setIsSettingsOpen(true)}
+          onViewBenchmark={() => navigateTo('validate')}
+        />
         <FloatingNavbar
           activeNav="upload"
           onSelectNav={handleSelectNav}
@@ -569,6 +574,10 @@ export function App() {
     const targetJobId = activeJobId || 'demo';
     return (
       <div className="luminous-app-root">
+        <VercelNoticeModal
+          onOpenSettings={() => setIsSettingsOpen(true)}
+          onViewBenchmark={() => navigateTo('validate')}
+        />
         <FloatingNavbar
           activeNav="terrain"
           onSelectNav={handleSelectNav}
@@ -598,6 +607,10 @@ export function App() {
     }
     return (
       <div className="luminous-app-root">
+        <VercelNoticeModal
+          onOpenSettings={() => setIsSettingsOpen(true)}
+          onViewBenchmark={() => navigateTo('validate')}
+        />
         <FloatingNavbar
           activeNav="upload"
           onSelectNav={handleSelectNav}
@@ -625,6 +638,10 @@ export function App() {
     const targetJobId = activeJobId || 'demo';
     return (
       <div className="luminous-app-root">
+        <VercelNoticeModal
+          onOpenSettings={() => setIsSettingsOpen(true)}
+          onViewBenchmark={() => navigateTo('validate')}
+        />
         <FloatingNavbar
           activeNav="accuracy"
           onSelectNav={handleSelectNav}
@@ -650,6 +667,10 @@ export function App() {
 
   return (
     <div className="luminous-app-root">
+      <VercelNoticeModal
+        onOpenSettings={() => setIsSettingsOpen(true)}
+        onViewBenchmark={() => navigateTo('validate')}
+      />
       {/* 1. FLOATING TOP NAVIGATION BAR */}
       <FloatingNavbar
         activeNav={activeNav}

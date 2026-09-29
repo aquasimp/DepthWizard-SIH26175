@@ -8,7 +8,7 @@ import numpy as np
 def heightmap_to_mesh(
     heightmap: np.ndarray,
     gsd_m: float = 0.33,
-    z_exag: float = 0.2,
+    z_exag: float = 1.0,
     gsd_x: float = 0.0,
     gsd_z: float = 0.0,
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:

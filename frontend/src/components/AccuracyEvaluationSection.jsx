@@ -32,7 +32,9 @@ import {
   MapPin,
   Sliders,
   Compass,
+  Mountain,
 } from 'lucide-react';
+import { TerrainPerformanceTable } from './TerrainPerformanceTable';
 
 // ==========================================
 // 1. BENCHMARK DATASETS ACROSS 35.1M LIDAR PIXELS
@@ -516,6 +518,11 @@ export default function AccuracyEvaluationSection({ API_BASE = '' }) {
         </div>
       </div>
 
+      {/* 2.5 PERFORMANCE ACROSS TERRAIN TYPES (ISRO SIH2026 + GAMUS LIDAR) */}
+      <div className="mb-6">
+        <TerrainPerformanceTable />
+      </div>
+
       {/* 3. INTERACTIVE VISUAL CHARTS SUITE (NO STATIC IMAGES, ZERO OVERLAP!) */}
       <div className="eval-visual-inspection-box">
         {/* Navigation Tabs for Charts */}
@@ -527,6 +534,13 @@ export default function AccuracyEvaluationSection({ API_BASE = '' }) {
             >
               <BarChart3 size={15} />
               <span>Model Comparison</span>
+            </button>
+            <button
+              onClick={() => setActiveChartTab('terrains')}
+              className={`eval-tab-pill ${activeChartTab === 'terrains' ? 'active' : ''}`}
+            >
+              <Mountain size={15} />
+              <span>Terrain Types Breakdown</span>
             </button>
             <button
               onClick={() => setActiveChartTab('heights')}
@@ -652,6 +666,13 @@ export default function AccuracyEvaluationSection({ API_BASE = '' }) {
               </div>
               <span className="text-slate-400">GAMUS Multi-City Held-Out Test Set</span>
             </div>
+          </div>
+        )}
+
+        {/* TAB 1.5: PERFORMANCE ACROSS TERRAIN TYPES (ISRO BENCHMARK) */}
+        {activeChartTab === 'terrains' && (
+          <div className="flex flex-col gap-4 animate-fadeIn">
+            <TerrainPerformanceTable />
           </div>
         )}
 

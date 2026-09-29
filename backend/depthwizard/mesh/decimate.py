@@ -37,7 +37,7 @@ def decimate_heightmap(
 def generate_lod_meshes(
     heightmap: np.ndarray,
     gsd_m: float = 0.33,
-    z_exag: float = 0.2,
+    z_exag: float = 1.0,
 ) -> Dict[str, Tuple[np.ndarray, np.ndarray, np.ndarray]]:
     """Generate meshes for LOD0 (512x512), LOD1 (256x256), and LOD2 (128x128).
 

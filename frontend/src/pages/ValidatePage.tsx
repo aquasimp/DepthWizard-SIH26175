@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { IsroHeader } from '../components/IsroHeader';
 import { getApiBase } from '../utils/apiConfig';
+import { TerrainPerformanceTable } from '../components/TerrainPerformanceTable';
 
 interface MetricsData {
   job_id: string;
@@ -548,6 +549,9 @@ export const ValidatePage: React.FC<ValidatePageProps> = ({
               </div>
             </div>
 
+            {/* Performance Across Terrain Types Table */}
+            <TerrainPerformanceTable className="w-full" />
+
             {/* Difference Map & Histogram Visualization */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Signed Difference Map */}
@@ -634,8 +638,11 @@ export const ValidatePage: React.FC<ValidatePageProps> = ({
             </div>
           </div>
         ) : (
-          <div className="mission-panel rounded-xl border border-[#1e315b] p-8 text-center text-slate-400 text-xs font-mono">
-            No ground truth evaluation registered yet. Ingest a reference GeoTIFF DSM above to benchmark photogrammetric accuracy against ISRO/ASPRS criteria.
+          <div className="flex flex-col gap-4">
+            <TerrainPerformanceTable className="w-full" />
+            <div className="mission-panel rounded-xl border border-[#1e315b] p-8 text-center text-slate-400 text-xs font-mono">
+              Ingest a reference GeoTIFF DSM above or click <strong>1-CLICK TEST BENCHMARK</strong> to run sub-pixel co-registration and generate live error rasters.
+            </div>
           </div>
         )}
       </main>

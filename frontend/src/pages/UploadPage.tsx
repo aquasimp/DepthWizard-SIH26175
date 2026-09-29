@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { getApiBase } from '../utils/apiConfig';
 import { processClientDepthPipeline } from '../utils/clientDepthEngine';
+import { isVercelEnvironment } from '../components/VercelNoticeModal';
 
 interface JobSummary {
   job_id: string;
@@ -468,6 +469,21 @@ export const UploadPage: React.FC<UploadPageProps> = ({
                 <div className="mission-error-banner">
                   <AlertTriangle size={15} />
                   <span>{error}</span>
+                </div>
+              )}
+
+              {/* Vercel Model Limitations Advisory Notice */}
+              {isVercelEnvironment() && (
+                <div className="p-3.5 rounded-xl border border-amber-500/50 bg-[#161105] text-amber-200 text-xs font-mono flex items-start gap-2.5 my-2 shadow-sm">
+                  <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                  <div className="space-y-1">
+                    <span className="font-bold text-amber-300 uppercase tracking-wide">
+                      Vercel Serverless Hosting Notice:
+                    </span>
+                    <p className="text-[11px] text-amber-200/90 leading-relaxed">
+                      Heavy PyTorch/CUDA deep learning models (35.1M parameters) cannot run on Vercel's serverless edge. When submitting here on Vercel, DepthWizard automatically routes your image through our <strong>WebGL In-Browser Surface Engine</strong>. For full PyTorch GPU neural inference, connect your local backend URL in Settings.
+                    </p>
+                  </div>
                 </div>
               )}
 
