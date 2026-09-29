@@ -71,12 +71,14 @@ export default function TerrainSection(props) {
         document.webkitFullscreenElement
       );
       if (!isCurrentlyFullscreen) {
+        setIsFullscreen(true);
         if (el.requestFullscreen) {
           await el.requestFullscreen();
         } else if (el.webkitRequestFullscreen) {
           await el.webkitRequestFullscreen();
         }
       } else {
+        setIsFullscreen(false);
         if (document.exitFullscreen) {
           await document.exitFullscreen();
         } else if (document.webkitExitFullscreen) {
@@ -100,27 +102,27 @@ export default function TerrainSection(props) {
     >
       {/* Flight Deck Header Toolbar */}
       <div className="terrain-header-toolbar">
-        <div className="toolbar-title-group">
-          <Navigation className="text-cyan animate-pulse" size={22} />
-          <div>
+        <div className="toolbar-title-group min-w-0 flex-1">
+          <Navigation className="text-cyan animate-pulse shrink-0" size={22} />
+          <div className="min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <h3 className="terrain-title-text">Tactical 3D Cockpit &amp; Flythrough</h3>
-              <span className="flight-live-badge">
+              <h3 className="terrain-title-text truncate">Tactical 3D Cockpit &amp; Flythrough</h3>
+              <span className="flight-live-badge shrink-0">
                 <span className="flight-pulse-dot" />
                 <span>112 FPS Fly Engine</span>
               </span>
-              <span className="hidden sm:inline-flex px-1.5 py-0.5 text-[10px] font-mono bg-sky-950/70 text-sky-300 border border-sky-800/60 rounded">
+              <span className="hidden sm:inline-flex px-1.5 py-0.5 text-[10px] font-mono bg-sky-950/70 text-sky-300 border border-sky-800/60 rounded shrink-0">
                 ISRO / SAC Telemetry
               </span>
             </div>
-            <span className="terrain-subtitle-text">
+            <span className="terrain-subtitle-text block truncate">
               Real-Time Drone Reconnaissance &amp; Metric Elevation Flight Deck ({dsmMesh ? `${dsmMesh.rows || 1024}×${dsmMesh.cols || 612} Grid` : '1024×612 Grid'} · 0.33m GSD)
             </span>
           </div>
         </div>
 
         {/* Clean, sleek aerospace action buttons */}
-        <div className="toolbar-controls-group">
+        <div className="toolbar-controls-group shrink-0">
           {onOpenCockpit && (
             <button
               type="button"

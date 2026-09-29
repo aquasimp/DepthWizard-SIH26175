@@ -31,7 +31,7 @@ export const ViewerPage: React.FC<ViewerPageProps> = ({
   onNavigateBack,
   onNavigateValidate,
   isEmbedded = false,
-  onOpenCockpit,
+  onOpenCockpit: _onOpenCockpit,
   onSelectPoint,
 }) => {
   // State
@@ -360,34 +360,20 @@ export const ViewerPage: React.FC<ViewerPageProps> = ({
       {/* Main 3D Viewport Workspace */}
       <div className="relative flex-1 w-full max-w-full h-full overflow-hidden">
         {/* Top Tactical Telemetry Bar positioned cleanly */}
-        <div className={`absolute ${isEmbedded ? 'top-3 left-3' : 'top-20 left-4'} z-20 flex items-center gap-2`}>
-          {!isEmbedded ? (
-            onNavigateBack && (
-              <button
-                type="button"
-                onClick={onNavigateBack}
-                className="mission-panel rounded-lg border border-[#00c2cb]/50 px-3 py-1.5 flex items-center gap-1.5 text-[11px] font-mono font-bold text-white hover:bg-[#00c2cb]/20 transition cursor-pointer shadow-lg backdrop-blur-md"
-                title="Return to Dashboard Home"
-              >
-                <ArrowLeft className="w-3.5 h-3.5 text-[#00c2cb]" />
-                <span>DASHBOARD</span>
-              </button>
-            )
-          ) : (
-            onOpenCockpit && (
-              <button
-                type="button"
-                onClick={onOpenCockpit}
-                className="mission-panel rounded-lg border border-[#00c2cb]/50 px-3 py-1.5 flex items-center gap-1.5 text-[11px] font-mono font-bold text-white hover:bg-[#00c2cb]/20 transition cursor-pointer shadow-lg backdrop-blur-md"
-                title="Launch Dedicated Fullscreen Cockpit Page"
-              >
-                <Compass className="w-3.5 h-3.5 text-[#00c2cb]" />
-                <span>FULL COCKPIT ↗</span>
-              </button>
-            )
+        <div className={`absolute ${isEmbedded ? 'top-3 left-3 max-w-[calc(100%-310px)]' : 'top-20 left-4'} z-20 flex items-center gap-2 overflow-hidden`}>
+          {!isEmbedded && onNavigateBack && (
+            <button
+              type="button"
+              onClick={onNavigateBack}
+              className="mission-panel rounded-lg border border-[#00c2cb]/50 px-3 py-1.5 flex items-center gap-1.5 text-[11px] font-mono font-bold text-white hover:bg-[#00c2cb]/20 transition cursor-pointer shadow-lg backdrop-blur-md shrink-0"
+              title="Return to Dashboard Home"
+            >
+              <ArrowLeft className="w-3.5 h-3.5 text-[#00c2cb]" />
+              <span>DASHBOARD</span>
+            </button>
           )}
 
-          <div className="mission-panel rounded-lg border border-[#1e315b] px-3.5 py-1.5 flex items-center gap-3 text-[11px] font-mono shadow-xl text-slate-300 backdrop-blur-md">
+          <div className="mission-panel rounded-lg border border-[#1e315b] px-3.5 py-1.5 flex items-center gap-3 text-[11px] font-mono shadow-xl text-slate-300 backdrop-blur-md shrink-0">
             <div className="flex items-center gap-1.5 text-white font-bold">
               <Satellite className="w-3.5 h-3.5 text-[#ff6600]" />
               <span>TARGET #{jobId.slice(0, 16)}</span>
@@ -412,11 +398,13 @@ export const ViewerPage: React.FC<ViewerPageProps> = ({
           </div>
         </div>
 
-        {/* Tactical Heading Compass Tape */}
-        <div className={`absolute ${isEmbedded ? 'top-3' : 'top-20'} left-1/2 -translate-x-1/2 z-20 pointer-events-none hidden xl:flex items-center gap-2 mission-panel rounded-md border border-[#1e315b]/80 px-4 py-1.5 text-[10px] font-mono text-slate-400 backdrop-blur-md`}>
-          <Compass className="w-3 h-3 text-[#00c2cb]" />
-          <span>270° W ··· 300° ··· 330° ··· <strong className="text-[#ff6600]">000° N</strong> ··· 030° ··· 060° ··· 090° E</span>
-        </div>
+        {/* Tactical Heading Compass Tape - Render only on dedicated fullscreen workstation to avoid embedded collision */}
+        {!isEmbedded && (
+          <div className="absolute top-20 left-1/2 -translate-x-1/2 z-20 pointer-events-none hidden xl:flex items-center gap-2 mission-panel rounded-md border border-[#1e315b]/80 px-4 py-1.5 text-[10px] font-mono text-slate-400 backdrop-blur-md">
+            <Compass className="w-3 h-3 text-[#00c2cb]" />
+            <span>270° W ··· 300° ··· 330° ··· <strong className="text-[#ff6600]">000° N</strong> ··· 030° ··· 060° ··· 090° E</span>
+          </div>
+        )}
 
         {/* Viewport Corner Framing Reticles */}
         <div className={`absolute ${isEmbedded ? 'top-2' : 'top-20'} left-2 w-4 h-4 border-t-2 border-l-2 border-[#ff6600] pointer-events-none z-10`} />
