@@ -1,0 +1,35 @@
+# Environments & Python
+.venv
+venv
+env
+ENV
+__pycache__
+*.pyc
+
+# Heavy ML & Backend Data
+backend
+models
+data
+jobs
+outputs
+logs
+.cache
+*.pt
+*.pth
+*.tif
+*.tiff
+scripts
+
+# Dependencies & Build Artefacts
+node_modules
+frontend/node_modules
+frontend/dist
+dist
+build
+
+# Git & Tooling
+.git
+.github
+.vscode
+.idea
+.vercel
