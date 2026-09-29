@@ -29,7 +29,7 @@ async def create_job(
     file: UploadFile,
     assumed_gsd_m: float = Form(default=0.33),
     calibration_path: Optional[str] = Form(default=None),
-    z_exag: float = Form(default=1.0),
+    z_exag: float = Form(default=0.2),
     model_version: Optional[str] = Form(default="v1.1.0_best"),
     manager: JobManager = Depends(get_job_manager),
 ) -> JobCreateResponse:

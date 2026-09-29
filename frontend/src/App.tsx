@@ -57,7 +57,7 @@ export function App() {
   }));
   const [cameraMode, setCameraMode] = useState<'orbit' | 'fly'>('orbit');
   const [textureMode, setTextureMode] = useState<'rgb' | 'colormap' | 'slope' | 'wireframe'>('rgb');
-  const [verticalExaggeration, setVerticalExaggeration] = useState(1.0);
+  const [verticalExaggeration, setVerticalExaggeration] = useState(0.2);
   const [colorRamp, setColorRamp] = useState('terrain');
   const [selectedMeasurement, setSelectedMeasurement] = useState<any>(null);
   const [resetViewTrigger, setResetViewTrigger] = useState(0);

@@ -220,12 +220,13 @@ export const ControlHud: React.FC<ControlHudProps> = ({
                 onChange={(e) => onZExagChange(parseFloat(e.target.value))}
                 className="accent-[#ff6600] cursor-pointer h-1.5 bg-[#070e1d] rounded-lg mt-1"
               />
-              <div className="flex justify-between text-[9px] text-slate-400 font-mono">
-                <span className={zExag <= 0.02 ? 'text-[#ff9944] font-bold' : ''}>0.0× (Flat)</span>
-                <span>0.5×</span>
-                <span className={Math.abs(zExag - 1.0) <= 0.04 ? 'text-[#ff9944] font-bold' : ''}>1.0× (True)</span>
-                <span>2.0×</span>
-                <span>3.0×</span>
+              <div className="flex justify-between text-[9px] text-slate-400 font-mono select-none">
+                <button type="button" onClick={() => onZExagChange(0.0)} className={`hover:text-white transition cursor-pointer ${zExag <= 0.02 ? 'text-[#ff9944] font-bold underline' : ''}`}>0.0× (Flat)</button>
+                <button type="button" onClick={() => onZExagChange(0.2)} className={`hover:text-white transition cursor-pointer ${Math.abs(zExag - 0.2) <= 0.04 ? 'text-[#ff9944] font-bold underline' : ''}`}>0.2× (Tactical)</button>
+                <button type="button" onClick={() => onZExagChange(0.5)} className={`hover:text-white transition cursor-pointer ${Math.abs(zExag - 0.5) <= 0.04 ? 'text-[#ff9944] font-bold underline' : ''}`}>0.5×</button>
+                <button type="button" onClick={() => onZExagChange(1.0)} className={`hover:text-white transition cursor-pointer ${Math.abs(zExag - 1.0) <= 0.04 ? 'text-[#ff9944] font-bold underline' : ''}`}>1.0× (True)</button>
+                <button type="button" onClick={() => onZExagChange(2.0)} className={`hover:text-white transition cursor-pointer ${Math.abs(zExag - 2.0) <= 0.04 ? 'text-[#ff9944] font-bold underline' : ''}`}>2.0×</button>
+                <button type="button" onClick={() => onZExagChange(3.0)} className={`hover:text-white transition cursor-pointer ${Math.abs(zExag - 3.0) <= 0.04 ? 'text-[#ff9944] font-bold underline' : ''}`}>3.0×</button>
               </div>
             </div>
 

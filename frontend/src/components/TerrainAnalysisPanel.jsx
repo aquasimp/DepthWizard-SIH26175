@@ -17,7 +17,7 @@ export default function TerrainAnalysisPanel(props) {
   const {
     selectedMeasurement = null,
     onResetMeasurement = null,
-    verticalExaggeration = 1.0,
+    verticalExaggeration = 0.2,
     onVerticalExaggerationChange = null,
     textureMode = 'rgb',
     onTextureModeChange = null,
@@ -164,6 +164,7 @@ export default function TerrainAnalysisPanel(props) {
           />
           <div className="slider-markers">
             <span className={verticalExaggeration <= 0.02 ? 'text-cyan font-bold' : ''}>0.0x (Flat)</span>
+            <span className={Math.abs(verticalExaggeration - 0.2) <= 0.04 ? 'text-cyan font-bold' : ''}>0.2x (Tactical)</span>
             <span>0.5x</span>
             <span className={Math.abs(verticalExaggeration - 1.0) <= 0.04 ? 'text-cyan font-bold' : ''}>1.0x (True)</span>
             <span>2.0x</span>
@@ -176,6 +177,13 @@ export default function TerrainAnalysisPanel(props) {
               onClick={() => onVerticalExaggerationChange && onVerticalExaggerationChange(0.0)}
             >
               Flat (0x)
+            </button>
+            <button
+              type="button"
+              className={`exag-preset-chip ${Math.abs(verticalExaggeration - 0.2) <= 0.04 ? 'active' : ''}`}
+              onClick={() => onVerticalExaggerationChange && onVerticalExaggerationChange(0.2)}
+            >
+              0.2x (Tactical)
             </button>
             <button
               type="button"

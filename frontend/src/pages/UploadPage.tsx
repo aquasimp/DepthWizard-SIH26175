@@ -97,7 +97,7 @@ export const UploadPage: React.FC<UploadPageProps> = ({
   const [assumedGsd, setAssumedGsd] = useState('0.33');
   const [calibrationPath, setCalibrationPath] = useState('');
   const [modelVersion, setModelVersion] = useState('v1.1.0_best');
-  const [zExag, setZExag] = useState('1.0');
+  const [zExag, setZExag] = useState('0.2');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoadingSample, setIsLoadingSample] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -246,7 +246,7 @@ export const UploadPage: React.FC<UploadPageProps> = ({
       if (!jobCreated) {
         const clientRes = await processClientDepthPipeline(
           selectedFile,
-          parseFloat(zExag) || 1.0
+          Number.isFinite(parseFloat(zExag)) ? parseFloat(zExag) : 0.2
         );
 
         // Store client result in session for Viewer / Status consumption
@@ -431,6 +431,7 @@ export const UploadPage: React.FC<UploadPageProps> = ({
                   />
                   <div className="flex justify-between text-[10px] text-slate-400 font-mono mt-1">
                     <span className={Number(zExag) <= 0.02 ? 'text-cyan-400 font-bold' : ''}>0.0x (Flat)</span>
+                    <span className={Math.abs(Number(zExag) - 0.2) <= 0.04 ? 'text-cyan-400 font-bold' : ''}>0.2x (Tactical)</span>
                     <span>0.5x</span>
                     <span className={Math.abs(Number(zExag) - 1.0) <= 0.04 ? 'text-cyan-400 font-bold' : ''}>1.0x (True)</span>
                     <span>2.0x</span>

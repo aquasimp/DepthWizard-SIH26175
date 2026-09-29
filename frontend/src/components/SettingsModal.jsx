@@ -10,7 +10,7 @@ export default function SettingsModal(props) {
     onSystemStatusChange = null,
     colorRamp = 'terrain',
     onColorRampChange = null,
-    verticalExaggeration = 1.0,
+    verticalExaggeration = 0.2,
     onVerticalExaggerationChange = null,
     theme = 'dark',
     onThemeChange = null,

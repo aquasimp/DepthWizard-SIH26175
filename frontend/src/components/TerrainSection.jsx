@@ -20,7 +20,7 @@ export default function TerrainSection(props) {
     onTextureModeChange,
     cameraMode = 'orbit',
     onCameraModeChange,
-    verticalExaggeration = 1.0,
+    verticalExaggeration = 0.2,
     colorRamp = 'terrain',
     selectedMeasurement,
     onSelectMeasurement,

@@ -14,7 +14,7 @@ export function createTerrainGeometry({
   cols,
   planeSize = 200,
   aspectRatio = 1.0,
-  verticalExaggeration = 1.0,
+  verticalExaggeration = 0.2,
 }) {
   const ar = Math.max(0.2, Math.min(5.0, Number(aspectRatio) || 1.0));
   const planeWidth = ar >= 1.0 ? planeSize : planeSize * ar;

@@ -91,7 +91,7 @@ export function loadImageElement(
  */
 export async function processClientDepthPipeline(
   source: File | Blob | string,
-  _verticalExaggeration: number = 1.0,
+  _verticalExaggeration: number = 0.2,
   userTextureUrl?: string
 ): Promise<ClientTerrainResult> {
   const startTime = performance.now();

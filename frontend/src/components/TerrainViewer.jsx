@@ -18,7 +18,7 @@ export default function TerrainViewer({
   onTextureModeChange = null,
   cameraMode = 'orbit', // 'orbit' or 'fly'
   onCameraModeChange = null,
-  verticalExaggeration = 1.0,
+  verticalExaggeration = 0.2,
   colorRamp = 'terrain',
   selectedPoint = null,
   onSelectPoint = null,
@@ -401,7 +401,7 @@ export default function TerrainViewer({
         const meshUserData = terrainMesh.userData || {};
 
         const baseOffset = meshUserData.baseOffset || 0;
-        const currentExag = meshUserData.verticalExaggeration || 1.0;
+        const currentExag = meshUserData.verticalExaggeration || 0.2;
         const pWidth = meshUserData.planeWidth || 200;
         const pHeight = meshUserData.planeHeight || 200;
         const meta = meshUserData.meta || loadedMeshMeta;

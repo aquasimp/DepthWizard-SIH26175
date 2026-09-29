@@ -86,6 +86,13 @@ export default function ControlPanel({
           value={verticalExaggeration}
           onChange={(e) => setVerticalExaggeration(parseFloat(e.target.value))}
         />
+        <div className="slider-ticks" style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', marginTop: '4px', opacity: 0.85, fontFamily: 'monospace' }}>
+          <span style={{ cursor: 'pointer', fontWeight: verticalExaggeration <= 0.02 ? 'bold' : 'normal', color: verticalExaggeration <= 0.02 ? 'var(--accent, #00d2ff)' : 'inherit' }} onClick={() => setVerticalExaggeration(0.0)}>0.0x (Flat)</span>
+          <span style={{ cursor: 'pointer', fontWeight: Math.abs(verticalExaggeration - 0.2) <= 0.04 ? 'bold' : 'normal', color: Math.abs(verticalExaggeration - 0.2) <= 0.04 ? 'var(--accent, #00d2ff)' : 'inherit' }} onClick={() => setVerticalExaggeration(0.2)}>0.2x (Tactical)</span>
+          <span style={{ cursor: 'pointer', fontWeight: Math.abs(verticalExaggeration - 0.5) <= 0.04 ? 'bold' : 'normal' }} onClick={() => setVerticalExaggeration(0.5)}>0.5x</span>
+          <span style={{ cursor: 'pointer', fontWeight: Math.abs(verticalExaggeration - 1.0) <= 0.04 ? 'bold' : 'normal', color: Math.abs(verticalExaggeration - 1.0) <= 0.04 ? 'var(--accent, #00d2ff)' : 'inherit' }} onClick={() => setVerticalExaggeration(1.0)}>1.0x (True)</span>
+          <span style={{ cursor: 'pointer', fontWeight: Math.abs(verticalExaggeration - 2.0) <= 0.04 ? 'bold' : 'normal' }} onClick={() => setVerticalExaggeration(2.0)}>2.0x</span>
+        </div>
       </div>
 
       {/* Color Ramp and Wireframe */}

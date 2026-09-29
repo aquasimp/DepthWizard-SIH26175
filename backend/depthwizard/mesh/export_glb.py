@@ -232,7 +232,7 @@ def export_all_lod_glbs(
     rgb_image: np.ndarray,
     out_dir: Union[str, Path],
     gsd_m: float = 0.33,
-    z_exag: float = 1.0,
+    z_exag: float = 0.2,
 ) -> Dict[str, Path]:
     """Generate and export all 3 LOD GLBs (lod0, lod1, lod2) and texture.jpg.
 
